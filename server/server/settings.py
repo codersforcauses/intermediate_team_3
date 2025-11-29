@@ -21,22 +21,18 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-FRONTEND_URL = os.environ.get("FRONTEND_URL")
+FRONTEND_URL: str | None = os.environ.get("FRONTEND_URL")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("API_SECRET_KEY")
+SECRET_KEY: str | None = os.environ.get("API_SECRET_KEY", "!!!--This-Is-My-Super-Public-And-Not-Very-Secret-Key--!!!")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("APP_ENV") == "DEVELOPMENT"
+DEBUG: bool = os.environ.get("APP_ENV", "DEVELOPMENT") == "DEVELOPMENT"
 
-ALLOWED_HOSTS = (
-    os.environ.get("API_ALLOWED_HOSTS").split()
-    if os.environ.get("API_ALLOWED_HOSTS")
-    else []
-)
+ALLOWED_HOSTS: list[str] = os.environ.get("API_ALLOWED_HOSTS").split() if os.environ.get("API_ALLOWED_HOSTS") else []
 
 
 # Application definition
@@ -48,10 +44,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_extensions",
+    # "django_extensions",
     "rest_framework",
     "corsheaders",
-    "api.healthcheck",
+    "healthcheck",
 ]
 
 MIDDLEWARE = [
@@ -65,13 +61,14 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    FRONTEND_URL
-]
 
-ROOT_URLCONF = "api.urls"
+CORS_ALLOWED_ORIGINS: list[str] = []
+if DEBUG:
+    CORS_ALLOWED_ORIGINS.extend(["http://localhost:3000", "http://127.0.0.1:3000"])
+if FRONTEND_URL:
+    CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
+
+ROOT_URLCONF = "server.urls"
 
 TEMPLATES = [
     {
@@ -89,18 +86,29 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "api.wsgi.application"
+WSGI_APPLICATION = "server.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": os.environ.get("POSTGRES_NAME") or "postgres",
+#         "USER": os.environ.get("POSTGRES_USER") or "postgres",
+#         "PASSWORD": os.environ.get("POSTGRES_PASSWORD") or "password",
+#         "HOST": os.environ.get("POSTGRES_HOST") or "host.docker.internal",
+#         "PORT": os.environ.get("POSTGRES_PORT") or 5432,
+#     }
+# }
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
 
 
 # Password validation
@@ -137,8 +145,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__))))  # <- '/' directory
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # <- '/' directory
 
 STATIC_URL = "/static/"
 

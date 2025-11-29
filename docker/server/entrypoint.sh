@@ -1,25 +1,36 @@
 #!/bin/bash
 
+# Wait until Database is available before continuing
+printf "\n" && echo "Checking Database is up"
+# using psql
+while ! pg_isready -q -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER
+do
+  echo "$(date) - waiting for database to start"
+  sleep 1
+done
+
+>&2 echo "Postgres is up - continuing"
+
 echo "Applying database migrations"
-python manage.py migrate --noinput
+uv run python manage.py migrate --noinput
 
 echo "Collecting static files"
-python manage.py collectstatic --noinput
+uv run python manage.py collectstatic --noinput
 
 # Create Django Superuser
 echo "Creating Django Superuser"
-python manage.py createsuperuser --noinput
+uv run python manage.py createsuperuser --noinput
 
 # Run inbuilt Django server if ENV is development
 if [ "${APP_ENV^^}" = "DEVELOPMENT" ]; then
 
     # Install extra non-prod packages
     printf "\n" && echo "Installing dev dependencies for $APP_ENV"
-    uv sync 
+    uv sync --frozen --all-groups
     # Run developments
     printf "\n" && echo "Starting inbuilt django webserver"
     echo "Running: python manage.py runserver 0.0.0.0:8081"
-    python manage.py runserver 0.0.0.0:8081
+    uv run python manage.py runserver 0.0.0.0:8081
     exit
 fi
 
@@ -30,6 +41,6 @@ if [ "${APP_ENV^^}" = "PRODUCTION" ]; then
 
     # Run Gunicorn / Django
     printf "\n" && echo " Running Gunicorn / Django"
-    echo "Running: gunicorn api.wsgi -b 0.0.0.0:8081 --workers=6 --keep-alive 20 --log-file=- --log-level debug --access-logfile=/var/log/accesslogs/gunicorn --capture-output --timeout 50"
-    gunicorn api.wsgi -b 0.0.0.0:8081 --workers=6 --keep-alive 20 --log-file=- --log-level debug --access-logfile=/var/log/accesslogs/gunicorn --capture-output --timeout 50
+    echo "Running: gunicorn server.wsgi -b 0.0.0.0:8081 --workers=6 --keep-alive 20 --log-file=- --log-level debug --access-logfile=/var/log/accesslogs/gunicorn --capture-output --timeout 50"
+    uv run gunicorn server.wsgi -b 0.0.0.0:8081 --workers=6 --keep-alive 20 --log-file=- --log-level debug --access-logfile=/var/log/accesslogs/gunicorn --capture-output --timeout 50
 fi
