@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "healthcheck",
     "user_profile",
+    "task_planner",
 ]
 
 MIDDLEWARE = [
