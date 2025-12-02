@@ -11,14 +11,14 @@ class Topic(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
-class Time(models.Model):
-    start_time = models.TimeField
-    end_time = models.TimeField
-
-
 class Task(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     topics = models.ManyToManyField(Topic)
-    times = models.ManyToManyField(Time)
+
+
+class Time(models.Model):
+    start_time = models.TimeField
+    end_time = models.TimeField
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
