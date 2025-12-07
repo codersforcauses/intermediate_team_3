@@ -9,7 +9,6 @@ from .permissions import IsUserOrReadOnly
 from .serializers import UserSerializer, ProfileSerializer
 
 # Create your views here.
-
 class UserList(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -17,12 +16,14 @@ class UserList(APIView):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
-    
+
+
 class UserProfileList(generics.ListAPIView):
     queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer 
+    serializer_class = ProfileSerializer
+
 
 class UserProfileDetail(generics.RetrieveUpdateAPIView):
-    permissions_classes = (permissions.IsAuthenticated,IsUserOrReadOnly)
+    permissions_classes = (permissions.IsAuthenticated, IsUserOrReadOnly)
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
