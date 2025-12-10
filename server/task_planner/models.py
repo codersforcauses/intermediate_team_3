@@ -26,4 +26,4 @@ class Time(models.Model):
     end_time = models.TimeField()
     repeating = models.BooleanField(default=False)
     task = models.ForeignKey(
-        Task, on_delete=models.CASCADE, related_name="task")
+        Task, related_name="times", on_delete=models.CASCADE)
