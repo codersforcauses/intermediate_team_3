@@ -28,3 +28,9 @@ class TimeList(APIView):
         times = Time.objects.all()
         serializer = TimeSerializer(times, many=True)
         return Response(serializer.data)
+    
+class UserTasks(APIView):
+    def get(self, request, user_id):
+        tasks = Task.objects.filter(user_id=user_id)
+        serializer = TaskSerializer(tasks, many=True)
+        return Response(serializer.data)
