@@ -17,7 +17,7 @@ class Task(models.Model):
     description = models.TextField(blank=True)
     completed = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    topics = models.ManyToManyField(Topic)
+    topics = models.ManyToManyField(Topic, blank=True)
 
 
 class Time(models.Model):
