@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import Countdown from "./countdown";
+import TimeDisplay from "./timeDisplay";
 
 interface Task {
   id: number;
@@ -14,6 +15,13 @@ interface Tasks {
 
 const CurrentTask = ({ tasks }: Tasks) => {
   const [currentTasks, setCurrentTasks] = useState<Task[]>([]);
+  const [currentTask, setCurrentTask] = useState<Task>(
+    {
+      id : 1,
+      start_time : "00:00:00",
+      end_time : "00:00:00"
+    }
+  );
 
   useEffect(() => {
     function getCurrentTask() {
@@ -50,10 +58,17 @@ const CurrentTask = ({ tasks }: Tasks) => {
           setCurrentTasks((prevTasks) => [...prevTasks, task]);
         }
       });
+      setCurrentTask(currentTasks[0]);
     }
 
     getCurrentTask();
   }, [tasks]);
+
+  const updateTask = (status : string) => {
+    if (status == "finished") {
+      setCurrentTask(currentTasks[0]);
+    }
+  }
 
   return (
     <>
@@ -75,6 +90,13 @@ const CurrentTask = ({ tasks }: Tasks) => {
           </>
         )}
       </ul>
+      <div>
+        {currentTasks.length > 0 ? (
+          <TimeDisplay statusSignal={updateTask} end_time={currentTasks[0].end_time} />
+        ):(
+          <></>
+        )}
+      </div>
     </>
   );
 };

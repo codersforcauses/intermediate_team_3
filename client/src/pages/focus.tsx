@@ -1,9 +1,18 @@
 import React, { useState } from "react";
 
 import CurrentTask from "@/components/ui/currentTask";
+import TimeDisplay from "@/components/ui/timeDisplay";
+
+interface Task {
+  id: number;
+  start_time: string;
+  end_time: string;
+}
 
 const CountdownTimer = () => {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [currentTask, setCurrentTask] = useState<Task>();
+  const [taskTime, setTaskTime] = useState(1000000);
   const [loading, setLoading] = useState(false);
 
   async function refreshTasks() {
@@ -16,12 +25,43 @@ const CountdownTimer = () => {
       }
 
       const result = await response.json();
-      console.log(result);
       setTasks(result);
-      console.log(tasks);
+      getCurrentTask();
       setLoading(false);
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  function getCurrentTask() {
+    console.log("getting current task");
+    tasks.forEach((task) => {
+        const [startHours, startMins, startSec] = task.start_time
+          .split(":")
+          .map(Number);
+        const [endHours, endMins, endSec] = task.end_time
+          .split(":")
+          .map(Number);
+
+        const d = new Date();
+        const start_time = startHours * 60 * 60 + startMins * 60 + startSec;
+        const end_time = endHours * 60 * 60 + endMins * 60 + endSec;
+        const cur_time =
+          d.getHours() * 60 * 60 + d.getMinutes() * 60 + d.getSeconds();
+        
+        if (start_time <= cur_time && end_time >= cur_time) {
+          if (start_time < taskTime) {
+            setCurrentTask(task);
+            setTaskTime(start_time);
+          }
+        }
+    });
+  }
+
+  function onTaskEnd(status : string) {
+    if (status == "finished") {
+      console.log("finished");
+      getCurrentTask();
     }
   }
 
@@ -73,7 +113,14 @@ const CountdownTimer = () => {
         )}
 
         <div>
-          <CurrentTask tasks={tasks} />
+          {currentTask ? (
+            <div>
+            <p>{currentTask.end_time}</p>
+            <TimeDisplay statusSignal={onTaskEnd} end_time={currentTask.end_time} />
+            </div>
+          ):(
+            <></>
+          )}
         </div>
       </div>
     </div>
