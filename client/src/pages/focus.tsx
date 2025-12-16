@@ -1,19 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
+import TaskDisplay from "@/components/ui/taskDisplay";
 import TimeDisplay from "@/components/ui/timeDisplay";
+
+interface Time {
+  id: number;
+  day: number;
+  start_time: string;
+  end_time: string;
+  repeating: boolean;
+  task: number;
+}
 
 interface Task {
   id: number;
-  start_time: string;
-  end_time: string;
+  name: string;
+}
+
+function serializeTime(time: string) {
+  const [Hours, Mins, Sec] = time.split(":").map(Number);
+
+  return Hours * 60 * 60 + Mins * 60 + Sec;
 }
 
 const CountdownTimer = () => {
+  const [times, setTimes] = useState<Time[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [currentTask, setCurrentTask] = useState<Task>();
+  const [currentTime, setCurrentTime] = useState<Time | null>();
+  const [currentTask, setCurrentTask] = useState<Task | null>();
+  const [nextTime, setNextTime] = useState<Time | null>();
   const [loading, setLoading] = useState(false);
 
-  async function refreshTasks() {
+  async function refreshTimes() {
     setLoading(true);
 
     try {
@@ -23,44 +41,68 @@ const CountdownTimer = () => {
       }
 
       const result = await response.json();
-      setTasks(result);
-      getCurrentTask();
+      setTimes(result);
+      getCurrentTask(result);
       setLoading(false);
     } catch (error) {
       console.error(error);
     }
   }
 
-  function getCurrentTask() {
-    console.log("getting current task");
-    let task_time = 1000000;
-
-    tasks.forEach((task) => {
-      const [startHours, startMins, startSec] = task.start_time
-        .split(":")
-        .map(Number);
-      const [endHours, endMins, endSec] = task.end_time.split(":").map(Number);
-
-      const d = new Date();
-      const start_time = startHours * 60 * 60 + startMins * 60 + startSec;
-      const end_time = endHours * 60 * 60 + endMins * 60 + endSec;
-      const cur_time =
-        d.getHours() * 60 * 60 + d.getMinutes() * 60 + d.getSeconds();
-
-      if (start_time <= cur_time && end_time >= cur_time) {
-        if (start_time < task_time) {
-          console.log("new time", start_time);
-          setCurrentTask(task);
-          task_time = start_time;
+  useEffect(() => {
+    async function fetchTask() {
+      try {
+        const response = await fetch("http://localhost:8000/api/planner/task/");
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
         }
+        const result = await response.json();
+        setTasks(result);
+        const cur_task = tasks.filter((task) => task.id === currentTime?.task);
+        setCurrentTask(cur_task[0]);
+      } catch (error) {
+        console.error(error);
       }
+    }
+
+    fetchTask();
+  }, [tasks, currentTime]);
+
+  function getCurrentTask(ts: Time[]) {
+    let upcomingTimes: Time[];
+
+    const d = new Date();
+    const cur_time =
+      d.getHours() * 60 * 60 + d.getMinutes() * 60 + d.getSeconds();
+
+    // filter out finished tasks
+    upcomingTimes = ts.filter((time) => {
+      const end_time = serializeTime(time.end_time);
+      return end_time > cur_time;
     });
+
+    // sort by start time
+    upcomingTimes = upcomingTimes.sort((a, b) => {
+      return serializeTime(a.start_time) - serializeTime(b.start_time);
+    });
+
+    // logic for if there are no tasks currently or at all
+    if (upcomingTimes.length > 0) {
+      if (serializeTime(upcomingTimes[0].start_time) < cur_time) {
+        setCurrentTime(upcomingTimes[0]);
+      } else {
+        setCurrentTime(null);
+        setNextTime(upcomingTimes[0]);
+      }
+    } else {
+      setCurrentTime(null);
+      setNextTime(null);
+    }
   }
 
   function onTaskEnd(status: string) {
     if (status == "finished") {
-      console.log("finished");
-      getCurrentTask();
+      getCurrentTask(times);
     }
   }
 
@@ -73,7 +115,7 @@ const CountdownTimer = () => {
   // lonk out
 
   return (
-    <div className="h-screen bg-slate-800 p-8">
+    <div className="h-screen bg-slate-800 p-8 font-inter">
       <div className="flex h-screen flex-col items-center justify-start rounded-xl bg-slate-700 p-8 font-mono text-white shadow-inner shadow-slate-900">
         {loading ? (
           <div>
@@ -104,25 +146,48 @@ const CountdownTimer = () => {
           </div>
         ) : (
           <button
-            onClick={refreshTasks}
+            onClick={refreshTimes}
             className="rounded-full bg-indigo-400 p-3 px-8 hover:bg-indigo-500"
           >
             refresh
           </button>
         )}
-
-        <div>
-          {currentTask ? (
+        <p className="font-inter text-4xl font-semibold">FOCUS</p>
+        <div className="flex flex-row justify-center">
+          <div className="flex flex-col">
             <div>
-              <p>{currentTask.end_time}</p>
-              <TimeDisplay
-                statusSignal={onTaskEnd}
-                end_time={currentTask.end_time}
-              />
+              {currentTime ? (
+                <div>
+                  <TimeDisplay
+                    statusSignal={onTaskEnd}
+                    time={currentTime.end_time}
+                    current={true}
+                  />
+                </div>
+              ) : (
+                <></>
+              )}
+              {nextTime && !currentTime ? (
+                <div>
+                  <TimeDisplay
+                    statusSignal={onTaskEnd}
+                    time={nextTime.start_time}
+                    current={false}
+                  />
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
-          ) : (
-            <></>
-          )}
+            <div>
+              {currentTask ? (
+                <div>{TaskDisplay(currentTask.name)}</div>
+              ) : (
+                <div>{TaskDisplay("none")}</div>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-row justify-center">upcoming</div>
         </div>
       </div>
     </div>

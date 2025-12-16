@@ -4,31 +4,30 @@ import Timer from "./timer";
 
 interface TimeDisplayProps {
   statusSignal: (data: string) => void;
-  end_time: string;
+  time: string;
+  current: boolean;
 }
 
 export default function TimeDisplay({
   statusSignal,
-  end_time,
+  time,
+  current,
 }: TimeDisplayProps) {
   const [timeRemaining, setTimeRemaining] = useState(0);
 
   useEffect(() => {
-    function updateStatus(s: string) {
-      statusSignal(s);
-    }
-
     const getTimeRemaining = setInterval(() => {
-      const [endHours, endMins, endSec] = end_time.split(":").map(Number);
+      const [Hours, Mins, Sec] = time.split(":").map(Number);
 
       const d = new Date();
-      const end_time_serial = endHours * 60 * 60 + endMins * 60 + endSec;
+      const time_serial = Hours * 60 * 60 + Mins * 60 + Sec;
       const cur_time =
         d.getHours() * 60 * 60 + d.getMinutes() * 60 + d.getSeconds();
 
-      const remaining_time = end_time_serial - cur_time;
+      let remaining_time = 0;
+
+      remaining_time = time_serial - cur_time;
       if (remaining_time <= 1) {
-        updateStatus("finished");
         clearInterval(getTimeRemaining);
       }
 
@@ -36,12 +35,26 @@ export default function TimeDisplay({
     }, 1000);
 
     return () => clearInterval(getTimeRemaining);
-  }, [end_time, timeRemaining, statusSignal]);
+  }, [time, timeRemaining]);
+
+  useEffect(() => {
+    if (timeRemaining <= 1) {
+      statusSignal("finished");
+    }
+  }, [timeRemaining, statusSignal]);
 
   return (
-    <div>
-      <h1>Timer</h1>
-      <div className="time left">{Timer(timeRemaining)}</div>
+    <div className="m-3 flex flex-col items-center justify-center rounded-3xl bg-slate-900 p-10 shadow-xl shadow-black/40">
+      {current ? (
+        <>
+          <h1 className="mb-2 font-inter text-4xl font-semibold">Timer</h1>
+        </>
+      ) : (
+        <>
+          <h1 className="mb-2 font-inter text-4xl font-semibold">Next Task</h1>
+        </>
+      )}
+      <div className="time_left">{Timer(timeRemaining)}</div>
       <div></div>
     </div>
   );

@@ -7,8 +7,14 @@ const Timer = (timeRemaining: number) => {
     return (
       <div className="countdown-display">
         <div className="countdown-value">
-          {hours.toString().padStart(2, "0")}
-          <span>:</span>
+          {hours > 0 ? (
+            <>
+              {hours.toString()}
+              <span>:</span>
+            </>
+          ) : (
+            <></>
+          )}
           {minutes.toString().padStart(2, "0")}
           <span>:</span>
           {seconds.toString().padStart(2, "0")}
@@ -18,7 +24,7 @@ const Timer = (timeRemaining: number) => {
   };
 
   return (
-    <div className="rounded-full bg-indigo-400 p-3 px-8">
+    <div className="rounded-full bg-indigo-400 p-3 px-8 font-inter text-xl font-semibold">
       {formatTime(timeRemaining)}
     </div>
   );
