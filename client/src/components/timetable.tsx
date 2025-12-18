@@ -1,4 +1,6 @@
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
+
+import TimetableTask, { resizeAndPositionTimetableTask } from "@/components/timetable_task";
 
 interface TimetableSlotProps {
   label?: string;
@@ -22,26 +24,37 @@ function TimetableSlot({
 }: TimetableSlotProps) {
   let class_name =
     "timetable-slot w-full h-full min-h-16 \
-    flex justify-center items-center";
+    flex justify-center items-center border-solid ";
 
   if (header === true) {
-    class_name = class_name + " bg-slate-800 sticky top-0 z-10";
+    class_name =
+      class_name +
+      " bg-slate-800 sticky top-0 z-10 \
+        border-b-2 border-b-slate-900";
   } else {
     class_name =
       class_name +
       " bg-slate-600 \
-        border-solid border-t border-b border-t-slate-400 border-b-slate-400";
+        border-t border-b border-t-slate-400 border-b-slate-400";
   }
 
   if (header !== true && time_label !== true) {
     class_name = class_name + " hover:bg-slate-500";
   }
 
-  return (
-    <div className={class_name} time={time}>
-      <p className="text-xl font-semibold text-slate-400">{label}</p>
-    </div>
-  );
+  // There's probably a better way to do this
+  if (time_label === true)
+    return (
+      <div id={time} className={class_name} data-time={time}>
+        <p className="text-xl font-semibold text-slate-400">{label}</p>
+      </div>
+    );
+  else
+    return (
+      <div className={class_name} data-time={time}>
+        <p className="text-xl font-semibold text-slate-400">{label}</p>
+      </div>
+    );
 }
 
 function TimetableColumn({ children, day, sticky }: TimetableColumnProps) {
@@ -56,7 +69,7 @@ function TimetableColumn({ children, day, sticky }: TimetableColumnProps) {
   }
 
   return (
-    <div className={class_name} day={day}>
+    <div id={day} className={class_name} data-day={day}>
       {children}
     </div>
   );
@@ -65,7 +78,7 @@ function TimetableColumn({ children, day, sticky }: TimetableColumnProps) {
 function TimetableDayColumn({ label, day }: TimetableColumnProps) {
   return (
     <TimetableColumn day={day} label={label}>
-      <TimetableSlot time="" label={label} header={true} />
+      <TimetableSlot time="Header" label={label} header={true} />
       <TimetableSlot time="00:00:00" />
       <TimetableSlot time="01:00:00" />
       <TimetableSlot time="02:00:00" />
@@ -96,8 +109,13 @@ function TimetableDayColumn({ label, day }: TimetableColumnProps) {
 
 function TimetableTimeColumn() {
   return (
-    <TimetableColumn day="" label="Time" sticky={true}>
-      <TimetableSlot time="" label="Time" header={true} time_label={true} />
+    <TimetableColumn day="Time" label="Time" sticky={true}>
+      <TimetableSlot
+        time="Header"
+        label="Time"
+        header={true}
+        time_label={true}
+      />
       <TimetableSlot time="00:00:00" label="00:00" time_label={true} />
       <TimetableSlot time="01:00:00" label="01:00" time_label={true} />
       <TimetableSlot time="02:00:00" label="02:00" time_label={true} />
@@ -128,9 +146,16 @@ function TimetableTimeColumn() {
 
 export default function Timetable() {
   return (
-    <div className="timetable-border h-full w-full rounded-lg bg-slate-900 p-3">
-      <div className="timetable-barrier h-full w-full overflow-auto">
-        <div id="timetable" className="timetable flex h-full w-full flex-row">
+    <div
+      id="timetable-border"
+      className="h-full w-full rounded-lg bg-slate-900 p-3"
+    >
+      <div id="timetable-barrier" className="h-full w-full overflow-auto">
+        <div
+          id="timetable"
+          className="timetable flex h-full w-full flex-row"
+          onScroll={resizeAndPositionTimetableTask}
+        >
           <TimetableTimeColumn />
           <TimetableDayColumn day="Monday" label="Monday" />
           <TimetableDayColumn day="Tuesday" label="Tuesday" />
@@ -139,6 +164,15 @@ export default function Timetable() {
           <TimetableDayColumn day="Friday" label="Friday" />
           <TimetableDayColumn day="Saturday" label="Saturday" />
           <TimetableDayColumn day="Sunday" label="Sunday" />
+          <div id="timetable-tasks" className="absolute left-0 top-0">
+            <TimetableTask
+              day="Friday"
+              start_time="06:15:00"
+              end_time="08:30:00"
+              duration_minutes={135}
+              title="Example"
+            />
+          </div>
         </div>
       </div>
     </div>
