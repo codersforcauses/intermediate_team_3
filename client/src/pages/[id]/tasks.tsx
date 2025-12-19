@@ -38,7 +38,7 @@ export default function TasksPage() {
     async function fetchTasks() {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/planner/tasks/user/${id}/`,
+          `http://localhost:8000/api/planner/tasks/`,
         );
         const data = await response.json();
         setItems(data);

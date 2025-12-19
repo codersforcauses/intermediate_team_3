@@ -14,18 +14,15 @@ class TimeSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class TaskReadSerializer(serializers.ModelSerializer):
     topics = TopicSerializer(many=True, read_only=True)
     times = TimeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Task
-        fields = (
-            "id",
-            "name",
-            "description",
-            "completed",
-            "user",
-            "topics",
-            "times",
-        )
+        fields = "__all__"
+
+class TaskWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ["name", "description", "completed"]
