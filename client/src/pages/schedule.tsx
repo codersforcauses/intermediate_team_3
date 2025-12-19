@@ -1,6 +1,17 @@
+import { useEffect } from "react";
+
 import Timetable from "@/components/timetable";
+import { resizeAndPositionTimetableTasks } from "@/components/timetable_task";
 
 function Schedule() {
+  useEffect(() => {
+    window.addEventListener("resize", resizeAndPositionTimetableTasks);
+
+    return () => {
+      window.removeEventListener("resize", resizeAndPositionTimetableTasks);
+    };
+  });
+
   return (
     <div className="content-container min-w-screen z-[50] flex h-fit min-h-screen w-full flex-row bg-slate-950">
       <div className="timetable-container flex h-screen w-4/5 flex-col items-center justify-center overflow-hidden p-3">

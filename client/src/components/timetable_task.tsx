@@ -1,14 +1,3 @@
-import { useEffect } from "react";
-
-interface TimetableTaskProps {
-  title: string;
-  day: string;
-  start_time: string;
-  end_time: string;
-  duration_minutes: number;
-  description?: string;
-}
-
 function getVisibleTimetableRect() {
   const time_header = document.getElementById("Header");
   if (time_header == null) return;
@@ -19,10 +8,10 @@ function getVisibleTimetableRect() {
   const timetable_barrier_rect = timetable_barrier.getBoundingClientRect();
 
   return {
-    top: time_header_rect.bottom,
-    bottom: timetable_barrier_rect.bottom,
     left: time_header_rect.right,
-    right: timetable_barrier_rect.right,
+    right: timetable_barrier_rect.left + timetable_barrier.clientWidth,
+    top: time_header_rect.bottom,
+    bottom: timetable_barrier_rect.top + timetable_barrier.clientHeight,
   };
 }
 
@@ -49,9 +38,17 @@ function getTimetableTaskDataProperties(task: HTMLElement) {
   };
 }
 
-export function resizeAndPositionTimetableTask() {
+/*
+NOTE: there is a small issue with this code which causes the TimetableTask to
+expand to the size of the column + border while the next column is offscreen
+before returning to just the size of the column (no border) once the next
+column becomes visible.
+
+Pretty sure the issue is because the client rect.right includes the border
+which I don't want it to.
+*/
+export function resizeAndPositionTimetableTask(task: HTMLElement) {
   // Get task
-  const task = document.getElementById("test");
   if (task == null) return;
   // Get task data
   const task_data = getTimetableTaskDataProperties(task);
@@ -69,36 +66,80 @@ export function resizeAndPositionTimetableTask() {
   // Get dimensions of column and row
   const col_rect = col.getBoundingClientRect();
   const row_rect = row.getBoundingClientRect();
-  // Check if cell is visible
-  const is_visible = !(
-    col_rect.right <= visible.left ||
-    col_rect.left >= visible.right ||
-    row_rect.bottom <= visible.top ||
-    row_rect.top >= visible.bottom
-  );
-  if (is_visible) {
-    task.style.display = "inline";
-  } else {
-    task.style.display = "none";
-    return;
-  }
+
   // Calculate dimensions
-  const left = col_rect.left > visible.left ? col_rect.left : visible.left;
-  const width =
+  let left, top, width, height;
+
+  let left_width_reduction = 0;
+  if (col_rect.left > visible.left) {
+    left = col_rect.left;
+  } else {
+    left = visible.left;
+    left_width_reduction = visible.left - col_rect.left;
+  }
+
+  width =
     col_rect.right < visible.right ? row_rect.width : visible.right - left;
+  width -= left_width_reduction;
+
   const one_hour_height = row_rect.height;
-  const offset_top = row_rect.top + one_hour_height * start_offset_hours;
-  const top = offset_top > visible.top ? offset_top : visible.top;
   const duration_height = one_hour_height * duration_hours;
-  const height =
+  const offset_top = row_rect.top + one_hour_height * start_offset_hours;
+
+  let top_height_reduction = 0;
+  if (offset_top > visible.top) {
+    top = offset_top;
+  } else {
+    top = visible.top;
+    top_height_reduction = visible.top - offset_top;
+  }
+
+  height =
     top + duration_height < visible.bottom
       ? duration_height
       : visible.bottom - top;
+  height -= top_height_reduction;
+
   // Set dimensions
   task.style.left = left + "px";
   task.style.top = top + "px";
   task.style.width = width + "px";
   task.style.height = height + "px";
+
+  // Hide elements not in the visible area
+  const right = left + width;
+  const bottom = top + height;
+  const is_visible = !(
+    right <= visible.left ||
+    left >= visible.right ||
+    bottom <= visible.top ||
+    top >= visible.bottom
+  );
+  if (is_visible) {
+    task.style.visibility = "visible";
+  } else {
+    task.style.visibility = "hidden";
+  }
+}
+
+export function resizeAndPositionTimetableTasks() {
+  const task_container = document.getElementById("timetable-tasks");
+  if (task_container == null) return;
+
+  const tasks = task_container.children;
+  for (let i = 0; i < tasks.length; i++) {
+    const task = tasks[i];
+    resizeAndPositionTimetableTask(task);
+  }
+}
+
+interface TimetableTaskProps {
+  title: string;
+  day: string;
+  start_time: string;
+  end_time: string;
+  duration_minutes: number;
+  description?: string;
 }
 
 function TimetableTask({
@@ -109,20 +150,10 @@ function TimetableTask({
   duration_minutes,
   description,
 }: TimetableTaskProps) {
-  // remove this useEffect
-  useEffect(() => {
-    window.addEventListener("resize", resizeAndPositionTimetableTask);
-
-    return () => {
-      window.removeEventListener("resize", resizeAndPositionTimetableTask);
-    };
-  });
-
   return (
     <div
       id="test"
-      className="timetable-task absolute z-[50] min-h-16 w-32 overflow-hidden rounded-lg bg-red-500"
-      onClick={resizeAndPositionTimetableTask}
+      className="timetable-task absolute z-[50] overflow-hidden rounded-lg bg-red-500"
       data-day={day}
       data-start_time={start_time}
       data-start_hour={start_time.substring(0, 2) + ":00:00"}

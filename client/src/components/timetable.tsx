@@ -1,6 +1,8 @@
 import React, { ReactElement } from "react";
 
-import TimetableTask, { resizeAndPositionTimetableTask } from "@/components/timetable_task";
+import TimetableTask, {
+  resizeAndPositionTimetableTasks,
+} from "@/components/timetable_task";
 
 interface TimetableSlotProps {
   label?: string;
@@ -150,12 +152,12 @@ export default function Timetable() {
       id="timetable-border"
       className="h-full w-full rounded-lg bg-slate-900 p-3"
     >
-      <div id="timetable-barrier" className="h-full w-full overflow-auto">
-        <div
-          id="timetable"
-          className="timetable flex h-full w-full flex-row"
-          onScroll={resizeAndPositionTimetableTask}
-        >
+      <div
+        id="timetable-barrier"
+        className="h-full w-full overflow-auto"
+        onScroll={resizeAndPositionTimetableTasks}
+      >
+        <div id="timetable" className="timetable flex h-full w-full flex-row">
           <TimetableTimeColumn />
           <TimetableDayColumn day="Monday" label="Monday" />
           <TimetableDayColumn day="Tuesday" label="Tuesday" />
@@ -164,7 +166,17 @@ export default function Timetable() {
           <TimetableDayColumn day="Friday" label="Friday" />
           <TimetableDayColumn day="Saturday" label="Saturday" />
           <TimetableDayColumn day="Sunday" label="Sunday" />
-          <div id="timetable-tasks" className="absolute left-0 top-0">
+          <div
+            id="timetable-tasks"
+            className="timetable-task absolute left-0 top-0"
+          >
+            <TimetableTask
+              day="Monday"
+              start_time="13:15:00"
+              end_time="15:30:00"
+              duration_minutes={135}
+              title="Example"
+            />
             <TimetableTask
               day="Friday"
               start_time="06:15:00"
