@@ -32,7 +32,7 @@ export function TaskList({ items, onToggleTask }: ListProps) {
   if (items.length === 0) {
     return (
       <div>
-        <p>No tasks available.</p>
+        <p className="text-center text-zinc-300">No tasks available.</p>
       </div>
     );
   }

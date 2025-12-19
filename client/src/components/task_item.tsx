@@ -28,24 +28,24 @@ type ItemProps = {
 
 export function TaskItem({ item, onToggle }: ItemProps) {
   return (
-    <label className="m-1 flex w-96 items-center justify-between space-x-2 rounded-md border-2 border-zinc-200 bg-zinc-700 p-2">
-      <div className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          checked={item.completed}
-          onChange={() => onToggle?.(item.id)}
-          className="w-xl h-xl accent-zinc-600"
-        />
-        <span
-          className={
-            item.completed ? "text-zinc-400 line-through" : "text-zinc-300"
-          }
-        >
-          {item.name}
-        </span>
-      </div>
-      <div className="flex flex-col items-end text-sm text-zinc-300">
-        <span className="text-sm text-zinc-300">
+    <label className="m-1 flex w-96 flex-col rounded-md border-2 border-zinc-200 bg-zinc-700 p-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={item.completed}
+            onChange={() => onToggle?.(item.id)}
+            className="w-xl h-xl accent-zinc-600"
+          />
+          <span
+            className={
+              item.completed ? "text-zinc-400 line-through" : "text-zinc-300"
+            }
+          >
+            {item.name}
+          </span>
+        </div>
+        <div className="flex flex-col items-end text-sm text-zinc-300">
           {item.times.length > 0
             ? item.times.map((t) => (
                 <span key={t.id}>
@@ -54,7 +54,26 @@ export function TaskItem({ item, onToggle }: ItemProps) {
                 </span>
               ))
             : "No time set"}
-        </span>
+        </div>
+      </div>
+
+      <div className="flex space-x-1 text-sm text-zinc-300">
+        {item.topics.length > 0
+          ? item.topics.map((topic) => (
+              <span
+                key={topic.id}
+                className="flex items-center gap-1 rounded-full border-2 border-zinc-800 px-2 py-0.5 text-zinc-100"
+              >
+                <span
+                  className="h-2 w-2 rounded-full"
+                  style={{
+                    backgroundColor: `#${topic.color_hex.toString(16).padStart(6, "0")}`,
+                  }}
+                />
+                {topic.name}
+              </span>
+            ))
+          : "No topics"}
       </div>
     </label>
   );
