@@ -31,6 +31,12 @@ class TaskViewSet(ModelViewSet):
         return TaskWriteSerializer
 
     def get_queryset(self):
+        # -- Temporary Code --
+        user_id = self.request.query_params.get('user_id')
+        if user_id:
+            return Task.objects.filter(user_id=user_id)
+        # -- End Temporary Code --
+        
         #return Task.objects.filter(user=self.request.user) # Will restrict tasks to a given user when authentication is added.
         return Task.objects.all()
     

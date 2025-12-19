@@ -37,8 +37,9 @@ export default function TasksPage() {
 
     async function fetchTasks() {
       try {
+        // Remove the query bit when authentication is added.
         const response = await fetch(
-          `http://localhost:8000/api/planner/tasks/`,
+          `http://localhost:8000/api/planner/tasks/?user_id=${id}`,
         );
         const data = await response.json();
         setItems(data);
