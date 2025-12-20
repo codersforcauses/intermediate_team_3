@@ -1,9 +1,11 @@
 from django.shortcuts import render
 
 # from rest_framework import generics, permissions
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+#from rest_framework.permissions import IsAuthenticated
 
 from .models import Task, Topic, Time
 from .serializers import TaskReadSerializer, TaskWriteSerializer, TopicSerializer, TimeSerializer
@@ -25,6 +27,9 @@ class TimeList(APIView):
         return Response(serializer.data)
 
 class TaskViewSet(ModelViewSet):
+
+    #permission_classes = [IsAuthenticated]  # Uncomment when authentication is added.
+
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
             return TaskReadSerializer
@@ -41,4 +46,12 @@ class TaskViewSet(ModelViewSet):
         return Task.objects.all()
     
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        # Use explicit user_id when provided (no auth yet); otherwise require auth
+        user_id = self.request.data.get("user_id")
+        if user_id:
+            serializer.save(user_id=user_id)
+            return
+        if self.request.user and self.request.user.is_authenticated:
+            serializer.save(user=self.request.user)
+            return
+        raise ValidationError({"user_id": "Provide user_id or authenticate."})

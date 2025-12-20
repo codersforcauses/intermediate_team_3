@@ -1,27 +1,27 @@
 import { TaskItem } from "./task_item";
 
-type Time = {
+interface Time {
   id: number;
   day: number;
   start_time: string;
   end_time: string;
   repeating: boolean;
-};
+}
 
-type Topic = {
+interface Topic {
   id: number;
   name: string;
   color_hex: number;
-};
+}
 
-type Item = {
+interface Item {
   id: number;
   name: string;
   completed: boolean;
   description: string;
   times: Time[];
   topics: Topic[];
-};
+}
 
 type ListProps = {
   items: Item[];
