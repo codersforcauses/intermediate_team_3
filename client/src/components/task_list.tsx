@@ -37,7 +37,7 @@ export function TaskList({ items, onToggleTask }: ListProps) {
     );
   }
   return (
-    <div className="mx-auto h-[85vh] w-full max-w-md overflow-y-auto p-2">
+    <div className="mx-auto h-[79vh] w-full max-w-md overflow-y-auto p-2">
       <ul className="space-y-2">
         {items.map((item) => (
           <li key={item.id}>

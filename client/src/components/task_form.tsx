@@ -64,25 +64,25 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 rounded-xl border bg-zinc-700 p-4"
+      className="mx-auto h-[79vh] w-full max-w-md space-y-4 overflow-y-auto rounded-xl bg-zinc-700 p-4"
     >
       <input
         type="text"
         value={taskName}
         onChange={(e) => setTaskName(e.target.value)}
         placeholder="Task Name"
-        className="w-full rounded border bg-zinc-800 p-2 text-zinc-200"
+        className="w-full rounded border-2 bg-zinc-700 p-2 text-zinc-200"
         required
       />
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Description"
-        className="w-full rounded border bg-zinc-800 p-2 text-zinc-200"
+        className="h-32 w-full resize-none rounded border-2 bg-zinc-700 p-2 text-zinc-200"
       />
       <button
         type="submit"
-        className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+        className="rounded border-2 border-zinc-200 bg-blue-600 px-4 py-2 text-zinc-200 hover:bg-blue-700"
       >
         Add Task
       </button>

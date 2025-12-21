@@ -57,12 +57,12 @@ export function TaskItem({ item, onToggle }: ItemProps) {
         </div>
       </div>
 
-      <div className="flex space-x-1 text-sm text-zinc-300">
+      <div className="flex flex-wrap gap-1 text-sm text-zinc-300">
         {item.topics.length > 0
           ? item.topics.map((topic) => (
               <span
                 key={topic.id}
-                className="flex items-center gap-1 rounded-full border-2 border-zinc-800 px-2 py-0.5 text-zinc-100"
+                className="flex items-center gap-1 rounded-lg border-2 border-zinc-500 px-2 py-0.5 text-zinc-100"
               >
                 <span
                   className="h-2 w-2 rounded-full"
