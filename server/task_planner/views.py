@@ -8,7 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 #from rest_framework.permissions import IsAuthenticated
 
 from .models import Task, Topic, Time
-from .serializers import TaskReadSerializer, TaskWriteSerializer, TopicSerializer, TimeSerializer
+from .serializers import TaskReadSerializer, TaskWriteSerializer, TopicReadSerializer, TimeReadSerializer
 
 
 # Create your views here.
@@ -16,14 +16,14 @@ from .serializers import TaskReadSerializer, TaskWriteSerializer, TopicSerialize
 class TopicList(APIView):
     def get(self, request):
         topics = Topic.objects.all()
-        serializer = TopicSerializer(topics, many=True)
+        serializer = TopicReadSerializer(topics, many=True)
         return Response(serializer.data)
 
 
 class TimeList(APIView):
     def get(self, request):
         times = Time.objects.all()
-        serializer = TimeSerializer(times, many=True)
+        serializer = TimeReadSerializer(times, many=True)
         return Response(serializer.data)
 
 class TaskViewSet(ModelViewSet):

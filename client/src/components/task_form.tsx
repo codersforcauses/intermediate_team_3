@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { TimeInput } from "@/components/time_input";
+
 interface Time {
   id: number;
   day: number;
@@ -31,6 +33,9 @@ interface TaskFormProps {
 export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
+  const [times, setTimes] = useState<Time[]>([]);
+  //const [existingTopicIds, setExistingTopicIds] = useState<number[]>([]);
+  //const [newTopics, setNewTopics] = useState<{ name: string; color_hex: string }[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +50,9 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
           description: description,
           completed: false,
           user_id: userId,
+          times: times,
+          //existing_topic_ids: existingTopicIds,
+          //new_topics: newTopics,
         }),
       });
 
@@ -80,6 +88,7 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
         placeholder="Description"
         className="h-32 w-full resize-none rounded border-2 bg-zinc-700 p-2 text-zinc-200"
       />
+      <TimeInput times={times} setTimes={setTimes} />
       <button
         type="submit"
         className="rounded border-2 border-zinc-200 bg-blue-600 px-4 py-2 text-zinc-200 hover:bg-blue-700"
