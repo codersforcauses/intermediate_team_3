@@ -1,4 +1,7 @@
-import { getVisibleTimetableRect } from "@/components/timetable";
+import {
+  getTimeTopPosition,
+  getVisibleTimetableRect,
+} from "@/components/timetable";
 
 export function resizeAndPositionTimeIndicator() {
   const time_indicator = document.getElementById("time-indicator");
@@ -15,15 +18,10 @@ export function resizeAndPositionTimeIndicator() {
 
   const now = new Date(Date.now());
   const hour = now.getHours();
-  const min = now.getMinutes();
+  const mins = now.getMinutes();
 
-  const hour_label = document.getElementById(hour + ":00:00");
-  if (hour_label == null) return;
-  const hour_rect = hour_label.getBoundingClientRect();
-  if (hour_rect == undefined) return;
-
-  const offset = (min / 60) * hour_rect.height;
-  const top = hour_rect.top + offset;
+  const top = getTimeTopPosition(hour, mins);
+  if (top == undefined) return;
   time_indicator.style.top = top + "px";
 
   const now_label_rect = now_label.getBoundingClientRect();
@@ -48,13 +46,13 @@ function TimeIndicator() {
     <>
       <div
         id="time-indicator-label"
-        className="absolute z-[1000] h-fit w-fit rounded bg-slate-400 p-1"
+        className="absolute z-[1000] h-fit w-fit rounded-full bg-slate-400 p-1 pl-2 pr-2"
       >
         <p className="text-slate-100">Now</p>
       </div>
       <div
         id="time-indicator"
-        className="absolute z-[100] min-h-[2px] bg-slate-300"
+        className="absolute z-[100] min-h-[2px] bg-slate-200 opacity-75"
       ></div>
     </>
   );

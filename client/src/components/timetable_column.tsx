@@ -67,7 +67,7 @@ export function TimetableTimeColumn() {
   return (
     <TimetableColumn day="Time" label="Time" sticky={true}>
       <TimetableSlot
-        time="Header"
+        time="time-header"
         label="Time"
         header={true}
         time_label={true}

@@ -132,6 +132,7 @@ export interface TimetableTaskProps {
   name: string;
   topics?: Topic[];
   description?: string;
+  completed: boolean;
   day: string;
   start_time: string;
   end_time: string;
@@ -143,6 +144,7 @@ function TimetableTask({
   name,
   topics,
   description,
+  completed,
   day,
   start_time,
   end_time,
@@ -156,10 +158,20 @@ function TimetableTask({
     ></TopicTag>
   ));
 
+  let additional_style = " ";
+
+  if (completed === true) {
+    additional_style += "opacity-75";
+  }
+
   return (
     <div
-      className="timetable-task absolute z-[50] overflow-hidden rounded-lg bg-slate-400 p-2 text-slate-100"
       id={id}
+      className={
+        "timetable-task absolute z-[50] overflow-hidden rounded-lg bg-slate-400 p-3 text-slate-100" +
+        additional_style
+      }
+      data-completed={completed}
       data-day={day}
       data-start_time={start_time}
       data-start_hour={start_time.substring(0, 2) + ":00:00"}
@@ -167,13 +179,13 @@ function TimetableTask({
       data-end_time={end_time}
       data-duration_minutes={duration_minutes}
     >
-      <h1 className="m-1 text-2xl font-bold">{name}</h1>
-      <TimeTag start_time={start_time} end_time={end_time}></TimeTag>
-      <div className="topic-tags mt-1 flex flex-row flex-wrap">
+      <h1 className="mb-1 text-2xl font-bold">{name}</h1>
+      <TimeTag start_time={start_time} end_time={end_time} />
+      <div className="topic-tags mt-2 flex flex-row flex-wrap justify-between text-slate-200">
         {topic_tags}
       </div>
-      <div className="mt-1 flex flex-col overflow-hidden">
-        <p className="mt-1">{description}</p>
+      <div className="description mt-1 flex flex-col text-slate-200">
+        <p className="">{description}</p>
       </div>
     </div>
   );

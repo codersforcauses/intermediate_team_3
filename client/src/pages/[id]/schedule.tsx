@@ -1,11 +1,7 @@
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
-import { resizeAndPositionTimeIndicator } from "@/components/time_indicator";
-import Timetable from "@/components/timetable";
-import TimetableTask, {
-  resizeAndPositionTimetableTasks,
-  TimetableTaskProps,
-} from "@/components/timetable_task";
+import Timetable, { resizeTimetableElements } from "@/components/timetable";
+import TimetableTask, { TimetableTaskProps } from "@/components/timetable_task";
 
 interface Time {
   id: number;
@@ -56,15 +52,15 @@ function Schedule() {
     TimetableTaskProps[]
   >([]);
 
+  /* This effect runs in an infinte loop if timetableTaskProps is defined as a
+  dependency */
   useEffect(() => {
     function addEventListeners() {
-      window.addEventListener("resize", resizeAndPositionTimetableTasks);
-      window.addEventListener("resize", resizeAndPositionTimeIndicator);
+      window.addEventListener("resize", resizeTimetableElements);
     }
 
     function removeEventListeners() {
-      window.removeEventListener("resize", resizeAndPositionTimetableTasks);
-      window.removeEventListener("resize", resizeAndPositionTimetableTasks);
+      window.removeEventListener("resize", resizeTimetableElements);
     }
 
     async function formatTaskDataToTimetableTaskProps(data: Task[]) {
@@ -78,6 +74,7 @@ function Schedule() {
             name: task.name,
             topics: task.topics,
             description: task.description,
+            completed: task.completed,
             day: Day[time.day],
             start_time: time.start_time,
             end_time: time.end_time,
@@ -97,22 +94,21 @@ function Schedule() {
           throw new Error(`Response status: ${response.status}`);
         }
         const data = await response.json();
-        const timetable_task_props: TimetableTaskProps[] =
-          await formatTaskDataToTimetableTaskProps(data);
-        setTimetableTaskProps(timetable_task_props);
+        setTimetableTaskProps(await formatTaskDataToTimetableTaskProps(data));
       } catch (error) {
         console.error(error);
       }
     }
 
     addEventListeners();
-
     fetchTasks();
 
     return () => {
       removeEventListeners();
     };
-  });
+  }, []);
+  /* This should be dependent on timetableTaskProps however doing so causes it
+  to run in an infinite loop. */
 
   const timetableTasks = timetableTaskProps.map((props) => (
     <TimetableTask key={props.id} {...props}></TimetableTask>
