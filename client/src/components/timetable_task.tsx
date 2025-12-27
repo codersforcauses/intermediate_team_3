@@ -1,19 +1,6 @@
-function getVisibleTimetableRect() {
-  const time_header = document.getElementById("Header");
-  if (time_header == null) return;
-  const time_header_rect = time_header.getBoundingClientRect();
-
-  const timetable_barrier = document.getElementById("timetable-barrier");
-  if (timetable_barrier == null) return;
-  const timetable_barrier_rect = timetable_barrier.getBoundingClientRect();
-
-  return {
-    left: time_header_rect.right,
-    right: timetable_barrier_rect.left + timetable_barrier.clientWidth,
-    top: time_header_rect.bottom,
-    bottom: timetable_barrier_rect.top + timetable_barrier.clientHeight,
-  };
-}
+import TimeTag from "@/components/time_tag";
+import { getVisibleTimetableRect } from "@/components/timetable";
+import TopicTag from "@/components/topic_tag";
 
 function getTimetableTaskDataProperties(task: HTMLElement) {
   const day = task.dataset.day;
@@ -116,9 +103,9 @@ export function resizeAndPositionTimetableTask(task: HTMLElement) {
     top >= visible.bottom
   );
   if (is_visible) {
-    task.style.visibility = "visible";
+    task.style.display = "inline";
   } else {
-    task.style.visibility = "hidden";
+    task.style.display = "none";
   }
 }
 
@@ -133,27 +120,46 @@ export function resizeAndPositionTimetableTasks() {
   }
 }
 
-interface TimetableTaskProps {
-  title: string;
+export interface Topic {
+  id: number;
+  name: string;
+  color_hex: number;
+  user: number;
+}
+
+export interface TimetableTaskProps {
+  id: string;
+  name: string;
+  topics?: Topic[];
+  description?: string;
   day: string;
   start_time: string;
   end_time: string;
   duration_minutes: number;
-  description?: string;
 }
 
 function TimetableTask({
-  title,
+  id,
+  name,
+  topics,
+  description,
   day,
   start_time,
   end_time,
   duration_minutes,
-  description,
 }: TimetableTaskProps) {
+  const topic_tags = topics?.map((topic) => (
+    <TopicTag
+      key={topic.name}
+      name={topic.name}
+      color_hex={topic.color_hex}
+    ></TopicTag>
+  ));
+
   return (
     <div
-      id="test"
-      className="timetable-task absolute z-[50] overflow-hidden rounded-lg bg-red-500"
+      className="timetable-task absolute z-[50] overflow-hidden rounded-lg bg-slate-400 p-2 text-slate-100"
+      id={id}
       data-day={day}
       data-start_time={start_time}
       data-start_hour={start_time.substring(0, 2) + ":00:00"}
@@ -161,9 +167,14 @@ function TimetableTask({
       data-end_time={end_time}
       data-duration_minutes={duration_minutes}
     >
-      <h1>{title}</h1>
-      <p>{start_time.substring(0, 5) + "-" + end_time.substring(0, 5)}</p>
-      <p>{description}</p>
+      <h1 className="m-1 text-2xl font-bold">{name}</h1>
+      <TimeTag start_time={start_time} end_time={end_time}></TimeTag>
+      <div className="topic-tags mt-1 flex flex-row flex-wrap">
+        {topic_tags}
+      </div>
+      <div className="mt-1 flex flex-col overflow-hidden">
+        <p className="mt-1">{description}</p>
+      </div>
     </div>
   );
 }
