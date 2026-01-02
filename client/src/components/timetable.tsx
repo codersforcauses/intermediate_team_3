@@ -32,6 +32,14 @@ export function getVisibleTimetableRect() {
   return rect;
 }
 
+export function getDurationMinutes(start_time: string, end_time: string) {
+  const start_hour: number = +start_time.substring(0, 2);
+  const start_minute: number = +start_time.substring(3, 5);
+  const end_hour: number = +end_time.substring(0, 2);
+  const end_minute: number = +end_time.substring(3, 5);
+  return 60 * (end_hour - start_hour) + (end_minute - start_minute);
+}
+
 export function getTimeTopPosition(hour: number, mins: number) {
   const hour_label = document.getElementById(hour + ":00:00");
   if (hour_label == null) return;
@@ -131,7 +139,7 @@ export function scrollToCurrentDay(align?: string) {
   let target_left;
   if (align == "left") target_left = visible.left;
   else if (align == "right") target_left = visible.right - row_width;
-  else target_left = visible.left + visible.width / 2;
+  else target_left = visible.left + visible.width / 2 - row_width / 2;
 
   let scroll_amount = today_left - target_left;
   if (scroll_amount < 0) scroll_amount = 0;
