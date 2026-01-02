@@ -164,6 +164,7 @@ export interface TimetableTaskContentProps {
   end_time: string;
   topics?: Topic[];
   description?: string;
+  time_display?: string;
 }
 
 function TimetableTaskContent({
@@ -172,6 +173,7 @@ function TimetableTaskContent({
   end_time,
   topics,
   description,
+  time_display,
 }: TimetableTaskContentProps) {
   return (
     <div className="timetable-task-content h-full overflow-hidden">
@@ -179,7 +181,7 @@ function TimetableTaskContent({
       <TimeTag
         start_time={start_time}
         end_time={end_time}
-        display={"duration"}
+        display={time_display}
       />
       <div className="topic-tags mt-2 flex flex-row flex-wrap justify-between text-slate-200">
         {topics?.map((topic) => (
@@ -272,6 +274,7 @@ function TimetableTask({
           end_time={end_time}
           topics={topics}
           description={description}
+          time_display={"duration"}
         />
       </div>
       <div
@@ -286,7 +289,7 @@ function TimetableTask({
             key={id + "-tooltip-" + props.name}
             className="z-[75] h-fit w-full rounded-lg bg-slate-400 p-3 text-slate-100"
           >
-            <TimetableTaskContent {...props} />
+            <TimetableTaskContent {...props} time_display="both" />
           </div>
         ))}
       </div>
