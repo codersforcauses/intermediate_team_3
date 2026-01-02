@@ -125,7 +125,7 @@ function resizeAndPositionTimetableTaskTooltip(tooltip: HTMLElement) {
   if (visible == undefined) return;
 
   if (task_rect.left - visible.left > visible.right - task_rect.right) {
-    tooltip.style.right = task_rect.left + "px";
+    tooltip.style.left = task_rect.left - tooltip_rect.width + "px";
   } else {
     tooltip.style.left = task_rect.right + "px";
   }
