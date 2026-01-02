@@ -68,3 +68,8 @@ class TaskWriteSerializer(serializers.ModelSerializer):
         task.save()
         task.refresh_from_db()
         return Task.objects.get(id=task.id)
+
+class TaskCompleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ["completed"]

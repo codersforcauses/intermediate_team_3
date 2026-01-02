@@ -6,10 +6,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
+from rest_framework.decorators import action
 #from rest_framework.permissions import IsAuthenticated
 
 from .models import Task, Topic, Time
-from .serializers import TaskReadSerializer, TaskWriteSerializer, TopicReadSerializer, TimeReadSerializer
+from .serializers import TaskReadSerializer, TaskWriteSerializer, TopicReadSerializer, TimeReadSerializer, TaskCompleteSerializer
 
 
 # Create your views here.
@@ -61,7 +62,6 @@ class TaskViewSet(ModelViewSet):
         write_serializer = TaskWriteSerializer(data=request.data)
         write_serializer.is_valid(raise_exception=True)
 
-        # 👇 THIS is what perform_create used to do
         user_id = request.data.get("user_id")
         if user_id:
             task = write_serializer.save(user_id=user_id)
@@ -70,6 +70,14 @@ class TaskViewSet(ModelViewSet):
         else:
             raise ValidationError({"user_id": "Provide user_id or authenticate."})
 
-        # Return READ shape
         read_serializer = TaskReadSerializer(task)
         return Response(read_serializer.data, status=status.HTTP_201_CREATED)
+    
+    @action(detail=True, methods=['patch'])
+    def toggle_complete(self, request, pk=None):
+        task = self.get_object()
+        serializer = TaskCompleteSerializer(task, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        read_serializer = TaskReadSerializer(task)
+        return Response(read_serializer.data)

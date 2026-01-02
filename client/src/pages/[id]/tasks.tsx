@@ -67,7 +67,7 @@ export default function TasksPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/planner/tasks/${id}/`,
+        `http://localhost:8000/api/planner/tasks/${id}/toggle_complete/`,
         {
           method: "PATCH",
           headers: {
