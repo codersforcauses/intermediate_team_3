@@ -109,6 +109,40 @@ export function resizeAndPositionTimetableTask(task: HTMLElement) {
   }
 }
 
+function resizeAndPositionTimetableTaskTooltip(tooltip: HTMLElement) {
+  const task_id = tooltip.id.slice(0, -"-tooltip".length);
+  const task = document.getElementById(task_id);
+  if (task == null) return;
+
+  const task_rect = task.getBoundingClientRect();
+  if (task_rect == undefined) return;
+
+  tooltip.style.display = "flex";
+  const tooltip_rect = tooltip.getBoundingClientRect();
+  if (tooltip_rect == undefined) return;
+
+  const visible = getVisibleTimetableRect();
+  if (visible == undefined) return;
+
+  if (task_rect.left - visible.left > visible.right - task_rect.right) {
+    tooltip.style.right = task_rect.left + "px";
+  } else {
+    tooltip.style.left = task_rect.right + "px";
+  }
+
+  const target_pos =
+    task_rect.top + task_rect.height / 2 - tooltip_rect.height / 2;
+
+  let tooltip_top = target_pos;
+  if (target_pos < visible.top) {
+    tooltip_top = visible.top;
+  } else if (target_pos > visible.bottom) {
+    tooltip_top = visible.bottom - tooltip_rect.height;
+  }
+
+  tooltip.style.top = tooltip_top + "px";
+}
+
 export function resizeAndPositionTimetableTasks() {
   const tasks = document.getElementsByClassName("timetable-task");
   for (let i = 0; i < tasks.length; i++) {
@@ -139,14 +173,6 @@ function TimetableTaskContent({
   topics,
   description,
 }: TimetableTaskContentProps) {
-  const topic_tags = topics?.map((topic) => (
-    <TopicTag
-      key={topic.name}
-      name={topic.name}
-      color_hex={topic.color_hex}
-    ></TopicTag>
-  ));
-
   return (
     <div className="timetable-task-content h-full overflow-hidden">
       <h1 className="mb-1 text-2xl font-bold">{name}</h1>
@@ -156,7 +182,13 @@ function TimetableTaskContent({
         display={"duration"}
       />
       <div className="topic-tags mt-2 flex flex-row flex-wrap justify-between text-slate-200">
-        {topic_tags}
+        {topics?.map((topic) => (
+          <TopicTag
+            key={topic.name}
+            name={topic.name}
+            color_hex={topic.color_hex}
+          />
+        ))}
       </div>
       <div className="description mt-1 flex flex-col text-slate-200">
         <p className="">{description}</p>
@@ -204,33 +236,61 @@ function TimetableTask({
     additional_style += "bg-slate-400 hover:bg-slate-300 ";
   }
 
-  if (tooltip_props.length > 0) {
-    // Avoids linting issue remove later
-  }
+  const mouseOverHandler = () => {
+    const tooltip = document.getElementById(id + "-tooltip");
+    if (tooltip == null) return;
+    resizeAndPositionTimetableTaskTooltip(tooltip); // Also sets display
+  };
+
+  const mouseOutHandler = () => {
+    const tooltip = document.getElementById(id + "-tooltip");
+    if (tooltip == null) return;
+    tooltip.style.display = "none";
+  };
 
   return (
-    <div
-      id={id}
-      className={
-        "timetable-task absolute z-[50] overflow-hidden rounded-lg p-3 text-slate-100" +
-        additional_style
-      }
-      data-completed={completed}
-      data-day={day}
-      data-start_time={start_time}
-      data-start_hour={start_time.substring(0, 2) + ":00:00"}
-      data-start_offset={start_time.substring(3, 5)}
-      data-end_time={end_time}
-      data-duration_minutes={duration_minutes}
-    >
-      <TimetableTaskContent
-        name={name}
-        start_time={start_time}
-        end_time={end_time}
-        topics={topics}
-        description={description}
-      />
-    </div>
+    <>
+      <div
+        id={id}
+        className={
+          "timetable-task absolute z-[50] overflow-hidden rounded-lg p-3 text-slate-100" +
+          additional_style
+        }
+        data-completed={completed}
+        data-day={day}
+        data-start_time={start_time}
+        data-start_hour={start_time.substring(0, 2) + ":00:00"}
+        data-start_offset={start_time.substring(3, 5)}
+        data-end_time={end_time}
+        data-duration_minutes={duration_minutes}
+        onMouseOver={mouseOverHandler}
+        onMouseOut={mouseOutHandler}
+      >
+        <TimetableTaskContent
+          name={name}
+          start_time={start_time}
+          end_time={end_time}
+          topics={topics}
+          description={description}
+        />
+      </div>
+      <div
+        id={id + "-tooltip"}
+        className="timetable-task-tooltip absolute z-[75] flex w-64 flex-col items-center justify-center gap-3 overflow-auto rounded-lg bg-slate-800 p-3"
+        style={{ display: "none" }}
+        onMouseOver={mouseOverHandler}
+        onMouseOut={mouseOutHandler}
+      >
+        {tooltip_props.map((props) => (
+          <div
+            key={id + "-tooltip-" + props.name}
+            className="z-[75] h-fit w-full rounded-lg bg-slate-400 p-3 text-slate-100"
+          >
+            <TimetableTaskContent {...props} />
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 

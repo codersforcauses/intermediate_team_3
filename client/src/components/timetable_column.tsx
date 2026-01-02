@@ -16,12 +16,12 @@ export default function TimetableColumn({
 }: TimetableColumnProps) {
   let class_name =
     "timetable-column w-full min-w-48 h-full \
-    flex flex-col bg-slate-500 border-r-4 border-slate-900";
+    flex flex-col bg-slate-500";
 
   if (sticky === true) {
-    class_name = class_name + " sticky left-0 z-10";
+    class_name += " sticky left-0 z-10";
   } else {
-    class_name = class_name + " z-0";
+    class_name += " z-0";
   }
 
   return (

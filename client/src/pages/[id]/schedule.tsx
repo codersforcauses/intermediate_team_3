@@ -159,7 +159,7 @@ function Schedule() {
           id: first_task.id + "/" + second_task.id,
           name: "Multiple Tasks",
           topics: [],
-          description: "Click for more details...",
+          description: "Hover for more details...",
           completed: false,
           day: first_task.day,
           start_time: second_task.start_time,
@@ -179,6 +179,7 @@ function Schedule() {
         by the clash, the first task in then split into 2 using a deep copy */
         if (second_end < first_end) {
           second_task = JSON.parse(JSON.stringify(first_task)); // Deep copy
+          second_task.id += ".2"; // Make the ID unique again
         }
 
         first_task.end_time = clash_props.start_time;
@@ -234,14 +235,14 @@ function Schedule() {
   /* This should be dependent on timetableTaskProps however doing so causes it
   to run in an infinite loop. */
 
-  const timetableTasks = timetableTaskProps.map((props) => (
-    <TimetableTask key={props.id} {...props}></TimetableTask>
-  ));
-
   return (
     <div className="content-container min-w-screen z-[50] flex h-[85vh] w-full flex-row bg-slate-950">
       <div className="timetable-container flex h-[85vh] w-4/5 flex-col items-center justify-center overflow-hidden p-3">
-        <Timetable>{timetableTasks}</Timetable>
+        <Timetable>
+          {timetableTaskProps.map((props) => (
+            <TimetableTask key={props.id} {...props} />
+          ))}
+        </Timetable>
       </div>
       <div className="tasklist-container z-[100] flex h-[85vh] w-1/5 flex-col items-center bg-slate-950 pt-5">
         <h1 className="text-center text-3xl text-white">Tasks</h1>

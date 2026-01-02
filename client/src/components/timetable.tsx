@@ -176,7 +176,10 @@ function Timetable({ children }: TimetableProps) {
         className="h-full w-full overflow-auto"
         onScroll={resizeTimetableElements}
       >
-        <div id="timetable" className="timetable flex h-full w-full flex-row">
+        <div
+          id="timetable"
+          className="timetable flex h-full w-full flex-row gap-1"
+        >
           <TimetableTimeColumn />
           <TimetableDayColumn day="Monday" label="Monday" />
           <TimetableDayColumn day="Tuesday" label="Tuesday" />
