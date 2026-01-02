@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from rest_framework import status
 #from rest_framework.permissions import IsAuthenticated
 
 from .models import Task, Topic, Time
@@ -55,3 +56,20 @@ class TaskViewSet(ModelViewSet):
             serializer.save(user=self.request.user)
             return
         raise ValidationError({"user_id": "Provide user_id or authenticate."})
+    
+    def create(self, request, *args, **kwargs):
+        write_serializer = TaskWriteSerializer(data=request.data)
+        write_serializer.is_valid(raise_exception=True)
+
+        # 👇 THIS is what perform_create used to do
+        user_id = request.data.get("user_id")
+        if user_id:
+            task = write_serializer.save(user_id=user_id)
+        elif request.user and request.user.is_authenticated:
+            task = write_serializer.save(user=request.user)
+        else:
+            raise ValidationError({"user_id": "Provide user_id or authenticate."})
+
+        # Return READ shape
+        read_serializer = TaskReadSerializer(task)
+        return Response(read_serializer.data, status=status.HTTP_201_CREATED)

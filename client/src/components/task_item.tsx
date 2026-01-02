@@ -46,7 +46,7 @@ export function TaskItem({ item, onToggle }: ItemProps) {
           </span>
         </div>
         <div className="flex flex-col items-end text-sm text-zinc-300">
-          {item.times.length > 0
+          {item.times?.length > 0
             ? item.times.map((t) => (
                 <span key={t.id}>
                   {formatDay(t.day)} {t.start_time.slice(0, 5)} -{" "}
@@ -58,7 +58,7 @@ export function TaskItem({ item, onToggle }: ItemProps) {
       </div>
 
       <div className="flex flex-wrap gap-1 text-sm text-zinc-300">
-        {item.topics.length > 0
+        {item.topics?.length > 0
           ? item.topics.map((topic) => (
               <span
                 key={topic.id}

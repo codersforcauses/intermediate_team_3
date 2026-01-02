@@ -46,21 +46,18 @@ class TaskWriteSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
+        user_id = validated_data.pop("user_id", None)
         existing_topics = validated_data.pop("existing_topic_ids", [])
         new_topics_data = validated_data.pop("new_topics", [])
         times_data = validated_data.pop("times", [])
 
-        task = Task.objects.create(**validated_data)
-        user = task.user
-
-        if not user:
-            raise serializers.ValidationError("Task user is required to create topics.")
+        task = Task.objects.create(**validated_data, user_id=user_id)
 
         for topic in existing_topics:
             task.topics.add(topic)
 
         for topic_data in new_topics_data:
-            topic = Topic.objects.create(**topic_data, user=task.user)
+            topic = Topic.objects.create(**topic_data, user_id=user_id)
             task.topics.add(topic)
 
         Time.objects.bulk_create([
@@ -68,4 +65,6 @@ class TaskWriteSerializer(serializers.ModelSerializer):
             for time_data in times_data
         ])
 
-        return task
+        task.save()
+        task.refresh_from_db()
+        return Task.objects.get(id=task.id)

@@ -61,12 +61,34 @@ export default function TasksPage() {
     setItems((prev) => [...prev, task]);
   };
 
-  function handleToggleTask(id: number) {
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, completed: !item.completed } : item,
-      ),
-    );
+  async function handleToggleTask(id: number) {
+    const task = items.find((t) => t.id === id);
+    if (!task) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/planner/tasks/${id}/`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ completed: !task.completed }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update task");
+      }
+
+      const updatedTask = await response.json();
+
+      setItems((prevItems) =>
+        prevItems.map((item) => (item.id === id ? updatedTask : item)),
+      );
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
   }
 
   return (
