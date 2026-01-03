@@ -237,17 +237,12 @@ function Schedule() {
 
   return (
     <div className="content-container min-w-screen z-[50] flex h-[85vh] w-full flex-row bg-slate-950">
-      <div className="timetable-container flex h-[85vh] w-4/5 flex-col items-center justify-center overflow-hidden p-3">
+      <div className="timetable-container w-5/5 flex h-[85vh] flex-col items-center justify-center overflow-hidden p-3">
         <Timetable>
           {timetableTaskProps.map((props) => (
             <TimetableTask key={props.id} {...props} />
           ))}
         </Timetable>
-      </div>
-      <div className="tasklist-container z-[100] flex h-[85vh] w-1/5 flex-col items-center bg-slate-950 pt-5">
-        <h1 className="text-center text-3xl text-white">Tasks</h1>
-        <div className="m-2 h-48 w-4/5 bg-slate-500"></div>
-        <div className="m-2 h-48 w-4/5 bg-slate-500"></div>
       </div>
     </div>
   );
