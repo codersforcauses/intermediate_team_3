@@ -1,25 +1,25 @@
-type Time = {
+interface Time {
   id: number;
   day: number;
   start_time: string;
   end_time: string;
   repeating: boolean;
-};
+}
 
-type Topic = {
+interface Topic {
   id: number;
   name: string;
   color_hex: number;
-};
+}
 
-type Item = {
+interface Item {
   id: number;
   name: string;
   completed: boolean;
   description: string;
   times: Time[];
   topics: Topic[];
-};
+}
 
 type ItemProps = {
   item: Item;
@@ -46,7 +46,7 @@ export function TaskItem({ item, onToggle }: ItemProps) {
           </span>
         </div>
         <div className="flex flex-col items-end text-sm text-zinc-300">
-          {item.times.length > 0
+          {item.times?.length > 0
             ? item.times.map((t) => (
                 <span key={t.id}>
                   {formatDay(t.day)} {t.start_time.slice(0, 5)} -{" "}
@@ -57,12 +57,12 @@ export function TaskItem({ item, onToggle }: ItemProps) {
         </div>
       </div>
 
-      <div className="flex space-x-1 text-sm text-zinc-300">
-        {item.topics.length > 0
+      <div className="flex flex-wrap gap-1 text-sm text-zinc-300">
+        {item.topics?.length > 0
           ? item.topics.map((topic) => (
               <span
                 key={topic.id}
-                className="flex items-center gap-1 rounded-full border-2 border-zinc-800 px-2 py-0.5 text-zinc-100"
+                className="flex items-center gap-1 rounded-lg border-2 border-zinc-500 px-2 py-0.5 text-zinc-100"
               >
                 <span
                   className="h-2 w-2 rounded-full"
