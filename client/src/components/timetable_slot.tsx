@@ -1,3 +1,19 @@
+/*
+@prop label: Optional string to display within slot.
+
+@prop header: Optional boolean determining if slot is a header or not. If true,
+sets positioning to sticky + top-0, darkens background colour, and
+sets id to the label + the suffix "-header".
+
+@prop time_label: Optional boolean determining if slot is a time label or not,
+if true sets positioing to sticky + left-0, also sets id to the time prop value.
+
+@prop time: The time the slot represents, currently unused but intended to be
+used by drag and drop functionality.
+
+@prop highlight: Optional boolean determining if the slot should be brighter
+(used to highlight slots on the current day).
+*/
 interface TimetableSlotProps {
   label?: string;
   header?: boolean;
@@ -6,6 +22,12 @@ interface TimetableSlotProps {
   highlight?: boolean;
 }
 
+/*
+A single slot of the timetable. Must have a time in HH:MM:DD format, 
+all other props are optional.
+
+Used to represent at 1 hour segment of a singular day.
+*/
 function TimetableSlot({
   label,
   header,
@@ -20,13 +42,11 @@ function TimetableSlot({
   if (header === true) {
     class_name +=
       " timetable-header bg-slate-800 sticky top-0 z-10 \
-        border-b-2 border-b-slate-900";
+        border-b-2 border-b-slate-900 ";
   } else {
     const bg_color = highlight === true ? " bg-slate-500" : " bg-slate-600";
     class_name +=
-      bg_color +
-      " border-t border-b \
-    border-t-slate-400 border-b-slate-400";
+      bg_color + " border-t border-b border-t-slate-400 border-b-slate-400";
   }
 
   if (header !== true && time_label !== true) {

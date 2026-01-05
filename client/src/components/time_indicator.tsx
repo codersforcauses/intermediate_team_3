@@ -3,6 +3,10 @@ import {
   getVisibleTimetableRect,
 } from "@/components/timetable";
 
+/*
+Resizes the time indicator to the correct width and positions it at the 
+y-position corresponding to the current time.
+*/
 export function resizeAndPositionTimeIndicator() {
   const time_indicator = document.getElementById("time-indicator");
   if (time_indicator == null) return;
@@ -41,6 +45,12 @@ export function resizeAndPositionTimeIndicator() {
   }
 }
 
+/*
+Component consisting of a rounded label containing the text "Now" and a 2px
+thick line stretching across the visible area of the timetable.
+
+There should only be one TimeIndicator per page.
+*/
 function TimeIndicator() {
   return (
     <>

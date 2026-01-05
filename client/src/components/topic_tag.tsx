@@ -3,6 +3,10 @@ interface TopicTagProps {
   color_hex: number;
 }
 
+/* 
+A small rounded label containing the topic's name and a circle of the colour
+stored in color_hex.
+*/
 function TopicTag({ name, color_hex }: TopicTagProps) {
   const bg_color = "#" + color_hex.toString(16).padStart(6, "0");
 

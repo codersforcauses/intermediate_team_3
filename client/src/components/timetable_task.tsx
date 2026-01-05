@@ -2,7 +2,24 @@ import TimeTag from "@/components/time_tag";
 import { getVisibleTimetableRect } from "@/components/timetable";
 import TopicTag from "@/components/topic_tag";
 
-function getTimetableTaskDataProperties(task: HTMLElement) {
+/*
+An interface for the data properties of a TimetableTask with numerical times
+in hours (rather than minutes as they are stored).
+*/
+interface timetableTaskDataProperties {
+  day: string;
+  hour: string;
+  duration_hours: number;
+  start_offset_hours: number;
+}
+
+/*
+Returns the data properties of a timetable task element in an object format
+with minute data converted to hours.
+*/
+function getTimetableTaskDataProperties(
+  task: HTMLElement,
+): undefined | timetableTaskDataProperties {
   const day = task.dataset.day;
   if (day == undefined) return;
 
@@ -26,13 +43,7 @@ function getTimetableTaskDataProperties(task: HTMLElement) {
 }
 
 /*
-NOTE: there is a small issue with this code which causes the TimetableTask to
-expand to the size of the column + border while the next column is offscreen
-before returning to just the size of the column (no border) once the next
-column becomes visible.
-
-Pretty sure the issue is because the client rect.right includes the border
-which I don't want it to.
+Sets the size and position of the timetable task provided in the task parameter.
 */
 export function resizeAndPositionTimetableTask(task: HTMLElement) {
   // Get task
@@ -109,6 +120,11 @@ export function resizeAndPositionTimetableTask(task: HTMLElement) {
   }
 }
 
+/*
+Sets the size and position of the timetable task tooltip provided in the 
+parameter. Will position the tooltip to the side (left/right) with the most
+space in the visible timetable area.
+*/
 function resizeAndPositionTimetableTaskTooltip(tooltip: HTMLElement) {
   const task_id = tooltip.id.slice(0, -"-tooltip".length);
   const task = document.getElementById(task_id);
@@ -153,6 +169,9 @@ function resizeAndPositionTimetableTaskTooltip(tooltip: HTMLElement) {
   tooltip.style.top = tooltip_top + "px";
 }
 
+/*
+Calls resizeAndPositionTimetableTask on each TimetableTask Element.
+*/
 export function resizeAndPositionTimetableTasks() {
   const tasks = document.getElementsByClassName("timetable-task");
   for (let i = 0; i < tasks.length; i++) {
@@ -161,6 +180,9 @@ export function resizeAndPositionTimetableTasks() {
   }
 }
 
+/*
+Database representation of Topic.
+*/
 export interface Topic {
   id: number;
   name: string;
@@ -168,6 +190,17 @@ export interface Topic {
   user: number;
 }
 
+/*
+Props for a TimetableTaskContent element.
+
+@prop name: The string to display as the title.
+@prop start_time: The string containing the starting time in HH:MM:DD format.
+@prop end_time: The string containing the ending time in HH:MM:DD format.
+@prop topics: Topic data to display as TopicTags.
+@prop description: String containing the description of the task.
+@prop time_display: Optional string, controls display mode of the TimeTag, see
+TimeTag for more information.
+*/
 export interface TimetableTaskContentProps {
   name: string;
   start_time: string;
@@ -177,6 +210,10 @@ export interface TimetableTaskContentProps {
   time_display?: string;
 }
 
+/*
+The contents of a Timetable Task inlcuding title, time tag, topic tags, and
+description. Separated into its own component to be reusable for tooltips.
+*/
 function TimetableTaskContent({
   name,
   start_time,
@@ -209,6 +246,25 @@ function TimetableTaskContent({
   );
 }
 
+/*
+The props for a TimetableTask.
+
+@prop id: The id to give the TimetableTask, typically task_id:time_id.
+@prop name: The title of the Task.
+@topics: The topics assigned to the Task.
+@description: The description of the Task.
+@completed: The completion status of the Task.
+@day: The day (string) the time is on.
+@start_time: A string representing the start time in HH:MM:SS format, (used
+to calculate position).
+@end_time: A string representing the end time in HH:MM:SS format.
+@duration_minutes: The duration of the time assigned to the task in minutes
+(used to calculate display height).
+@clash: A boolean indicating whether the timetable task represents a clash
+(time with two overlapping tasks).
+@tooltip_props: The props of the TimetableTaskContents to display in the tooltip.
+
+*/
 export interface TimetableTaskProps {
   id: string;
   name: string;
@@ -223,6 +279,15 @@ export interface TimetableTaskProps {
   tooltip_props: TimetableTaskContentProps[];
 }
 
+/*
+A rounded rectangle representing a Time on the timetable which has been assigned
+to a Task on a specific day. 
+
+Contains the information of the task as well as a tooltip that displays while 
+mouse is over the TimetableTask or tooltip that also displays the task 
+information (allows user to view full content of tasks if task does not have
+enough space, as well as times that have multiple tasks assigned to them).
+*/
 function TimetableTask({
   id,
   name,

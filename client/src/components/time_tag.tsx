@@ -1,11 +1,22 @@
 import { getDurationMinutes } from "@/components/timetable";
 
+/*
+@prop start_time: string of form HH:MM:SS containing the start time to display
+@prop end_time: string of form HH:MM:SS containing the end time to display
+@prop display: (optional) string describing what to display in the tag,
+defaults to displaying the start and end times, "duration" to display duration,
+or "both" to display start and end times with duration in brackets.
+*/
 interface TimeTagProps {
   start_time: string;
   end_time: string;
   display?: string;
 }
 
+/*
+A small round tag containing a clock icon and either the start and end times,
+the duration, or both, specified by the display prop.
+*/
 function TimeTag({ start_time, end_time, display }: TimeTagProps) {
   const time_string =
     start_time.substring(0, 5) + "-" + end_time.substring(0, 5);

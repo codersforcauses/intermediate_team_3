@@ -1,4 +1,4 @@
-import { ReactElement, useEffect } from "react";
+import { useEffect } from "react";
 
 import TimeIndicator, {
   resizeAndPositionTimeIndicator,
@@ -7,8 +7,34 @@ import {
   TimetableDayColumn,
   TimetableTimeColumn,
 } from "@/components/timetable_column";
-import { resizeAndPositionTimetableTasks } from "@/components/timetable_task";
+import TimetableTask, {
+  resizeAndPositionTimetableTasks,
+  TimetableTaskProps,
+} from "@/components/timetable_task";
 
+/*
+KNOWN BUGS:
+1. Sticky positioning does not work at certain zooms/screen sizes towards the end
+of scroll.
+2. Using padding on the TimetableTask containers looks the nicest but causes
+the resizing width to reach a minimum before disappearing rather than smoothly
+resizing until 0. Using margin on the content looks worse but does not have this 
+issue.
+*/
+
+/*
+Returns a rect {left, right, top, bottom, width, height} of the visible area of
+the timetable where timetable tasks are to be rendered.
+
+Visible area is the area: 
+- Within timetable-barrier's bounding client rect
+- Right of timetable-separator (right of time labels)
+- Below time-header(s))
+
+Returns nothing if any of the required elements are not found (that is, elements
+with id: time-header, timetable-barrier, timetable-separator, and 
+timetable-barrier).
+*/
 export function getVisibleTimetableRect() {
   const time_header = document.getElementById("time-header");
   if (time_header == null) return;
@@ -36,6 +62,9 @@ export function getVisibleTimetableRect() {
   return rect;
 }
 
+/*
+Returns the number of minutes between two strings of format "HH:MM:SS".
+*/
 export function getDurationMinutes(start_time: string, end_time: string) {
   const start_hour: number = +start_time.substring(0, 2);
   const start_minute: number = +start_time.substring(3, 5);
@@ -44,12 +73,17 @@ export function getDurationMinutes(start_time: string, end_time: string) {
   return 60 * (end_hour - start_hour) + (end_minute - start_minute);
 }
 
+/*
+Returns the y-position (top) of any time on the timetable.
+
+Returns nothing if the hour is not in range [0-23] as time-label with matching
+id will not exist.
+*/
 export function getTimeTopPosition(hour: number, mins: number) {
   const hour_label = document.getElementById(hour + ":00:00");
   if (hour_label == null) return;
 
   const hour_rect = hour_label.getBoundingClientRect();
-  if (hour_rect == undefined) return;
 
   const offset = (mins / 60) * hour_rect.height;
   const top = hour_rect.top + offset;
@@ -57,32 +91,59 @@ export function getTimeTopPosition(hour: number, mins: number) {
   return top;
 }
 
+/*
+Returns the x-position (left) of any day (string) on the timetable.
+
+Returns early if an element with the id corresponding to the day is not found.
+*/
 export function getDayLeftPosition(day: string) {
   const day_label = document.getElementById(day);
   if (day_label == null) return;
   return day_label.getBoundingClientRect().left;
 }
 
+/*
+Sets the size and position of the Timetable Separator to directly right of the
+time label column and taking up the entire visible vertical space of the 
+timetable.
+
+Returns nothing if elements with id: timetable-separator, Time do not exist.
+*/
 function resizeAndPositionTimetableSeparator() {
   const separator = document.getElementById("timetable-separator");
   if (separator == null) return;
 
   const time_col = document.getElementById("Time");
   if (time_col == null) return;
-
   const col_rect = time_col.getBoundingClientRect();
-  if (col_rect == undefined) return;
+
+  const corner_cell = document.getElementById("time-header");
+  if (corner_cell == null) return;
+  const corner_rect = corner_cell.getBoundingClientRect();
 
   separator.style.left = col_rect.right + "px";
   separator.style.height = col_rect.height + "px";
+  separator.style.top = corner_rect.top + "px";
 }
 
+/*
+Calls all of the resizeAndPosition functions.
+*/
 export function resizeTimetableElements() {
   resizeAndPositionTimetableSeparator();
   resizeAndPositionTimetableTasks();
   resizeAndPositionTimeIndicator();
 }
 
+/*
+Sets the vertical scroll of the timetable-barrier to make the current time
+visible.
+
+@param align: An optional string argument indicating where the now position
+should be aligned to in the visible area of the timetable. By default,
+sets the now position to the center of the visible area, can additionally be 
+specified "top" or "bottom".
+*/
 export function scrollToCurrentTime(align?: string) {
   const timetable_barrier = document.getElementById("timetable-barrier");
   if (timetable_barrier == null) return;
@@ -119,6 +180,16 @@ export function scrollToCurrentTime(align?: string) {
   timetable_barrier.scrollTop = scroll_amount;
 }
 
+/*
+Sets the horizontal scroll position of the timetable-barrier to display the 
+column of the current day positioned in the center/left/right specified by
+align argument.
+
+@param align: An optional String argument that controls whether the scroll
+position should be set to align the current day to the left, right or center
+of the visible timetable area. By default center, otherwise can be specified
+"left" or "right".
+*/
 export function scrollToCurrentDay(align?: string) {
   const timetable_barrier = document.getElementById("timetable-barrier");
   if (timetable_barrier == null) return;
@@ -167,6 +238,12 @@ export function scrollToCurrentDay(align?: string) {
   timetable_barrier.scrollLeft = scroll_amount;
 }
 
+/*
+Scrolls the vertical and horizonal scroll of timetable-barrier to position
+the current time and current day within the visible area of the timetable.
+
+Calls scrollToCurrentTime and scrollToCurrentDay.
+*/
 export function scrollToCurrentTimeAndDay(
   time_align?: string,
   day_align?: string,
@@ -175,11 +252,25 @@ export function scrollToCurrentTimeAndDay(
   scrollToCurrentDay(day_align);
 }
 
+/*
+@prop timetable_tasks_props: TimetableTaskProps to be rendered as TimetableTasks
+within the timetable.
+*/
 interface TimetableProps {
-  children: ReactElement[];
+  timetable_tasks_props: TimetableTaskProps[];
 }
 
-function Timetable({ children }: TimetableProps) {
+/*
+A Timetable composed of 8 columns (header + each day) and 25 rows 
+(header + each hour). The header row and leftmost column are sticky to allow
+user to scroll without positional information (day and time) disappearing.
+
+Takes 1 prop containing the props for TimetableTasks to be rendered within the
+timetable.
+
+There can only be one timetable per page as the logic uses ids.
+*/
+function Timetable({ timetable_tasks_props }: TimetableProps) {
   useEffect(() => {
     resizeTimetableElements();
     scrollToCurrentTimeAndDay();
@@ -200,24 +291,28 @@ function Timetable({ children }: TimetableProps) {
           className="timetable flex h-full w-full flex-row gap-[4px]"
         >
           <TimetableTimeColumn />
-          <TimetableDayColumn day="Monday" label="Monday" />
-          <TimetableDayColumn day="Tuesday" label="Tuesday" />
-          <TimetableDayColumn day="Wednesday" label="Wednesday" />
-          <TimetableDayColumn day="Thursday" label="Thursday" />
-          <TimetableDayColumn day="Friday" label="Friday" />
-          <TimetableDayColumn day="Saturday" label="Saturday" />
-          <TimetableDayColumn day="Sunday" label="Sunday" />
-          <TimeIndicator />
-          <div
-            id="timetable-tasks"
-            className="timetable-tasks absolute left-0 top-0"
-          >
-            {children}
+          <TimetableDayColumn day="Monday" />
+          <TimetableDayColumn day="Tuesday" />
+          <TimetableDayColumn day="Wednesday" />
+          <TimetableDayColumn day="Thursday" />
+          <TimetableDayColumn day="Friday" />
+          <TimetableDayColumn day="Saturday" />
+          <TimetableDayColumn day="Sunday" />
+          <div id="timetable-foreground" className="absolute left-0 top-0">
+            <TimeIndicator />
+            <div
+              id="timetable-tasks"
+              className="timetable-tasks absolute left-0 top-0"
+            >
+              {timetable_tasks_props.map((props) => (
+                <TimetableTask key={props.id} {...props} />
+              ))}
+            </div>
+            <div
+              id="timetable-separator"
+              className="absolute z-[10] w-[4px] bg-slate-900"
+            ></div>
           </div>
-          <div
-            id="timetable-separator"
-            className="absolute z-[10] w-[4px] bg-slate-900"
-          ></div>
         </div>
       </div>
     </div>
