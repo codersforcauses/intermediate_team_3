@@ -115,28 +115,38 @@ function resizeAndPositionTimetableTaskTooltip(tooltip: HTMLElement) {
   if (task == null) return;
 
   const task_rect = task.getBoundingClientRect();
-  if (task_rect == undefined) return;
 
   tooltip.style.display = "flex";
   const tooltip_rect = tooltip.getBoundingClientRect();
-  if (tooltip_rect == undefined) return;
 
   const visible = getVisibleTimetableRect();
   if (visible == undefined) return;
 
-  if (task_rect.left - visible.left > visible.right - task_rect.right) {
+  const left_space = task_rect.left - visible.left;
+  const right_space = visible.right - task_rect.right;
+
+  if (left_space > right_space) {
     tooltip.style.left = task_rect.left - tooltip_rect.width + "px";
+    // Tooltip has a max width so won't get too big
+    tooltip.style.width = left_space + "px";
   } else {
     tooltip.style.left = task_rect.right + "px";
+    // Tooltip has a max width so won't get too big
+    tooltip.style.width = right_space + "px";
+  }
+
+  if (tooltip_rect.height > visible.height) {
+    tooltip.style.height = visible.height + "px";
   }
 
   const target_pos =
     task_rect.top + task_rect.height / 2 - tooltip_rect.height / 2;
 
   let tooltip_top = target_pos;
+
   if (target_pos < visible.top) {
     tooltip_top = visible.top;
-  } else if (target_pos > visible.bottom) {
+  } else if (target_pos > visible.bottom - tooltip_rect.height) {
     tooltip_top = visible.bottom - tooltip_rect.height;
   }
 
@@ -279,19 +289,21 @@ function TimetableTask({
       </div>
       <div
         id={id + "-tooltip"}
-        className="timetable-task-tooltip absolute z-[75] flex w-64 flex-col items-center justify-center gap-3 overflow-auto rounded-lg bg-slate-800 p-3"
+        className="timetable-task-tooltip absolute z-[75] max-w-64 rounded-lg bg-slate-800 p-3"
         style={{ display: "none" }}
         onMouseOver={mouseOverHandler}
         onMouseOut={mouseOutHandler}
       >
-        {tooltip_props.map((props) => (
-          <div
-            key={id + "-tooltip-" + props.name}
-            className="z-[75] h-fit w-full rounded-lg bg-slate-400 p-3 text-slate-100"
-          >
-            <TimetableTaskContent {...props} time_display="both" />
-          </div>
-        ))}
+        <div className="tooltip-content-container flex h-full w-full flex-col gap-3 overflow-auto">
+          {tooltip_props.map((props) => (
+            <div
+              key={id + "-tooltip-" + props.name}
+              className="z-[75] h-fit w-full rounded-lg bg-slate-400 p-3 text-slate-100"
+            >
+              <TimetableTaskContent {...props} time_display="both" />
+            </div>
+          ))}
+        </div>
       </div>
     </>
   );

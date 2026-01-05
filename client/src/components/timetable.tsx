@@ -18,8 +18,12 @@ export function getVisibleTimetableRect() {
   if (timetable_barrier == null) return;
   const timetable_barrier_rect = timetable_barrier.getBoundingClientRect();
 
+  const timetable_separator = document.getElementById("timetable-separator");
+  if (timetable_separator == null) return;
+  const timetable_separator_rect = timetable_separator.getBoundingClientRect();
+
   const rect = {
-    left: time_header_rect.right,
+    left: time_header_rect.right + timetable_separator_rect.width,
     right: timetable_barrier_rect.left + timetable_barrier.clientWidth,
     top: time_header_rect.bottom,
     bottom: timetable_barrier_rect.top + timetable_barrier.clientHeight,
@@ -59,7 +63,22 @@ export function getDayLeftPosition(day: string) {
   return day_label.getBoundingClientRect().left;
 }
 
+function resizeAndPositionTimetableSeparator() {
+  const separator = document.getElementById("timetable-separator");
+  if (separator == null) return;
+
+  const time_col = document.getElementById("Time");
+  if (time_col == null) return;
+
+  const col_rect = time_col.getBoundingClientRect();
+  if (col_rect == undefined) return;
+
+  separator.style.left = col_rect.right + "px";
+  separator.style.height = col_rect.height + "px";
+}
+
 export function resizeTimetableElements() {
+  resizeAndPositionTimetableSeparator();
   resizeAndPositionTimetableTasks();
   resizeAndPositionTimeIndicator();
 }
@@ -75,7 +94,7 @@ export function scrollToCurrentTime(align?: string) {
   if (timetable == null) return;
 
   const time_header = document.getElementById("time-header");
-  if (time_header == undefined) return;
+  if (time_header == null) return;
   const time_header_height = time_header.getBoundingClientRect().height;
   if (time_header_height == undefined) return;
 
@@ -178,7 +197,7 @@ function Timetable({ children }: TimetableProps) {
       >
         <div
           id="timetable"
-          className="timetable flex h-full w-full flex-row gap-1"
+          className="timetable flex h-full w-full flex-row gap-[4px]"
         >
           <TimetableTimeColumn />
           <TimetableDayColumn day="Monday" label="Monday" />
@@ -195,6 +214,10 @@ function Timetable({ children }: TimetableProps) {
           >
             {children}
           </div>
+          <div
+            id="timetable-separator"
+            className="absolute z-[10] w-[4px] bg-slate-900"
+          ></div>
         </div>
       </div>
     </div>

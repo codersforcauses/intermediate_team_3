@@ -15,7 +15,7 @@ export default function TimetableColumn({
   sticky,
 }: TimetableColumnProps) {
   let class_name =
-    "timetable-column w-full min-w-48 h-full \
+    "timetable-column w-full min-w-32 md:min-w-48 h-full \
     flex flex-col bg-slate-500";
 
   if (sticky === true) {
@@ -32,33 +32,45 @@ export default function TimetableColumn({
 }
 
 export function TimetableDayColumn({ label, day }: TimetableColumnProps) {
+  const now = new Date(Date.now());
+  enum DateDay {
+    Monday = 1,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday,
+  }
+  const current_day = DateDay[now.getDay()];
+
   return (
     <TimetableColumn day={day} label={label}>
       <TimetableSlot time="Header" label={label} header={true} />
-      <TimetableSlot time="00:00:00" />
-      <TimetableSlot time="01:00:00" />
-      <TimetableSlot time="02:00:00" />
-      <TimetableSlot time="03:00:00" />
-      <TimetableSlot time="04:00:00" />
-      <TimetableSlot time="05:00:00" />
-      <TimetableSlot time="06:00:00" />
-      <TimetableSlot time="07:00:00" />
-      <TimetableSlot time="08:00:00" />
-      <TimetableSlot time="09:00:00" />
-      <TimetableSlot time="10:00:00" />
-      <TimetableSlot time="11:00:00" />
-      <TimetableSlot time="12:00:00" />
-      <TimetableSlot time="13:00:00" />
-      <TimetableSlot time="14:00:00" />
-      <TimetableSlot time="15:00:00" />
-      <TimetableSlot time="16:00:00" />
-      <TimetableSlot time="17:00:00" />
-      <TimetableSlot time="18:00:00" />
-      <TimetableSlot time="19:00:00" />
-      <TimetableSlot time="20:00:00" />
-      <TimetableSlot time="21:00:00" />
-      <TimetableSlot time="22:00:00" />
-      <TimetableSlot time="23:00:00" />
+      <TimetableSlot time="00:00:00" highlight={day === current_day} />
+      <TimetableSlot time="01:00:00" highlight={day === current_day} />
+      <TimetableSlot time="02:00:00" highlight={day === current_day} />
+      <TimetableSlot time="03:00:00" highlight={day === current_day} />
+      <TimetableSlot time="04:00:00" highlight={day === current_day} />
+      <TimetableSlot time="05:00:00" highlight={day === current_day} />
+      <TimetableSlot time="06:00:00" highlight={day === current_day} />
+      <TimetableSlot time="07:00:00" highlight={day === current_day} />
+      <TimetableSlot time="08:00:00" highlight={day === current_day} />
+      <TimetableSlot time="09:00:00" highlight={day === current_day} />
+      <TimetableSlot time="10:00:00" highlight={day === current_day} />
+      <TimetableSlot time="11:00:00" highlight={day === current_day} />
+      <TimetableSlot time="12:00:00" highlight={day === current_day} />
+      <TimetableSlot time="13:00:00" highlight={day === current_day} />
+      <TimetableSlot time="14:00:00" highlight={day === current_day} />
+      <TimetableSlot time="15:00:00" highlight={day === current_day} />
+      <TimetableSlot time="16:00:00" highlight={day === current_day} />
+      <TimetableSlot time="17:00:00" highlight={day === current_day} />
+      <TimetableSlot time="18:00:00" highlight={day === current_day} />
+      <TimetableSlot time="19:00:00" highlight={day === current_day} />
+      <TimetableSlot time="20:00:00" highlight={day === current_day} />
+      <TimetableSlot time="21:00:00" highlight={day === current_day} />
+      <TimetableSlot time="22:00:00" highlight={day === current_day} />
+      <TimetableSlot time="23:00:00" highlight={day === current_day} />
     </TimetableColumn>
   );
 }

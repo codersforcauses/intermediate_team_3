@@ -46,13 +46,13 @@ function TimeIndicator() {
     <>
       <div
         id="time-indicator-label"
-        className="absolute z-[1000] h-fit w-fit rounded-full bg-slate-400 p-1 pl-2 pr-2"
+        className="absolute z-[75] h-fit w-fit rounded-full bg-slate-400 p-1 pl-2 pr-2"
       >
         <p className="text-slate-100">Now</p>
       </div>
       <div
         id="time-indicator"
-        className="absolute z-[100] min-h-[2px] bg-slate-200 opacity-75"
+        className="absolute z-[75] min-h-[2px] bg-slate-200 opacity-75"
       ></div>
     </>
   );
