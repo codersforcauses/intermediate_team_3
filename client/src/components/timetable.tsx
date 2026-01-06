@@ -84,9 +84,9 @@ Returns nothing if the hour is not in range [0-23] as time-label with matching
 id will not exist.
 */
 export function getTimeTopPosition(hour: number, mins: number) {
-  const hour_label = document.getElementById(hour + ":00:00");
+  const hour_id = (hour + ":00:00").padStart(8, "0");
+  const hour_label = document.getElementById(hour_id);
   if (hour_label == null) return;
-
   const hour_rect = hour_label.getBoundingClientRect();
 
   const offset = (mins / 60) * hour_rect.height;
@@ -106,28 +106,18 @@ export function getDayLeftPosition(day: string) {
   return day_label.getBoundingClientRect().left;
 }
 
-/*
-Sets the size and position of the Timetable Separator to directly right of the
-time label column and taking up the entire visible vertical space of the 
-timetable.
+function resizeAndPositionTimetableForeground() {
+  const foreground = document.getElementById("timetable-foreground");
+  if (foreground == null) return;
 
-Returns nothing if elements with id: timetable-separator, Time do not exist.
-*/
-function resizeAndPositionTimetableSeparator() {
-  const separator = document.getElementById("timetable-separator");
-  if (separator == null) return;
+  const barrier = document.getElementById("timetable-barrier");
+  if (barrier == null) return;
+  const barrier_rect = barrier.getBoundingClientRect();
 
-  const time_col = document.getElementById("Time-Labels");
-  if (time_col == null) return;
-  const col_rect = time_col.getBoundingClientRect();
-
-  const corner_cell = document.getElementById("time-header");
-  if (corner_cell == null) return;
-  const corner_rect = corner_cell.getBoundingClientRect();
-
-  separator.style.left = col_rect.right + "px";
-  separator.style.height = col_rect.height + "px";
-  separator.style.top = corner_rect.top + "px";
+  foreground.style.top = barrier_rect.top + "px";
+  foreground.style.left = barrier_rect.left + "px";
+  foreground.style.width = barrier.clientWidth + "px";
+  foreground.style.height = barrier.clientHeight + "px";
 }
 
 function resizeAndPositionTimetableHeaders() {
@@ -149,10 +139,15 @@ function resizeAndPositionTimetableHeaders() {
     if (col == null) return;
     const col_rect = col.getBoundingClientRect();
 
-    header.style.left = col_rect.left + "px";
-    header.style.top = barrier_rect.top + "px";
+    header.style.top = "0px";
+    header.style.left = col_rect.left - barrier_rect.left + "px";
     header.style.width = col_rect.width + "px";
   }
+
+  const time_header = document.getElementById("Time-Header");
+  if (time_header == null) return;
+  time_header.style.left = "0px";
+  time_header.style.zIndex = "1000";
 }
 
 function resizeAndPositionTimetableTimeLabels() {
@@ -167,22 +162,70 @@ function resizeAndPositionTimetableTimeLabels() {
   if (timetable_barrier == null) return;
   const barrier_rect = timetable_barrier.getBoundingClientRect();
 
-  time_labels.style.top = time_col_rect.top + "px";
-  time_labels.style.left = barrier_rect.left + "px";
+  time_labels.style.top = time_col_rect.top - barrier_rect.top + "px";
+  time_labels.style.left = "0px";
 
   time_labels.style.width = time_col_rect.width + "px";
-  time_labels.style.height = barrier_rect.height + "px";
+}
+
+/*
+Sets the size and position of the Timetable Separator to directly right of the
+time label column and taking up the entire visible vertical space of the 
+timetable.
+
+Returns nothing if elements with id: timetable-separator, Time do not exist.
+*/
+function resizeAndPositionTimetableSeparator() {
+  const separator = document.getElementById("timetable-separator");
+  if (separator == null) return;
+
+  const time_col = document.getElementById("Time-Labels");
+  if (time_col == null) return;
+  const col_rect = time_col.getBoundingClientRect();
+
+  const time_header = document.getElementById("Time-Header");
+  if (time_header == null) return;
+  const header_rect = time_header.getBoundingClientRect();
+
+  const barrier_rect = document
+    .getElementById("timetable-barrier")
+    ?.getBoundingClientRect();
+  if (barrier_rect == undefined) return;
+
+  separator.style.top = header_rect.top - barrier_rect.top + "px";
+  separator.style.left = col_rect.right - barrier_rect.left + "px";
+  separator.style.height = col_rect.height + "px";
+}
+
+function resizeAndPositionTimetableTaskArea() {
+  const task_container = document.getElementById("timetable-tasks");
+  if (task_container == null) return;
+
+  const barrier_rect = document
+    .getElementById("timetable-barrier")
+    ?.getBoundingClientRect();
+  if (barrier_rect == undefined) return;
+
+  const visible = getVisibleTimetableRect();
+  if (visible == undefined) return;
+
+  task_container.style.top = visible.top - barrier_rect.top + "px";
+  task_container.style.left = visible.left - barrier_rect.left + "px";
+  task_container.style.width = visible.width + "px";
+  task_container.style.height = visible.height + "px";
 }
 
 /*
 Calls all of the resizeAndPosition functions.
 */
 export function resizeTimetableElements() {
-  resizeAndPositionTimetableSeparator();
-  resizeAndPositionTimetableTasks();
-  resizeAndPositionTimeIndicator();
+  resizeAndPositionTimetableForeground();
   resizeAndPositionTimetableHeaders();
   resizeAndPositionTimetableTimeLabels();
+  resizeAndPositionTimetableSeparator();
+  resizeAndPositionTimetableTaskArea();
+  resizeAndPositionTimetableTasks();
+  resizeAndPositionTimeIndicator();
 }
 
 /*
@@ -349,7 +392,7 @@ function Timetable({ timetable_tasks_props }: TimetableProps) {
           <TimetableColumn day="Saturday" />
           <TimetableColumn day="Sunday" />
         </div>
-        <div id="timetable-foreground" className="absolute left-0 top-0">
+        <div id="timetable-foreground" className="absolute overflow-hidden">
           <div id="timetable-headers">
             {[
               "Time",
@@ -371,7 +414,7 @@ function Timetable({ timetable_tasks_props }: TimetableProps) {
           ></div>
           <div
             id="timetable-tasks"
-            className="timetable-tasks absolute left-0 top-0"
+            className="timetable-tasks absolute overflow-hidden"
           >
             {timetable_tasks_props.map((props) => (
               <TimetableTask key={props.id} {...props} />

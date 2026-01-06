@@ -1,5 +1,8 @@
 import TimeTag from "@/components/time_tag";
-import { getVisibleTimetableRect } from "@/components/timetable";
+import {
+  getTimeTopPosition,
+  getVisibleTimetableRect,
+} from "@/components/timetable";
 import TopicTag from "@/components/topic_tag";
 
 /*
@@ -46,78 +49,36 @@ function getTimetableTaskDataProperties(
 Sets the size and position of the timetable task provided in the task parameter.
 */
 export function resizeAndPositionTimetableTask(task: HTMLElement) {
-  // Get task
   if (task == null) return;
-  // Get task data
+
   const task_data = getTimetableTaskDataProperties(task);
   if (task_data == null) return;
   const { day, hour, duration_hours, start_offset_hours } = task_data;
-  // Get visible area
+
   const visible = getVisibleTimetableRect();
   if (visible == null) return;
-  // Get column
+
   const col = document.getElementById(day);
   if (col == null) return;
-  // Get row
+  const col_rect = col.getBoundingClientRect();
+
   const row = document.getElementById(hour);
   if (row == null) return;
-  // Get dimensions of column and row
-  const col_rect = col.getBoundingClientRect();
   const row_rect = row.getBoundingClientRect();
-
-  // Calculate dimensions
-  let left, top, width, height;
-
-  let left_width_reduction = 0;
-  if (col_rect.left > visible.left) {
-    left = col_rect.left;
-  } else {
-    left = visible.left;
-    left_width_reduction = visible.left - col_rect.left;
-  }
-
-  width =
-    col_rect.right < visible.right ? row_rect.width : visible.right - left;
-  width -= left_width_reduction;
 
   const one_hour_height = row_rect.height;
   const duration_height = one_hour_height * duration_hours;
-  const offset_top = row_rect.top + one_hour_height * start_offset_hours;
 
-  let top_height_reduction = 0;
-  if (offset_top > visible.top) {
-    top = offset_top;
-  } else {
-    top = visible.top;
-    top_height_reduction = visible.top - offset_top;
-  }
+  const hours = Number(hour.substring(0, 2));
+  console.log(hours);
 
-  height =
-    top + duration_height < visible.bottom
-      ? duration_height
-      : visible.bottom - top;
-  height -= top_height_reduction;
+  const time_top = getTimeTopPosition(hours, start_offset_hours * 60);
+  if (time_top == undefined) return;
 
-  // Set dimensions
-  task.style.left = left + "px";
-  task.style.top = top + "px";
-  task.style.width = width + "px";
-  task.style.height = height + "px";
-
-  // Hide elements not in the visible area
-  const right = left + width;
-  const bottom = top + height;
-  const is_visible = !(
-    right <= visible.left ||
-    left >= visible.right ||
-    bottom <= visible.top ||
-    top >= visible.bottom
-  );
-  if (is_visible) {
-    task.style.display = "inline";
-  } else {
-    task.style.display = "none";
-  }
+  task.style.left = col_rect.left - visible.left + "px";
+  task.style.top = time_top - visible.top + "px";
+  task.style.width = row_rect.width + "px";
+  task.style.height = duration_height + "px";
 }
 
 /*
@@ -141,32 +102,37 @@ function resizeAndPositionTimetableTaskTooltip(tooltip: HTMLElement) {
   const left_space = task_rect.left - visible.left;
   const right_space = visible.right - task_rect.right;
 
+  let left, top, width, height;
+
   if (left_space > right_space) {
-    tooltip.style.left = task_rect.left - tooltip_rect.width + "px";
+    left = task_rect.left - tooltip_rect.width;
     // Tooltip has a max width so won't get too big
-    tooltip.style.width = left_space + "px";
+    width = left_space;
   } else {
-    tooltip.style.left = task_rect.right + "px";
+    left = task_rect.right;
     // Tooltip has a max width so won't get too big
-    tooltip.style.width = right_space + "px";
+    width = right_space;
   }
 
   if (tooltip_rect.height > visible.height) {
-    tooltip.style.height = visible.height + "px";
+    height = visible.height;
   }
 
   const target_pos =
     task_rect.top + task_rect.height / 2 - tooltip_rect.height / 2;
 
-  let tooltip_top = target_pos;
+  top = target_pos;
 
   if (target_pos < visible.top) {
-    tooltip_top = visible.top;
+    top = visible.top;
   } else if (target_pos > visible.bottom - tooltip_rect.height) {
-    tooltip_top = visible.bottom - tooltip_rect.height;
+    top = visible.bottom - tooltip_rect.height;
   }
 
-  tooltip.style.top = tooltip_top + "px";
+  tooltip.style.left = left - visible.left + "px";
+  tooltip.style.top = top - visible.top + "px";
+  tooltip.style.width = width + "px";
+  tooltip.style.height = height + "px";
 }
 
 /*
@@ -330,7 +296,7 @@ function TimetableTask({
       <div
         id={id}
         className={
-          "timetable-task absolute z-[50] overflow-hidden rounded-lg text-slate-100" +
+          "timetable-task absolute z-[50] overflow-hidden rounded-lg p-3 text-slate-100" +
           additional_style
         }
         data-completed={completed}
@@ -343,16 +309,14 @@ function TimetableTask({
         onMouseOver={mouseOverHandler}
         onMouseOut={mouseOutHandler}
       >
-        <div className="m-3">
-          <TimetableTaskContent
-            name={name}
-            start_time={start_time}
-            end_time={end_time}
-            topics={topics}
-            description={description}
-            time_display={"duration"}
-          />
-        </div>
+        <TimetableTaskContent
+          name={name}
+          start_time={start_time}
+          end_time={end_time}
+          topics={topics}
+          description={description}
+          time_display={"duration"}
+        />
       </div>
       <div
         id={id + "-tooltip"}
