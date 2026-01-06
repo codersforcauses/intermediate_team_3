@@ -6,7 +6,7 @@ sets positioning to sticky + top-0, darkens background colour, and
 sets id to the label + the suffix "-header".
 
 @prop time_label: Optional boolean determining if slot is a time label or not,
-if true sets positioing to sticky + left-0, also sets id to the time prop value.
+sets id to the time prop value.
 
 @prop time: The time the slot represents, currently unused but intended to be
 used by drag and drop functionality.
@@ -23,10 +23,8 @@ interface TimetableSlotProps {
 }
 
 /*
-A single slot of the timetable. Must have a time in HH:MM:DD format, 
-all other props are optional.
-
-Used to represent at 1 hour segment of a singular day.
+A single slot of the timetable (representing 1 hour of 1 day). Must have a time 
+in HH:MM:DD format, all other props are optional.
 */
 function TimetableSlot({
   label,

@@ -13,6 +13,12 @@ import TimetableTask, {
 } from "@/components/timetable_task";
 
 /*
+NOTES: 
+- Should rename timetable-barrier to timetable-content to be more descriptive.
+- Should use element.parentElement for position adjusting for more clarity.
+*/
+
+/*
 Returns a rect {left, right, top, bottom, width, height} of the visible area of
 the timetable where timetable tasks are to be rendered.
 
@@ -96,6 +102,11 @@ export function getDayLeftPosition(day: string) {
   return day_label.getBoundingClientRect().left;
 }
 
+/*
+Sync the timetable-foreground element's position and size with the 
+timetable-barrier element. Ensures foreground elements inhabit the same area
+as the background elements.
+*/
 function resizeAndPositionTimetableForeground() {
   const foreground = document.getElementById("timetable-foreground");
   if (foreground == null) return;
@@ -110,6 +121,10 @@ function resizeAndPositionTimetableForeground() {
   foreground.style.height = barrier.clientHeight + "px";
 }
 
+/*
+Sync the left position of the TimetableHeaders in the foreground with their
+respective columns, set the top position to 0px.
+*/
 function resizeAndPositionTimetableHeaders() {
   const timetable_headers = document.getElementById("timetable-headers");
   if (timetable_headers == null) return;
@@ -140,6 +155,10 @@ function resizeAndPositionTimetableHeaders() {
   time_header.style.zIndex = "1000";
 }
 
+/*
+Sync the TimeLabels column top position with the underlying Time column and set
+the left position to 0px.
+*/
 function resizeAndPositionTimetableTimeLabels() {
   const time_labels = document.getElementById("Time-Labels");
   if (time_labels == null) return;
@@ -187,6 +206,11 @@ function resizeAndPositionTimetableSeparator() {
   separator.style.height = col_rect.height + "px";
 }
 
+/*
+Sync the timetable-tasks element's size and position with the visible area of
+the timetable (area returned by getVisibleTimetableRect() ). Allows overflowing
+TimetableTasks to be hidden.
+*/
 function resizeAndPositionTimetableTaskArea() {
   const task_container = document.getElementById("timetable-tasks");
   if (task_container == null) return;
@@ -206,9 +230,10 @@ function resizeAndPositionTimetableTaskArea() {
 }
 
 /*
-Calls all of the resizeAndPosition functions.
+Calls all of the resizeAndPosition functions. Syncs the foreground elements of
+the timetable with the background elements.
 */
-export function resizeTimetableElements() {
+export function resizeAndPositionTimetableElements() {
   resizeAndPositionTimetableForeground();
   resizeAndPositionTimetableHeaders();
   resizeAndPositionTimetableTimeLabels();
@@ -230,22 +255,13 @@ specified "top" or "bottom".
 export function scrollToCurrentTime(align?: string) {
   const timetable_barrier = document.getElementById("timetable-barrier");
   if (timetable_barrier == null) return;
+  const barrier_rect = timetable_barrier.getBoundingClientRect();
 
   const visible = getVisibleTimetableRect();
   if (visible == undefined) return;
 
-  const timetable = document.getElementById("timetable");
+  const timetable = document.getElementById("timetable-background");
   if (timetable == null) return;
-
-  const time_header = document.getElementById("time-header");
-  if (time_header == null) return;
-  const time_header_height = time_header.getBoundingClientRect().height;
-  if (time_header_height == undefined) return;
-
-  const scroll_height = timetable.scrollHeight - time_header_height;
-  const scroll_max = scroll_height - visible.height; // Top row is sticky
-
-  timetable_barrier.scrollTop = 0; // Ensures consistent position
 
   const now = new Date(Date.now());
   const now_top = getTimeTopPosition(now.getHours(), now.getMinutes());
@@ -254,13 +270,10 @@ export function scrollToCurrentTime(align?: string) {
   let target_top;
   if (align === "top") target_top = visible.top;
   else if (align === "bottom") target_top = visible.bottom;
-  else target_top = visible.top + visible.height / 2;
+  else target_top = barrier_rect.top + barrier_rect.height / 2;
 
-  let scroll_amount = now_top - target_top;
-  if (scroll_amount < 0) scroll_amount = 0;
-  if (scroll_amount > scroll_max) scroll_amount = scroll_max;
-
-  timetable_barrier.scrollTop = scroll_amount;
+  const scroll_amount = now_top - target_top;
+  timetable_barrier.scrollTop += scroll_amount;
 }
 
 /*
@@ -280,19 +293,13 @@ export function scrollToCurrentDay(align?: string) {
   const visible = getVisibleTimetableRect();
   if (visible == undefined) return;
 
-  const timetable = document.getElementById("timetable");
+  const timetable = document.getElementById("timetable-background");
   if (timetable == null) return;
 
-  const time_header = document.getElementById("time-header");
-  if (time_header == undefined) return;
+  const time_header = document.getElementById("Time-Header");
+  if (time_header == null) return;
   const time_header_width = time_header.getBoundingClientRect().width;
-  if (time_header_width == undefined) return;
   const row_width = time_header_width; // easier to read later
-
-  const scroll_width = timetable.scrollWidth - time_header_width; // sticky
-  const scroll_max = scroll_width - visible.width;
-
-  timetable_barrier.scrollLeft = 0;
 
   enum DateDay {
     Monday = 1,
@@ -314,11 +321,8 @@ export function scrollToCurrentDay(align?: string) {
   else if (align == "right") target_left = visible.right - row_width;
   else target_left = visible.left + visible.width / 2 - row_width / 2;
 
-  let scroll_amount = today_left - target_left;
-  if (scroll_amount < 0) scroll_amount = 0;
-  if (scroll_amount > scroll_max) scroll_amount = scroll_max;
-
-  timetable_barrier.scrollLeft = scroll_amount;
+  const scroll_amount = today_left - target_left;
+  timetable_barrier.scrollLeft += scroll_amount;
 }
 
 /*
@@ -355,7 +359,7 @@ There can only be one timetable per page as the logic uses ids.
 */
 function Timetable({ timetable_tasks_props }: TimetableProps) {
   useEffect(() => {
-    resizeTimetableElements();
+    resizeAndPositionTimetableElements();
     scrollToCurrentTimeAndDay();
   });
 
@@ -367,11 +371,11 @@ function Timetable({ timetable_tasks_props }: TimetableProps) {
       <div
         id="timetable-barrier"
         className="h-full w-full overflow-auto overscroll-none"
-        onScroll={resizeTimetableElements}
+        onScroll={resizeAndPositionTimetableElements}
       >
         <div
-          id="timetable"
-          className="timetable flex h-full w-full flex-row gap-[4px]"
+          id="timetable-background"
+          className="timetable-background flex h-full w-full flex-row gap-[4px]"
         >
           <TimetableColumn day="Time" />
           <TimetableColumn day="Monday" />

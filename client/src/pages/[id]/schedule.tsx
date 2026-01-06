@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import Timetable, {
   getDurationMinutes,
-  resizeTimetableElements,
+  resizeAndPositionTimetableElements,
 } from "@/components/timetable";
 import { TimetableTaskProps } from "@/components/timetable_task";
 
@@ -70,11 +70,11 @@ function Schedule() {
   */
   useEffect(() => {
     function addEventListeners() {
-      window.addEventListener("resize", resizeTimetableElements);
+      window.addEventListener("resize", resizeAndPositionTimetableElements);
     }
 
     function removeEventListeners() {
-      window.removeEventListener("resize", resizeTimetableElements);
+      window.removeEventListener("resize", resizeAndPositionTimetableElements);
     }
 
     /*

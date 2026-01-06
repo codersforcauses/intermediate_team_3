@@ -70,7 +70,6 @@ export function resizeAndPositionTimetableTask(task: HTMLElement) {
   const duration_height = one_hour_height * duration_hours;
 
   const hours = Number(hour.substring(0, 2));
-  console.log(hours);
 
   const time_top = getTimeTopPosition(hours, start_offset_hours * 60);
   if (time_top == undefined) return;
@@ -320,7 +319,7 @@ function TimetableTask({
       </div>
       <div
         id={id + "-tooltip"}
-        className="timetable-task-tooltip pointer-events-auto absolute z-[75] max-w-64 rounded-lg bg-slate-800 p-3"
+        className="timetable-task-tooltip pointer-events-auto absolute z-[100] max-w-64 rounded-lg bg-slate-800 p-3"
         style={{ display: "none" }}
         onMouseOver={mouseOverHandler}
         onMouseOut={mouseOutHandler}
