@@ -296,7 +296,7 @@ function TimetableTask({
       <div
         id={id}
         className={
-          "timetable-task absolute z-[50] overflow-hidden rounded-lg p-3 text-slate-100" +
+          "timetable-task pointer-events-auto absolute z-[50] overflow-hidden rounded-lg p-3 text-slate-100" +
           additional_style
         }
         data-completed={completed}
@@ -320,7 +320,7 @@ function TimetableTask({
       </div>
       <div
         id={id + "-tooltip"}
-        className="timetable-task-tooltip absolute z-[75] max-w-64 rounded-lg bg-slate-800 p-3"
+        className="timetable-task-tooltip pointer-events-auto absolute z-[75] max-w-64 rounded-lg bg-slate-800 p-3"
         style={{ display: "none" }}
         onMouseOver={mouseOverHandler}
         onMouseOut={mouseOutHandler}

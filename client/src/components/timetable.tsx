@@ -13,16 +13,6 @@ import TimetableTask, {
 } from "@/components/timetable_task";
 
 /*
-KNOWN BUGS:
-1. Sticky positioning does not work at certain zooms/screen sizes towards the end
-of scroll.
-2. Using padding on the TimetableTask containers looks the nicest but causes
-the resizing width to reach a minimum before disappearing rather than smoothly
-resizing until 0. Using margin on the content looks worse but does not have this 
-issue.
-*/
-
-/*
 Returns a rect {left, right, top, bottom, width, height} of the visible area of
 the timetable where timetable tasks are to be rendered.
 
@@ -376,7 +366,7 @@ function Timetable({ timetable_tasks_props }: TimetableProps) {
     >
       <div
         id="timetable-barrier"
-        className="h-full w-full overflow-auto"
+        className="h-full w-full overflow-auto overscroll-none"
         onScroll={resizeTimetableElements}
       >
         <div
@@ -392,7 +382,10 @@ function Timetable({ timetable_tasks_props }: TimetableProps) {
           <TimetableColumn day="Saturday" />
           <TimetableColumn day="Sunday" />
         </div>
-        <div id="timetable-foreground" className="absolute overflow-hidden">
+        <div
+          id="timetable-foreground"
+          className="pointer-events-none absolute overflow-hidden"
+        >
           <div id="timetable-headers">
             {[
               "Time",
