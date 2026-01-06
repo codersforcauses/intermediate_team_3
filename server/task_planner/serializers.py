@@ -73,7 +73,7 @@ class TaskWriteSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         existing_topics = validated_data.pop("existing_topic_ids", [])
         new_topics_data = validated_data.pop("new_topics", [])
-        #times_data = validated_data.pop("times", [])
+        times_data = validated_data.pop("times", [])
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -86,14 +86,14 @@ class TaskWriteSerializer(serializers.ModelSerializer):
             for topic_data in new_topics_data:
                 topic = Topic.objects.create(**topic_data, user_id=instance.user_id)
                 instance.topics.add(topic)
-        """
+        
         if times_data is not None:
             instance.times.all().delete()
             Time.objects.bulk_create([
                 Time(task=instance, **time_data)
                 for time_data in times_data
             ])
-        """
+        
 
         instance.save()
         instance.refresh_from_db()

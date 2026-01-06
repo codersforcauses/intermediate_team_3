@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { TimeInput } from "@/components/time_input";
 import { TopicInput } from "@/components/topic_input";
 
 interface Time {
@@ -49,6 +50,7 @@ export function TaskItem({
   const [draftName, setDraftName] = useState(item.name);
   const [draftDescription, setDraftDescription] = useState(item.description);
   const [draftTopics, setDraftTopics] = useState<TopicSelection[]>([]);
+  const [draftTimes, setDraftTimes] = useState<Time[]>([]);
   const [saving, setSaving] = useState(false);
 
   function startEdit() {
@@ -60,6 +62,7 @@ export function TaskItem({
         id: t.id,
       })),
     );
+    setDraftTimes(item.times.map((t) => ({ ...t })));
     setIsEditing(true);
   }
 
@@ -67,6 +70,7 @@ export function TaskItem({
     setDraftName(item.name);
     setDraftDescription(item.description);
     setDraftTopics(item.topics.map((t) => ({ type: "existing", id: t.id })));
+    setDraftTimes(item.times.map((t) => ({ ...t })));
     setIsEditing(false);
   }
 
@@ -83,6 +87,7 @@ export function TaskItem({
           name: t.name,
           color_hex: t.color_hex,
         }));
+
       const response = await fetch(
         `http://localhost:8000/api/planner/tasks/${item.id}/`,
         {
@@ -94,6 +99,7 @@ export function TaskItem({
             completed: item.completed,
             existing_topic_ids: existing_topic_ids,
             new_topics: new_topics,
+            times: draftTimes,
           }),
         },
       );
@@ -143,14 +149,18 @@ export function TaskItem({
 
         {/* Task Times */}
         <div className="flex flex-col items-end text-sm text-zinc-300">
-          {item.times?.length > 0
-            ? item.times.map((t) => (
-                <span key={t.id}>
-                  {formatDay(t.day)} {t.start_time.slice(0, 5)} -{" "}
-                  {t.end_time.slice(0, 5)}
-                </span>
-              ))
-            : "No time set"}
+          {isEditing ? (
+            <TimeInput times={draftTimes} setTimes={setDraftTimes} />
+          ) : item.times?.length > 0 ? (
+            item.times.map((t) => (
+              <span key={t.id}>
+                {formatDay(t.day)} {t.start_time.slice(0, 5)} -{" "}
+                {t.end_time.slice(0, 5)}
+              </span>
+            ))
+          ) : (
+            "No time set"
+          )}
         </div>
       </div>
 
