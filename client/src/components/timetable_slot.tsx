@@ -36,13 +36,12 @@ function TimetableSlot({
   highlight,
 }: TimetableSlotProps) {
   let class_name =
-    "timetable-slot w-full h-full min-h-16 \
+    "timetable-slot w-full min-h-16 \
     flex justify-center items-center border-solid ";
 
   if (header === true) {
     class_name +=
-      " timetable-header bg-slate-800 sticky top-0 z-10 \
-        border-b-2 border-b-slate-900 ";
+      " timetable-header bg-slate-800 border-b-2 border-b-slate-900 ";
   } else {
     const bg_color = highlight === true ? " bg-slate-500" : " bg-slate-600";
     class_name +=
@@ -69,3 +68,14 @@ function TimetableSlot({
 }
 
 export default TimetableSlot;
+
+export function TimetableHeader({ label }: TimetableSlotProps) {
+  return (
+    <div
+      id={label + "-Header"}
+      className="timetable-header absolute z-[100] flex min-h-16 min-w-32 items-center justify-center border-b-2 border-b-slate-900 bg-slate-800"
+    >
+      <p className="text-xl font-semibold text-slate-400">{label}</p>
+    </div>
+  );
+}

@@ -330,7 +330,7 @@ function TimetableTask({
       <div
         id={id}
         className={
-          "timetable-task absolute z-[50] overflow-hidden rounded-lg p-3 text-slate-100" +
+          "timetable-task absolute z-[50] overflow-hidden rounded-lg text-slate-100" +
           additional_style
         }
         data-completed={completed}
@@ -343,14 +343,16 @@ function TimetableTask({
         onMouseOver={mouseOverHandler}
         onMouseOut={mouseOutHandler}
       >
-        <TimetableTaskContent
-          name={name}
-          start_time={start_time}
-          end_time={end_time}
-          topics={topics}
-          description={description}
-          time_display={"duration"}
-        />
+        <div className="m-3">
+          <TimetableTaskContent
+            name={name}
+            start_time={start_time}
+            end_time={end_time}
+            topics={topics}
+            description={description}
+            time_display={"duration"}
+          />
+        </div>
       </div>
       <div
         id={id + "-tooltip"}

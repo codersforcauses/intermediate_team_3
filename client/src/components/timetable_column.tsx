@@ -1,5 +1,3 @@
-import React, { ReactElement } from "react";
-
 import TimetableSlot from "./timetable_slot";
 
 /*
@@ -9,41 +7,13 @@ leftmost column containing the labels). Also gives left-0 positioning if true.
 @prop day: String to display within the header, also sets id to this value.
 */
 interface TimetableColumnProps {
-  children?: ReactElement[];
-  sticky?: boolean;
   day: string;
 }
 
 /*
 A column of the timetable containing TimetableSlots.
 */
-export default function TimetableColumn({
-  children,
-  day,
-  sticky,
-}: TimetableColumnProps) {
-  let class_name =
-    "timetable-column w-full min-w-32 md:min-w-48 h-full \
-    flex flex-col bg-slate-500";
-
-  if (sticky === true) {
-    class_name += " sticky left-0 z-10";
-  } else {
-    class_name += " z-0";
-  }
-
-  return (
-    <div id={day} className={class_name}>
-      {children}
-    </div>
-  );
-}
-
-/*
-A TimetableColumn for a Day, header has text and all other slots are blank. If 
-day is the current day all non-header slots will be set to the highlight colour.
-*/
-export function TimetableDayColumn({ day }: TimetableColumnProps) {
+export default function TimetableColumn({ day }: TimetableColumnProps) {
   const now = new Date(Date.now());
   enum DateDay {
     Monday = 1,
@@ -58,8 +28,15 @@ export function TimetableDayColumn({ day }: TimetableColumnProps) {
   const is_current_day = day === current_day;
 
   return (
-    <TimetableColumn day={day}>
-      <TimetableSlot time="Header" label={day} header={true} />
+    <div
+      id={day}
+      className="timetable-column flex h-full w-full min-w-32 flex-col bg-slate-500 md:min-w-48"
+    >
+      <TimetableSlot
+        time={day.toLowerCase() + "-header"}
+        label={day}
+        header={true}
+      />
       <TimetableSlot time="00:00:00" highlight={is_current_day} />
       <TimetableSlot time="01:00:00" highlight={is_current_day} />
       <TimetableSlot time="02:00:00" highlight={is_current_day} />
@@ -84,7 +61,7 @@ export function TimetableDayColumn({ day }: TimetableColumnProps) {
       <TimetableSlot time="21:00:00" highlight={is_current_day} />
       <TimetableSlot time="22:00:00" highlight={is_current_day} />
       <TimetableSlot time="23:00:00" highlight={is_current_day} />
-    </TimetableColumn>
+    </div>
   );
 }
 
@@ -92,9 +69,12 @@ export function TimetableDayColumn({ day }: TimetableColumnProps) {
 A TimetableColumn for the time labels. Header has text "Time", all other slots
 have text "HH:MM" for time time they represent. Already has sticky set.
 */
-export function TimetableTimeColumn() {
+export function TimetableTimeLabelsColumn() {
   return (
-    <TimetableColumn day="Time" sticky={true}>
+    <div
+      id="Time-Labels"
+      className="timetable-column absolute flex flex-col bg-slate-500"
+    >
       <TimetableSlot
         time="time-header"
         label="Time"
@@ -125,6 +105,6 @@ export function TimetableTimeColumn() {
       <TimetableSlot time="21:00:00" label="21:00" time_label={true} />
       <TimetableSlot time="22:00:00" label="22:00" time_label={true} />
       <TimetableSlot time="23:00:00" label="23:00" time_label={true} />
-    </TimetableColumn>
+    </div>
   );
 }

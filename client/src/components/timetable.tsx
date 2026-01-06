@@ -3,10 +3,10 @@ import { useEffect } from "react";
 import TimeIndicator, {
   resizeAndPositionTimeIndicator,
 } from "@/components/time_indicator";
-import {
-  TimetableDayColumn,
-  TimetableTimeColumn,
+import TimetableColumn, {
+  TimetableTimeLabelsColumn,
 } from "@/components/timetable_column";
+import { TimetableHeader } from "@/components/timetable_slot";
 import TimetableTask, {
   resizeAndPositionTimetableTasks,
   TimetableTaskProps,
@@ -36,9 +36,13 @@ with id: time-header, timetable-barrier, timetable-separator, and
 timetable-barrier).
 */
 export function getVisibleTimetableRect() {
-  const time_header = document.getElementById("time-header");
+  const time_header = document.getElementById("Time-Header");
   if (time_header == null) return;
   const time_header_rect = time_header.getBoundingClientRect();
+
+  const time_labels = document.getElementById("Time-Labels");
+  if (time_labels == null) return;
+  const time_labels_rect = time_labels.getBoundingClientRect();
 
   const timetable_barrier = document.getElementById("timetable-barrier");
   if (timetable_barrier == null) return;
@@ -49,7 +53,7 @@ export function getVisibleTimetableRect() {
   const timetable_separator_rect = timetable_separator.getBoundingClientRect();
 
   const rect = {
-    left: time_header_rect.right + timetable_separator_rect.width,
+    left: time_labels_rect.right + timetable_separator_rect.width,
     right: timetable_barrier_rect.left + timetable_barrier.clientWidth,
     top: time_header_rect.bottom,
     bottom: timetable_barrier_rect.top + timetable_barrier.clientHeight,
@@ -113,7 +117,7 @@ function resizeAndPositionTimetableSeparator() {
   const separator = document.getElementById("timetable-separator");
   if (separator == null) return;
 
-  const time_col = document.getElementById("Time");
+  const time_col = document.getElementById("Time-Labels");
   if (time_col == null) return;
   const col_rect = time_col.getBoundingClientRect();
 
@@ -126,6 +130,50 @@ function resizeAndPositionTimetableSeparator() {
   separator.style.top = corner_rect.top + "px";
 }
 
+function resizeAndPositionTimetableHeaders() {
+  const timetable_headers = document.getElementById("timetable-headers");
+  if (timetable_headers == null) return;
+  const headers = timetable_headers.children;
+
+  const barrier = document.getElementById("timetable-barrier");
+  if (barrier == null) return;
+  const barrier_rect = barrier.getBoundingClientRect();
+
+  for (let i = 0; i < headers.length; i++) {
+    const header_id = headers[i].id;
+    const header = document.getElementById(header_id);
+    if (header == null) return;
+
+    const col_id = header.id.slice(0, -"-Header".length);
+    const col = document.getElementById(col_id);
+    if (col == null) return;
+    const col_rect = col.getBoundingClientRect();
+
+    header.style.left = col_rect.left + "px";
+    header.style.top = barrier_rect.top + "px";
+    header.style.width = col_rect.width + "px";
+  }
+}
+
+function resizeAndPositionTimetableTimeLabels() {
+  const time_labels = document.getElementById("Time-Labels");
+  if (time_labels == null) return;
+
+  const time_col = document.getElementById("Time");
+  if (time_col == null) return;
+  const time_col_rect = time_col.getBoundingClientRect();
+
+  const timetable_barrier = document.getElementById("timetable-barrier");
+  if (timetable_barrier == null) return;
+  const barrier_rect = timetable_barrier.getBoundingClientRect();
+
+  time_labels.style.top = time_col_rect.top + "px";
+  time_labels.style.left = barrier_rect.left + "px";
+
+  time_labels.style.width = time_col_rect.width + "px";
+  time_labels.style.height = barrier_rect.height + "px";
+}
+
 /*
 Calls all of the resizeAndPosition functions.
 */
@@ -133,6 +181,8 @@ export function resizeTimetableElements() {
   resizeAndPositionTimetableSeparator();
   resizeAndPositionTimetableTasks();
   resizeAndPositionTimeIndicator();
+  resizeAndPositionTimetableHeaders();
+  resizeAndPositionTimetableTimeLabels();
 }
 
 /*
@@ -290,29 +340,44 @@ function Timetable({ timetable_tasks_props }: TimetableProps) {
           id="timetable"
           className="timetable flex h-full w-full flex-row gap-[4px]"
         >
-          <TimetableTimeColumn />
-          <TimetableDayColumn day="Monday" />
-          <TimetableDayColumn day="Tuesday" />
-          <TimetableDayColumn day="Wednesday" />
-          <TimetableDayColumn day="Thursday" />
-          <TimetableDayColumn day="Friday" />
-          <TimetableDayColumn day="Saturday" />
-          <TimetableDayColumn day="Sunday" />
-          <div id="timetable-foreground" className="absolute left-0 top-0">
-            <TimeIndicator />
-            <div
-              id="timetable-tasks"
-              className="timetable-tasks absolute left-0 top-0"
-            >
-              {timetable_tasks_props.map((props) => (
-                <TimetableTask key={props.id} {...props} />
-              ))}
-            </div>
-            <div
-              id="timetable-separator"
-              className="absolute z-[10] w-[4px] bg-slate-900"
-            ></div>
+          <TimetableColumn day="Time" />
+          <TimetableColumn day="Monday" />
+          <TimetableColumn day="Tuesday" />
+          <TimetableColumn day="Wednesday" />
+          <TimetableColumn day="Thursday" />
+          <TimetableColumn day="Friday" />
+          <TimetableColumn day="Saturday" />
+          <TimetableColumn day="Sunday" />
+        </div>
+        <div id="timetable-foreground" className="absolute left-0 top-0">
+          <div id="timetable-headers">
+            {[
+              "Time",
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday",
+            ].map((header) => (
+              <TimetableHeader key={header} time="header" label={header} />
+            ))}
           </div>
+          <TimetableTimeLabelsColumn />
+          <div
+            id="timetable-separator"
+            className="absolute z-[100] w-[4px] bg-slate-900"
+          ></div>
+          <div
+            id="timetable-tasks"
+            className="timetable-tasks absolute left-0 top-0"
+          >
+            {timetable_tasks_props.map((props) => (
+              <TimetableTask key={props.id} {...props} />
+            ))}
+          </div>
+          <TimeIndicator />
         </div>
       </div>
     </div>
