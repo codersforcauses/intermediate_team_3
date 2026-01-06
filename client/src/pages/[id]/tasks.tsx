@@ -32,6 +32,7 @@ export default function TasksPage() {
   const { id } = router.query;
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
     if (!id) return;
@@ -52,6 +53,13 @@ export default function TasksPage() {
     }
     fetchTasks();
   }, [id]);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/planner/topic/")
+      .then((res) => res.json())
+      .then((data) => setAvailableTopics(data))
+      .catch((err) => console.error("Failed to load topics", err));
+  }, []);
 
   if (loading) {
     return <p>Loading tasks...</p>;
@@ -103,6 +111,7 @@ export default function TasksPage() {
           items={items}
           onToggleTask={handleToggleTask}
           onUpdate={handleTaskUpdated}
+          availableTopics={availableTopics}
         />
       </div>
       <div className="m-4 h-fit w-fit rounded-xl bg-zinc-700 p-4 text-center">

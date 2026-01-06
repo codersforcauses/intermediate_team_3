@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { TopicInput } from "@/components/topic_input";
+
 interface Time {
   id: number;
   day: number;
@@ -27,26 +29,60 @@ type ItemProps = {
   item: Item;
   onToggle?: (id: number) => void;
   onUpdate: (item: Item) => void;
+  availableTopics: Topic[];
 };
 
-export function TaskItem({ item, onToggle, onUpdate }: ItemProps) {
+type TopicSelection =
+  | { type: "existing"; id: number }
+  | { type: "new"; name: string; color_hex: number };
+
+export function TaskItem({
+  item,
+  onToggle,
+  onUpdate,
+  availableTopics,
+}: ItemProps) {
+  {
+    /* Editing Functionality */
+  }
   const [isEditing, setIsEditing] = useState(false);
   const [draftName, setDraftName] = useState(item.name);
+  const [draftDescription, setDraftDescription] = useState(item.description);
+  const [draftTopics, setDraftTopics] = useState<TopicSelection[]>([]);
   const [saving, setSaving] = useState(false);
 
   function startEdit() {
     setDraftName(item.name);
+    setDraftDescription(item.description);
+    setDraftTopics(
+      item.topics.map((t) => ({
+        type: "existing",
+        id: t.id,
+      })),
+    );
     setIsEditing(true);
   }
 
   function cancelEdit() {
-    setIsEditing(false);
     setDraftName(item.name);
+    setDraftDescription(item.description);
+    setDraftTopics(item.topics.map((t) => ({ type: "existing", id: t.id })));
+    setIsEditing(false);
   }
 
   async function saveEdit() {
     setSaving(true);
     try {
+      const existing_topic_ids = draftTopics
+        .filter((t) => t.type === "existing")
+        .map((t) => t.id);
+
+      const new_topics = draftTopics
+        .filter((t) => t.type === "new")
+        .map((t) => ({
+          name: t.name,
+          color_hex: t.color_hex,
+        }));
       const response = await fetch(
         `http://localhost:8000/api/planner/tasks/${item.id}/`,
         {
@@ -54,8 +90,10 @@ export function TaskItem({ item, onToggle, onUpdate }: ItemProps) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: draftName,
-            description: item.description,
+            description: draftDescription,
             completed: item.completed,
+            existing_topic_ids: existing_topic_ids,
+            new_topics: new_topics,
           }),
         },
       );
@@ -72,9 +110,13 @@ export function TaskItem({ item, onToggle, onUpdate }: ItemProps) {
     }
   }
 
+  {
+    /* Item Display */
+  }
   return (
-    <label className="m-1 flex w-96 flex-col rounded-md border-2 border-zinc-200 bg-zinc-700 p-2">
+    <div className="m-1 flex w-96 flex-col rounded-md border-2 border-zinc-200 bg-zinc-700 p-2">
       <div className="flex items-center justify-between">
+        {/* Task Name and Completion */}
         <div className="flex items-center space-x-2">
           <input
             type="checkbox"
@@ -98,6 +140,8 @@ export function TaskItem({ item, onToggle, onUpdate }: ItemProps) {
             </span>
           )}
         </div>
+
+        {/* Task Times */}
         <div className="flex flex-col items-end text-sm text-zinc-300">
           {item.times?.length > 0
             ? item.times.map((t) => (
@@ -110,26 +154,45 @@ export function TaskItem({ item, onToggle, onUpdate }: ItemProps) {
         </div>
       </div>
 
+      {/* Task Topics */}
       <div className="flex flex-wrap gap-1 text-sm text-zinc-300">
-        {item.topics?.length > 0
-          ? item.topics.map((topic) => (
+        {isEditing ? (
+          <TopicInput
+            availableTopics={availableTopics}
+            topics={draftTopics}
+            setTopics={setDraftTopics}
+          />
+        ) : item.topics.length > 0 ? (
+          item.topics.map((topic) => (
+            <span
+              key={topic.id}
+              className="flex items-center gap-1 rounded-lg border-2 border-zinc-500 px-2 py-0.5 text-zinc-100"
+            >
               <span
-                key={topic.id}
-                className="flex items-center gap-1 rounded-lg border-2 border-zinc-500 px-2 py-0.5 text-zinc-100"
-              >
-                <span
-                  className="h-2 w-2 rounded-full"
-                  style={{
-                    backgroundColor: `#${topic.color_hex.toString(16).padStart(6, "0")}`,
-                  }}
-                />
-                {topic.name}
-              </span>
-            ))
-          : "No topics"}
+                className="h-2 w-2 rounded-full"
+                style={{
+                  backgroundColor: `#${topic.color_hex
+                    .toString(16)
+                    .padStart(6, "0")}`,
+                }}
+              />
+              {topic.name}
+            </span>
+          ))
+        ) : (
+          "No topics"
+        )}
       </div>
+
+      {/* Task Description */}
       <div>
-        {item.description ? (
+        {isEditing ? (
+          <textarea
+            value={draftDescription}
+            onChange={(e) => setDraftDescription(e.target.value)}
+            className="mt-2 w-full rounded border-2 bg-zinc-600 p-1 text-zinc-200"
+          />
+        ) : item.description ? (
           <span className="mt-2 block text-zinc-300">{item.description}</span>
         ) : (
           <span className="mt-2 block italic text-zinc-500">
@@ -149,7 +212,7 @@ export function TaskItem({ item, onToggle, onUpdate }: ItemProps) {
           <button onClick={startEdit}>Edit</button>
         )}
       </div>
-    </label>
+    </div>
   );
 }
 
