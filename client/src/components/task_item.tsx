@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { TimeInput } from "@/components/time_input";
-import TimeTag from "@/components/time_tag";
+import TimeTag, { DayTag } from "@/components/time_tag";
 import { TopicInput } from "@/components/topic_input";
 import TopicTag from "@/components/topic_tag";
 
@@ -150,17 +150,18 @@ export function TaskItem({
       </div>
       <div className="task-times-container">
         {/* Task Times */}
-        <div className="text- flex flex-col items-start text-slate-300">
+        <div className="flex flex-col items-start text-slate-300">
           {isEditing ? (
             <TimeInput times={draftTimes} setTimes={setDraftTimes} />
           ) : item.times?.length > 0 ? (
             item.times.map((time) => (
-              <TimeTag
-                key={time.id}
-                start_time={time.start_time}
-                end_time={time.end_time}
-                day={formatDay(time.day)}
-              />
+              <div key={time.id} className="flex flex-row gap-3">
+                <DayTag day={formatDay(time.day)} />
+                <TimeTag
+                  start_time={time.start_time}
+                  end_time={time.end_time}
+                />
+              </div>
             ))
           ) : (
             "No time set"
