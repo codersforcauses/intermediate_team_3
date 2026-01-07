@@ -57,7 +57,7 @@ export default function UpcomingTasks({ tasks, times }: Tasks) {
 
   return (
     <div className="rounded-2xl bg-slate-900 p-2 py-3 shadow-xl shadow-black/40">
-      <div className="w-100 scrollbar h-[285px] overflow-y-auto">
+      <div className="scrollbar h-[285px] w-96 overflow-y-auto overflow-x-hidden">
         {upcomingTimes.map((time: Time) => (
           <TaskDisplay
             task={tasks.filter((task) => task.id === time.task)[0]}
