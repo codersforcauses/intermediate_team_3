@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 
 import Timetable, {
   getDurationMinutes,
-  resizeTimetableElements,
+  resizeAndPositionTimetableElements,
 } from "@/components/timetable";
-import TimetableTask, { TimetableTaskProps } from "@/components/timetable_task";
+import { TimetableTaskProps } from "@/components/timetable_task";
 
+/*
+Database representation of Time.
+*/
 interface Time {
   id: number;
   day: number;
@@ -15,6 +18,9 @@ interface Time {
   task: number;
 }
 
+/*
+Database representation of Topic.
+*/
 interface Topic {
   id: number;
   name: string;
@@ -22,6 +28,9 @@ interface Topic {
   user: number;
 }
 
+/*
+Database representation of Task.
+*/
 interface Task {
   id: number;
   name: string;
@@ -32,6 +41,9 @@ interface Task {
   times: Time[];
 }
 
+/*
+Used to convert database representation of a day to string used by front end.
+*/
 enum Day {
   Monday = 0,
   Tuesday,
@@ -42,22 +54,33 @@ enum Day {
   Sunday,
 }
 
+/*
+Page containing a Timetable to visually represent the times that tasks have been
+assigned.
+*/
 function Schedule() {
-  const [timetableTaskProps, setTimetableTaskProps] = useState<
+  const [timetableTasksProps, setTimetableTasksProps] = useState<
     TimetableTaskProps[]
   >([]);
 
-  /* This effect runs in an infinte loop if timetableTaskProps is defined as a
-  dependency */
+  /* 
+  This effect runs in an infinte loop IF timetableTasksProps is defined as a
+  dependency. To prevent this an empty array has been provided to the 
+  dependencies argument.
+  */
   useEffect(() => {
     function addEventListeners() {
-      window.addEventListener("resize", resizeTimetableElements);
+      window.addEventListener("resize", resizeAndPositionTimetableElements);
     }
 
     function removeEventListeners() {
-      window.removeEventListener("resize", resizeTimetableElements);
+      window.removeEventListener("resize", resizeAndPositionTimetableElements);
     }
 
+    /*
+    Get the task data from the API and format the tasks into the TimetableTasks
+    to be displayed. Sets the timetableTasksProps State variable once finished.
+    */
     async function fetchTasks() {
       const API_URL = "http://localhost:8000/api/planner/task/";
       try {
@@ -70,12 +93,18 @@ function Schedule() {
           await formatTaskDataToTimetableTaskProps(data);
         timetable_task_props =
           await formatTimetableClashes(timetable_task_props);
-        setTimetableTaskProps(timetable_task_props);
+        setTimetableTasksProps(timetable_task_props);
       } catch (error) {
         console.error(error);
       }
     }
 
+    /*
+    Format the task data from the API into TimetableTaskProps. Creates a 
+    TimetableTaskProps object for each Task x Time where Time is assigned to
+    Task (i.e. if a Task has 4 times assigned to it 4 sets of TimetableTaskProps
+    are created).
+    */
     async function formatTaskDataToTimetableTaskProps(data: Task[]) {
       const timetable_task_props: TimetableTaskProps[] = [];
       for (let i = 0; i < data.length; i++) {
@@ -111,6 +140,10 @@ function Schedule() {
       return timetable_task_props;
     }
 
+    /*
+    Convert a time string in format HH:MM:TT to a minute representation where
+    0 represents 00:00:00, 60 represents 01:00:00 etc.
+    */
     function timeToMins(time: string) {
       const hours = Number(time.substring(0, 2));
       const mins = Number(time.substring(3, 5));
@@ -199,6 +232,11 @@ function Schedule() {
       }
     }
 
+    /*
+    Checks for timetable clashes between TimetableTasks, creates new 
+    TimetableTasks for each clash found and fixes the information of the
+    clashing tasks to remove the clashing section.
+    */
     async function formatTimetableClashes(
       timetable_task_props: TimetableTaskProps[],
     ) {
@@ -232,17 +270,13 @@ function Schedule() {
       removeEventListeners();
     };
   }, []);
-  /* This should be dependent on timetableTaskProps however doing so causes it
+  /* This should be dependent on timetableTasksProps however doing so causes it
   to run in an infinite loop. */
 
   return (
-    <div className="content-container min-w-screen z-[50] flex h-[85vh] w-full flex-row bg-slate-950">
-      <div className="timetable-container w-5/5 flex h-[85vh] flex-col items-center justify-center overflow-hidden p-3">
-        <Timetable>
-          {timetableTaskProps.map((props) => (
-            <TimetableTask key={props.id} {...props} />
-          ))}
-        </Timetable>
+    <div className="content-container min-w-screen flex h-[85vh] w-full flex-row bg-slate-950">
+      <div className="timetable-container h-[85vh] w-full p-3">
+        <Timetable timetable_tasks_props={timetableTasksProps} />
       </div>
     </div>
   );

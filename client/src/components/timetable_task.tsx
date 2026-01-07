@@ -1,8 +1,28 @@
 import TimeTag from "@/components/time_tag";
-import { getVisibleTimetableRect } from "@/components/timetable";
+import {
+  getTimeTopPosition,
+  getVisibleTimetableRect,
+} from "@/components/timetable";
 import TopicTag from "@/components/topic_tag";
 
-function getTimetableTaskDataProperties(task: HTMLElement) {
+/*
+An interface for the data properties of a TimetableTask with numerical times
+in hours (rather than minutes as they are stored).
+*/
+interface timetableTaskDataProperties {
+  day: string;
+  hour: string;
+  duration_hours: number;
+  start_offset_hours: number;
+}
+
+/*
+Returns the data properties of a timetable task element in an object format
+with minute data converted to hours.
+*/
+function getTimetableTaskDataProperties(
+  task: HTMLElement,
+): undefined | timetableTaskDataProperties {
   const day = task.dataset.day;
   if (day == undefined) return;
 
@@ -26,123 +46,97 @@ function getTimetableTaskDataProperties(task: HTMLElement) {
 }
 
 /*
-NOTE: there is a small issue with this code which causes the TimetableTask to
-expand to the size of the column + border while the next column is offscreen
-before returning to just the size of the column (no border) once the next
-column becomes visible.
-
-Pretty sure the issue is because the client rect.right includes the border
-which I don't want it to.
+Sets the size and position of the timetable task provided in the task parameter.
 */
 export function resizeAndPositionTimetableTask(task: HTMLElement) {
-  // Get task
   if (task == null) return;
-  // Get task data
+
   const task_data = getTimetableTaskDataProperties(task);
   if (task_data == null) return;
   const { day, hour, duration_hours, start_offset_hours } = task_data;
-  // Get visible area
-  const visible = getVisibleTimetableRect();
-  if (visible == null) return;
-  // Get column
-  const col = document.getElementById(day);
-  if (col == null) return;
-  // Get row
-  const row = document.getElementById(hour);
-  if (row == null) return;
-  // Get dimensions of column and row
-  const col_rect = col.getBoundingClientRect();
-  const row_rect = row.getBoundingClientRect();
 
-  // Calculate dimensions
-  let left, top, width, height;
+  const col_rect = document.getElementById(day)?.getBoundingClientRect();
+  if (col_rect == undefined) return;
 
-  let left_width_reduction = 0;
-  if (col_rect.left > visible.left) {
-    left = col_rect.left;
-  } else {
-    left = visible.left;
-    left_width_reduction = visible.left - col_rect.left;
-  }
-
-  width =
-    col_rect.right < visible.right ? row_rect.width : visible.right - left;
-  width -= left_width_reduction;
+  const row_rect = document.getElementById(hour)?.getBoundingClientRect();
+  if (row_rect == undefined) return;
 
   const one_hour_height = row_rect.height;
   const duration_height = one_hour_height * duration_hours;
-  const offset_top = row_rect.top + one_hour_height * start_offset_hours;
 
-  let top_height_reduction = 0;
-  if (offset_top > visible.top) {
-    top = offset_top;
-  } else {
-    top = visible.top;
-    top_height_reduction = visible.top - offset_top;
-  }
+  const hours = Number(hour.substring(0, 2));
+  const time_top = getTimeTopPosition(hours, start_offset_hours * 60);
+  if (time_top == undefined) return;
 
-  height =
-    top + duration_height < visible.bottom
-      ? duration_height
-      : visible.bottom - top;
-  height -= top_height_reduction;
+  const parent_rect = task.parentElement?.getBoundingClientRect();
+  if (parent_rect == undefined) return;
 
-  // Set dimensions
-  task.style.left = left + "px";
-  task.style.top = top + "px";
-  task.style.width = width + "px";
-  task.style.height = height + "px";
-
-  // Hide elements not in the visible area
-  const right = left + width;
-  const bottom = top + height;
-  const is_visible = !(
-    right <= visible.left ||
-    left >= visible.right ||
-    bottom <= visible.top ||
-    top >= visible.bottom
-  );
-  if (is_visible) {
-    task.style.display = "inline";
-  } else {
-    task.style.display = "none";
-  }
+  task.style.left = col_rect.left - parent_rect.left + "px";
+  task.style.top = time_top - parent_rect.top + "px";
+  task.style.width = row_rect.width + "px";
+  task.style.height = duration_height + "px";
 }
 
+/*
+Sets the size and position of the timetable task tooltip provided in the 
+parameter. Will position the tooltip to the side (left/right) with the most
+space in the visible timetable area.
+*/
 function resizeAndPositionTimetableTaskTooltip(tooltip: HTMLElement) {
   const task_id = tooltip.id.slice(0, -"-tooltip".length);
   const task = document.getElementById(task_id);
   if (task == null) return;
 
   const task_rect = task.getBoundingClientRect();
-  if (task_rect == undefined) return;
 
   tooltip.style.display = "flex";
   const tooltip_rect = tooltip.getBoundingClientRect();
-  if (tooltip_rect == undefined) return;
 
   const visible = getVisibleTimetableRect();
   if (visible == undefined) return;
 
-  if (task_rect.left - visible.left > visible.right - task_rect.right) {
-    tooltip.style.left = task_rect.left - tooltip_rect.width + "px";
+  const left_space = task_rect.left - visible.left;
+  const right_space = visible.right - task_rect.right;
+
+  let left, top, width, height;
+
+  if (left_space > right_space) {
+    left = task_rect.left - tooltip_rect.width;
+    // Tooltip has a max width so won't get too big
+    width = left_space;
   } else {
-    tooltip.style.left = task_rect.right + "px";
+    left = task_rect.right;
+    // Tooltip has a max width so won't get too big
+    width = right_space;
+  }
+
+  if (tooltip_rect.height > visible.height) {
+    height = visible.height;
   }
 
   const target_pos =
     task_rect.top + task_rect.height / 2 - tooltip_rect.height / 2;
 
-  let tooltip_top = target_pos;
+  top = target_pos;
+
   if (target_pos < visible.top) {
-    tooltip_top = visible.top;
-  } else if (target_pos > visible.bottom) {
-    tooltip_top = visible.bottom - tooltip_rect.height;
+    top = visible.top;
+  } else if (target_pos > visible.bottom - tooltip_rect.height) {
+    top = visible.bottom - tooltip_rect.height;
   }
 
-  tooltip.style.top = tooltip_top + "px";
+  const parent_rect = tooltip.parentElement?.getBoundingClientRect();
+  if (parent_rect == undefined) return;
+
+  tooltip.style.left = left - parent_rect.left + "px";
+  tooltip.style.top = top - parent_rect.top + "px";
+  tooltip.style.width = width + "px";
+  tooltip.style.height = height + "px";
 }
 
+/*
+Calls resizeAndPositionTimetableTask on each TimetableTask Element.
+*/
 export function resizeAndPositionTimetableTasks() {
   const tasks = document.getElementsByClassName("timetable-task");
   for (let i = 0; i < tasks.length; i++) {
@@ -151,6 +145,9 @@ export function resizeAndPositionTimetableTasks() {
   }
 }
 
+/*
+Database representation of Topic.
+*/
 export interface Topic {
   id: number;
   name: string;
@@ -158,6 +155,17 @@ export interface Topic {
   user: number;
 }
 
+/*
+Props for a TimetableTaskContent element.
+
+@prop name: The string to display as the title.
+@prop start_time: The string containing the starting time in HH:MM:DD format.
+@prop end_time: The string containing the ending time in HH:MM:DD format.
+@prop topics: Topic data to display as TopicTags.
+@prop description: String containing the description of the task.
+@prop time_display: Optional string, controls display mode of the TimeTag, see
+TimeTag for more information.
+*/
 export interface TimetableTaskContentProps {
   name: string;
   start_time: string;
@@ -167,6 +175,10 @@ export interface TimetableTaskContentProps {
   time_display?: string;
 }
 
+/*
+The contents of a Timetable Task inlcuding title, time tag, topic tags, and
+description. Separated into its own component to be reusable for tooltips.
+*/
 function TimetableTaskContent({
   name,
   start_time,
@@ -199,6 +211,25 @@ function TimetableTaskContent({
   );
 }
 
+/*
+The props for a TimetableTask.
+
+@prop id: The id to give the TimetableTask, typically task_id:time_id.
+@prop name: The title of the Task.
+@topics: The topics assigned to the Task.
+@description: The description of the Task.
+@completed: The completion status of the Task.
+@day: The day (string) the time is on.
+@start_time: A string representing the start time in HH:MM:SS format, (used
+to calculate position).
+@end_time: A string representing the end time in HH:MM:SS format.
+@duration_minutes: The duration of the time assigned to the task in minutes
+(used to calculate display height).
+@clash: A boolean indicating whether the timetable task represents a clash
+(time with two overlapping tasks).
+@tooltip_props: The props of the TimetableTaskContents to display in the tooltip.
+
+*/
 export interface TimetableTaskProps {
   id: string;
   name: string;
@@ -213,6 +244,15 @@ export interface TimetableTaskProps {
   tooltip_props: TimetableTaskContentProps[];
 }
 
+/*
+A rounded rectangle representing a Time on the timetable which has been assigned
+to a Task on a specific day. 
+
+Contains the information of the task as well as a tooltip that displays while 
+mouse is over the TimetableTask or tooltip that also displays the task 
+information (allows user to view full content of tasks if task does not have
+enough space, as well as times that have multiple tasks assigned to them).
+*/
 function TimetableTask({
   id,
   name,
@@ -255,7 +295,7 @@ function TimetableTask({
       <div
         id={id}
         className={
-          "timetable-task absolute z-[50] overflow-hidden rounded-lg p-3 text-slate-100" +
+          "timetable-task pointer-events-auto absolute z-[50] overflow-hidden rounded-lg p-3 text-slate-100" +
           additional_style
         }
         data-completed={completed}
@@ -279,19 +319,21 @@ function TimetableTask({
       </div>
       <div
         id={id + "-tooltip"}
-        className="timetable-task-tooltip absolute z-[75] flex w-64 flex-col items-center justify-center gap-3 overflow-auto rounded-lg bg-slate-800 p-3"
+        className="timetable-task-tooltip pointer-events-auto absolute z-[150] max-w-64 rounded-lg bg-slate-800 p-3"
         style={{ display: "none" }}
         onMouseOver={mouseOverHandler}
         onMouseOut={mouseOutHandler}
       >
-        {tooltip_props.map((props) => (
-          <div
-            key={id + "-tooltip-" + props.name}
-            className="z-[75] h-fit w-full rounded-lg bg-slate-400 p-3 text-slate-100"
-          >
-            <TimetableTaskContent {...props} time_display="both" />
-          </div>
-        ))}
+        <div className="tooltip-content-container flex h-full w-full flex-col gap-3 overflow-auto">
+          {tooltip_props.map((props) => (
+            <div
+              key={id + "-tooltip-" + props.name}
+              className="h-fit w-full rounded-lg bg-slate-400 p-3 text-slate-100"
+            >
+              <TimetableTaskContent {...props} time_display="both" />
+            </div>
+          ))}
+        </div>
       </div>
     </>
   );
