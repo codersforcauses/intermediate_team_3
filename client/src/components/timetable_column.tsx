@@ -11,7 +11,7 @@ interface TimetableColumnProps {
 }
 
 /*
-A column of the timetable containing TimetableSlots.
+A column of the timetable containing 25 TimetableSlots (header + one each hour).
 */
 export default function TimetableColumn({ day }: TimetableColumnProps) {
   const now = new Date(Date.now());
@@ -67,7 +67,8 @@ export default function TimetableColumn({ day }: TimetableColumnProps) {
 
 /*
 A TimetableColumn for the time labels. Header has text "Time", all other slots
-have text "HH:MM" for time time they represent. Already has sticky set.
+have text "HH:MM" for time time they represent. Each slot has its id set to its
+time prop value.
 */
 export function TimetableTimeLabelsColumn() {
   return (

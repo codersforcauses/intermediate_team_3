@@ -1,3 +1,8 @@
+/*
+@prop name: The String to display within the topic tag.
+@prop color_hex: The integer representing the hex code of the color to display
+within the circle in the tag.
+*/
 interface TopicTagProps {
   name: string;
   color_hex: number;

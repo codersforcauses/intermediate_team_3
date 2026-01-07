@@ -117,7 +117,12 @@ function resizeAndPositionTimetableForeground() {
 
 /*
 Sync the left position of the TimetableHeaders in the foreground with their
-respective columns, set the top position to 0px.
+respective columns, set the top position to 0px, ensures Time-header remains
+in the top left corner. 
+
+Also resizes the timetable-headers container to the width of timetable-content 
+element and height of Time-header to prevent underlying elements from showing
+through the gaps between headers.
 */
 function resizeAndPositionTimetableHeaders() {
   const timetable_headers = document.getElementById("timetable-headers");

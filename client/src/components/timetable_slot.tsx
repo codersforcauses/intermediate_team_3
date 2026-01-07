@@ -67,6 +67,11 @@ function TimetableSlot({
 
 export default TimetableSlot;
 
+/*
+A slightly modified TimetableSlot designed to be displayed in the foreground
+with the styling of a TimetableSlot with header=true.
+Has id set to its label + "-header" suffix.
+*/
 export function TimetableHeader({ label }: TimetableSlotProps) {
   return (
     <div
