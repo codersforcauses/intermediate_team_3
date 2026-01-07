@@ -190,12 +190,14 @@ function TimetableTaskContent({
   return (
     <div className="timetable-task-content h-full overflow-hidden">
       <h1 className="mb-1 text-2xl font-bold">{name}</h1>
-      <TimeTag
-        start_time={start_time}
-        end_time={end_time}
-        display={time_display}
-      />
-      <div className="topic-tags mt-2 flex flex-row flex-wrap justify-between text-slate-200">
+      <div className="text-lg font-medium">
+        <TimeTag
+          start_time={start_time}
+          end_time={end_time}
+          display={time_display}
+        />
+      </div>
+      <div className="topic-tags mt-2 flex flex-row flex-wrap justify-between gap-1 text-slate-200">
         {topics?.map((topic) => (
           <TopicTag
             key={topic.name}
@@ -204,7 +206,7 @@ function TimetableTaskContent({
           />
         ))}
       </div>
-      <div className="description mt-1 flex flex-col text-slate-200">
+      <div className="description mt-1 flex flex-col text-justify text-slate-200">
         <p className="">{description}</p>
       </div>
     </div>

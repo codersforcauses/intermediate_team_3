@@ -1,7 +1,9 @@
 import { useState } from "react";
 
 import { TimeInput } from "@/components/time_input";
+import TimeTag from "@/components/time_tag";
 import { TopicInput } from "@/components/topic_input";
+import TopicTag from "@/components/topic_tag";
 
 interface Time {
   id: number;
@@ -120,43 +122,45 @@ export function TaskItem({
     /* Item Display */
   }
   return (
-    <div className="m-1 flex w-96 flex-col rounded-md border-2 border-zinc-200 bg-zinc-700 p-2">
-      <div className="flex items-center justify-between">
+    <div className="task flex h-fit w-full max-w-96 flex-col rounded-lg bg-slate-400 p-3 text-slate-300">
+      <div className="task-title-container mb-3 flex w-full flex-row items-center justify-start text-slate-200 hover:text-slate-100">
         {/* Task Name and Completion */}
-        <div className="flex items-center space-x-2">
+        <input
+          className="task-completion mr-3 accent-slate-300"
+          type="checkbox"
+          checked={item.completed}
+          onChange={() => onToggle?.(item.id)}
+        />
+        {isEditing ? (
           <input
-            type="checkbox"
-            checked={item.completed}
-            onChange={() => onToggle?.(item.id)}
-            className="w-xl h-xl accent-zinc-600"
+            className="task-title-edit rounded border-2 bg-slate-500 p-1 text-slate-300"
+            value={draftName}
+            onChange={(e) => setDraftName(e.target.value)}
           />
-          {isEditing ? (
-            <input
-              value={draftName}
-              onChange={(e) => setDraftName(e.target.value)}
-              className="rounded border-2 bg-zinc-600 p-1 text-zinc-200"
-            />
-          ) : (
-            <span
-              className={
-                item.completed ? "text-zinc-400 line-through" : "text-zinc-300"
-              }
-            >
-              {item.name}
-            </span>
-          )}
-        </div>
-
+        ) : (
+          <span
+            className={
+              "task-title text-3xl font-bold" +
+              (item.completed ? " line-through" : "")
+            }
+          >
+            {item.name}
+          </span>
+        )}
+      </div>
+      <div className="task-times-container">
         {/* Task Times */}
-        <div className="flex flex-col items-end text-sm text-zinc-300">
+        <div className="text- flex flex-col items-start text-slate-300">
           {isEditing ? (
             <TimeInput times={draftTimes} setTimes={setDraftTimes} />
           ) : item.times?.length > 0 ? (
-            item.times.map((t) => (
-              <span key={t.id}>
-                {formatDay(t.day)} {t.start_time.slice(0, 5)} -{" "}
-                {t.end_time.slice(0, 5)}
-              </span>
+            item.times.map((time) => (
+              <TimeTag
+                key={time.id}
+                start_time={time.start_time}
+                end_time={time.end_time}
+                day={formatDay(time.day)}
+              />
             ))
           ) : (
             "No time set"
@@ -165,7 +169,7 @@ export function TaskItem({
       </div>
 
       {/* Task Topics */}
-      <div className="flex flex-wrap gap-1 text-sm text-zinc-300">
+      <div className="task-topic-tags mt-2 flex flex-row flex-wrap gap-1 text-slate-200">
         {isEditing ? (
           <TopicInput
             availableTopics={availableTopics}
@@ -174,20 +178,11 @@ export function TaskItem({
           />
         ) : item.topics.length > 0 ? (
           item.topics.map((topic) => (
-            <span
+            <TopicTag
               key={topic.id}
-              className="flex items-center gap-1 rounded-lg border-2 border-zinc-500 px-2 py-0.5 text-zinc-100"
-            >
-              <span
-                className="h-2 w-2 rounded-full"
-                style={{
-                  backgroundColor: `#${topic.color_hex
-                    .toString(16)
-                    .padStart(6, "0")}`,
-                }}
-              />
-              {topic.name}
-            </span>
+              name={topic.name}
+              color_hex={topic.color_hex}
+            />
           ))
         ) : (
           "No topics"
@@ -195,31 +190,44 @@ export function TaskItem({
       </div>
 
       {/* Task Description */}
-      <div>
+      <div className="task-description mt-2 text-justify text-slate-300 hover:text-slate-100">
         {isEditing ? (
           <textarea
             value={draftDescription}
             onChange={(e) => setDraftDescription(e.target.value)}
-            className="mt-2 w-full rounded border-2 bg-zinc-600 p-1 text-zinc-200"
+            className="mt-2 w-full rounded border-2 bg-slate-600 p-1 text-slate-200"
           />
         ) : item.description ? (
-          <span className="mt-2 block text-zinc-300">{item.description}</span>
+          <span className="block">{item.description}</span>
         ) : (
-          <span className="mt-2 block italic text-zinc-500">
-            No description.
-          </span>
+          <span className="block italic">No description.</span>
         )}
       </div>
-      <div className="mt-2 flex gap-2">
+
+      <div className="task-edit mt-2 flex gap-2">
         {isEditing ? (
           <>
-            <button onClick={saveEdit} disabled={saving}>
+            <button
+              className="text-slate-300 hover:text-slate-100"
+              onClick={saveEdit}
+              disabled={saving}
+            >
               Save
             </button>
-            <button onClick={cancelEdit}>Cancel</button>
+            <button
+              className="text-slate-300 hover:text-slate-100"
+              onClick={cancelEdit}
+            >
+              Cancel
+            </button>
           </>
         ) : (
-          <button onClick={startEdit}>Edit</button>
+          <button
+            className="text-slate-300 hover:text-slate-100"
+            onClick={startEdit}
+          >
+            Edit
+          </button>
         )}
       </div>
     </div>

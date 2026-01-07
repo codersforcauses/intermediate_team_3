@@ -44,8 +44,11 @@ export function TaskList({
     );
   }
   return (
-    <div className="mx-auto h-[79vh] w-full max-w-md overflow-y-auto p-2">
-      <ul className="space-y-2">
+    <div
+      className="task-list h-full w-full overflow-y-auto bg-slate-500 p-3"
+      style={{ scrollbarWidth: "none" }}
+    >
+      <ul className="space-y-3">
         {items.map((item) => (
           <li key={item.id}>
             <TaskItem

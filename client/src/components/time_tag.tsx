@@ -11,13 +11,17 @@ interface TimeTagProps {
   start_time: string;
   end_time: string;
   display?: string;
+  day?: string;
 }
 
 /*
-A small round tag containing a clock icon and either the start and end times,
-the duration, or both, specified by the display prop.
+Returns a string describing the time component of a TimeTag.
 */
-function TimeTag({ start_time, end_time, display }: TimeTagProps) {
+function getTimeDisplayString(
+  start_time: string,
+  end_time: string,
+  display?: string,
+) {
   const time_string =
     start_time.substring(0, 5) + "-" + end_time.substring(0, 5);
 
@@ -33,14 +37,35 @@ function TimeTag({ start_time, end_time, display }: TimeTagProps) {
     else if (display == "both") display_string += " (" + duration_string + ")";
   }
 
+  return display_string;
+}
+
+/*
+A small round tag containing a clock icon and either the start and end times,
+the duration, or both, specified by the display prop.
+*/
+function TimeTag({ start_time, end_time, display, day }: TimeTagProps) {
+  const time_display_string = getTimeDisplayString(
+    start_time,
+    end_time,
+    display,
+  );
   return (
     <div
       className={
-        "flex h-fit w-fit flex-row items-center justify-center rounded-full text-lg font-medium"
+        "flex h-fit w-fit flex-row items-center justify-center rounded-full text-slate-300 hover:text-slate-100"
       }
     >
+      {day != undefined ? (
+        <>
+          <div className="placeholder-calendar aspect-1/1/ h-5 w-5 bg-slate-200"></div>
+          <p className="ml-1 mr-3">{day}</p>
+        </>
+      ) : (
+        <></>
+      )}
       <div className="placeholder-clock aspect-1/1 h-5 w-5 rounded-[50] bg-slate-200"></div>
-      <p className="ml-1">{display_string}</p>
+      <p className="ml-1">{time_display_string}</p>
     </div>
   );
 }

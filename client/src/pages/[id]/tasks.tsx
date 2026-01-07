@@ -104,17 +104,25 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="container mx-auto flex flex-row items-center justify-center p-4">
-      <div className="m-4 h-fit w-fit rounded-xl bg-zinc-700 p-4 text-center">
-        <h1 className="mb-4 text-3xl font-bold text-zinc-300">Task List</h1>
-        <TaskList
-          items={items}
-          onToggleTask={handleToggleTask}
-          onUpdate={handleTaskUpdated}
-          availableTopics={availableTopics}
-        />
+    <div className="content-container min-w-screen flex h-[85vh] flex-row items-center justify-center bg-slate-950 p-3">
+      <div className="task-list-border h-full w-fit overflow-hidden rounded-lg bg-slate-800 p-3">
+        <div className="task-list-container h-full w-full overflow-hidden">
+          <div className="task-list-content h-full w-full rounded-lg">
+            <div className="task-list-top h-fit w-full rounded-t-lg bg-slate-500 p-3">
+              <h1 className="task-list-title border-b-2 border-b-slate-400 p-3 text-center text-3xl font-bold text-slate-100">
+                My Tasks
+              </h1>
+            </div>
+            <TaskList
+              items={items}
+              onToggleTask={handleToggleTask}
+              onUpdate={handleTaskUpdated}
+              availableTopics={availableTopics}
+            />
+          </div>
+        </div>
       </div>
-      <div className="m-4 h-fit w-fit rounded-xl bg-zinc-700 p-4 text-center">
+      <div className="m-4 hidden h-fit w-fit rounded-xl bg-zinc-700 p-4 text-center">
         <h1 className="mb-4 text-3xl font-bold text-zinc-300">Add Task</h1>
         <TaskForm userId={Number(id)} onTaskCreated={handleTaskCreated} />
       </div>
