@@ -122,7 +122,7 @@ export function TaskItem({
     /* Item Display */
   }
   return (
-    <div className="task flex h-fit w-full max-w-96 flex-col rounded-lg bg-slate-400 p-3 text-slate-300">
+    <div className="task flex h-fit w-full max-w-96 flex-col rounded-lg bg-slate-400 p-5 text-slate-300">
       <div className="task-title-container mb-3 flex w-full flex-row items-center justify-start text-slate-200 hover:text-slate-100">
         {/* Task Name and Completion */}
         <input

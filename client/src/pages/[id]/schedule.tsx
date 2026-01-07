@@ -82,7 +82,7 @@ function Schedule() {
     to be displayed. Sets the timetableTasksProps State variable once finished.
     */
     async function fetchTasks() {
-      const API_URL = "http://localhost:8000/api/planner/task/";
+      const API_URL = "http://localhost:8000/api/planner/tasks/";
       try {
         const response = await fetch(API_URL);
         if (!response.ok) {
