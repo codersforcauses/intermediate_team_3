@@ -54,7 +54,9 @@ const CountdownTimer = () => {
   useEffect(() => {
     async function fetchTask() {
       try {
-        const response = await fetch("http://localhost:8000/api/planner/task/");
+        const response = await fetch(
+          "http://localhost:8000/api/planner/tasks/",
+        );
         if (!response.ok) {
           throw new Error(`Response status: ${response.status}`);
         }
