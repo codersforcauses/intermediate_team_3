@@ -19,10 +19,10 @@ export function resizeAndPositionTimeIndicator() {
     ?.getBoundingClientRect();
   if (separator_rect == undefined) return;
 
-  const barrier_rect = document
-    .getElementById("timetable-barrier")
+  const content_rect = document
+    .getElementById("timetable-content")
     ?.getBoundingClientRect();
-  if (barrier_rect == undefined) return;
+  if (content_rect == undefined) return;
 
   const visible = getVisibleTimetableRect();
   if (visible == undefined) return;
@@ -35,8 +35,8 @@ export function resizeAndPositionTimeIndicator() {
   if (time_top == undefined) return;
 
   time_indicator.style.left =
-    visible.left - separator_rect.width - barrier_rect.left + "px";
-  time_indicator.style.top = time_top - barrier_rect.top + "px";
+    visible.left - separator_rect.width - content_rect.left + "px";
+  time_indicator.style.top = time_top - content_rect.top + "px";
   time_indicator.style.width = visible.width + separator_rect.width + "px";
 
   const now_label_rect = now_label.getBoundingClientRect();
@@ -46,8 +46,8 @@ export function resizeAndPositionTimeIndicator() {
     visible.left - now_label_rect.width - separator_rect.width;
   const now_label_top = time_top - now_label_rect.height / 2;
 
-  now_label.style.left = now_label_left - barrier_rect.left + "px";
-  now_label.style.top = now_label_top - barrier_rect.top + "px";
+  now_label.style.left = now_label_left - content_rect.left + "px";
+  now_label.style.top = now_label_top - content_rect.top + "px";
 }
 
 /*
@@ -61,13 +61,13 @@ function TimeIndicator() {
     <>
       <div
         id="time-indicator-label"
-        className="absolute z-[75] h-fit w-fit rounded-full bg-slate-400 p-1 pl-2 pr-2"
+        className="absolute z-[100] h-fit w-fit rounded-full bg-slate-400 p-1 pl-2 pr-2"
       >
         <p className="text-slate-100">Now</p>
       </div>
       <div
         id="time-indicator"
-        className="absolute z-[75] min-h-[2px] bg-slate-200 opacity-75"
+        className="absolute z-[100] min-h-[2px] bg-slate-200 opacity-75"
       ></div>
     </>
   );

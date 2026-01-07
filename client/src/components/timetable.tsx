@@ -14,7 +14,7 @@ import TimetableTask, {
 
 /*
 NOTES: 
-- Should rename timetable-barrier to timetable-content to be more descriptive.
+- Should rename timetable-content to timetable-content to be more descriptive.
 - Should use element.parentElement for position adjusting for more clarity.
 */
 
@@ -23,13 +23,13 @@ Returns a rect {left, right, top, bottom, width, height} of the visible area of
 the timetable where timetable tasks are to be rendered.
 
 Visible area is the area: 
-- Within timetable-barrier's bounding client rect
+- Within timetable-content's bounding client rect
 - Right of timetable-separator (right of time labels)
 - Below time-header(s))
 
 Returns nothing if any of the required elements are not found (that is, elements
-with id: time-header, timetable-barrier, timetable-separator, and 
-timetable-barrier).
+with id: time-header, timetable-content, timetable-separator, and 
+timetable-content).
 */
 export function getVisibleTimetableRect() {
   const time_header = document.getElementById("Time-Header");
@@ -40,9 +40,9 @@ export function getVisibleTimetableRect() {
   if (time_labels == null) return;
   const time_labels_rect = time_labels.getBoundingClientRect();
 
-  const timetable_barrier = document.getElementById("timetable-barrier");
-  if (timetable_barrier == null) return;
-  const timetable_barrier_rect = timetable_barrier.getBoundingClientRect();
+  const timetable_content = document.getElementById("timetable-content");
+  if (timetable_content == null) return;
+  const timetable_content_rect = timetable_content.getBoundingClientRect();
 
   const timetable_separator = document.getElementById("timetable-separator");
   if (timetable_separator == null) return;
@@ -50,9 +50,9 @@ export function getVisibleTimetableRect() {
 
   const rect = {
     left: time_labels_rect.right + timetable_separator_rect.width,
-    right: timetable_barrier_rect.left + timetable_barrier.clientWidth,
+    right: timetable_content_rect.left + timetable_content.clientWidth,
     top: time_header_rect.bottom,
-    bottom: timetable_barrier_rect.top + timetable_barrier.clientHeight,
+    bottom: timetable_content_rect.top + timetable_content.clientHeight,
     width: 0,
     height: 0,
   };
@@ -104,21 +104,21 @@ export function getDayLeftPosition(day: string) {
 
 /*
 Sync the timetable-foreground element's position and size with the 
-timetable-barrier element. Ensures foreground elements inhabit the same area
+timetable-content element. Ensures foreground elements inhabit the same area
 as the background elements.
 */
 function resizeAndPositionTimetableForeground() {
   const foreground = document.getElementById("timetable-foreground");
   if (foreground == null) return;
 
-  const barrier = document.getElementById("timetable-barrier");
-  if (barrier == null) return;
-  const barrier_rect = barrier.getBoundingClientRect();
+  const content = document.getElementById("timetable-content");
+  if (content == null) return;
+  const content_rect = content.getBoundingClientRect();
 
-  foreground.style.top = barrier_rect.top + "px";
-  foreground.style.left = barrier_rect.left + "px";
-  foreground.style.width = barrier.clientWidth + "px";
-  foreground.style.height = barrier.clientHeight + "px";
+  foreground.style.top = content_rect.top + "px";
+  foreground.style.left = content_rect.left + "px";
+  foreground.style.width = content.clientWidth + "px";
+  foreground.style.height = content.clientHeight + "px";
 }
 
 /*
@@ -130,9 +130,9 @@ function resizeAndPositionTimetableHeaders() {
   if (timetable_headers == null) return;
   const headers = timetable_headers.children;
 
-  const barrier = document.getElementById("timetable-barrier");
-  if (barrier == null) return;
-  const barrier_rect = barrier.getBoundingClientRect();
+  const content = document.getElementById("timetable-content");
+  if (content == null) return;
+  const content_rect = content.getBoundingClientRect();
 
   for (let i = 0; i < headers.length; i++) {
     const header_id = headers[i].id;
@@ -145,7 +145,7 @@ function resizeAndPositionTimetableHeaders() {
     const col_rect = col.getBoundingClientRect();
 
     header.style.top = "0px";
-    header.style.left = col_rect.left - barrier_rect.left + "px";
+    header.style.left = col_rect.left - content_rect.left + "px";
     header.style.width = col_rect.width + "px";
   }
 
@@ -167,11 +167,11 @@ function resizeAndPositionTimetableTimeLabels() {
   if (time_col == null) return;
   const time_col_rect = time_col.getBoundingClientRect();
 
-  const timetable_barrier = document.getElementById("timetable-barrier");
-  if (timetable_barrier == null) return;
-  const barrier_rect = timetable_barrier.getBoundingClientRect();
+  const timetable_content = document.getElementById("timetable-content");
+  if (timetable_content == null) return;
+  const content_rect = timetable_content.getBoundingClientRect();
 
-  time_labels.style.top = time_col_rect.top - barrier_rect.top + "px";
+  time_labels.style.top = time_col_rect.top - content_rect.top + "px";
   time_labels.style.left = "0px";
 
   time_labels.style.width = time_col_rect.width + "px";
@@ -196,13 +196,13 @@ function resizeAndPositionTimetableSeparator() {
   if (time_header == null) return;
   const header_rect = time_header.getBoundingClientRect();
 
-  const barrier_rect = document
-    .getElementById("timetable-barrier")
+  const content_rect = document
+    .getElementById("timetable-content")
     ?.getBoundingClientRect();
-  if (barrier_rect == undefined) return;
+  if (content_rect == undefined) return;
 
-  separator.style.top = header_rect.top - barrier_rect.top + "px";
-  separator.style.left = col_rect.right - barrier_rect.left + "px";
+  separator.style.top = header_rect.top - content_rect.top + "px";
+  separator.style.left = col_rect.right - content_rect.left + "px";
   separator.style.height = col_rect.height + "px";
 }
 
@@ -215,16 +215,16 @@ function resizeAndPositionTimetableTaskArea() {
   const task_container = document.getElementById("timetable-tasks");
   if (task_container == null) return;
 
-  const barrier_rect = document
-    .getElementById("timetable-barrier")
+  const content_rect = document
+    .getElementById("timetable-content")
     ?.getBoundingClientRect();
-  if (barrier_rect == undefined) return;
+  if (content_rect == undefined) return;
 
   const visible = getVisibleTimetableRect();
   if (visible == undefined) return;
 
-  task_container.style.top = visible.top - barrier_rect.top + "px";
-  task_container.style.left = visible.left - barrier_rect.left + "px";
+  task_container.style.top = visible.top - content_rect.top + "px";
+  task_container.style.left = visible.left - content_rect.left + "px";
   task_container.style.width = visible.width + "px";
   task_container.style.height = visible.height + "px";
 }
@@ -244,7 +244,7 @@ export function resizeAndPositionTimetableElements() {
 }
 
 /*
-Sets the vertical scroll of the timetable-barrier to make the current time
+Sets the vertical scroll of the timetable-content to make the current time
 visible.
 
 @param align: An optional string argument indicating where the now position
@@ -253,9 +253,9 @@ sets the now position to the center of the visible area, can additionally be
 specified "top" or "bottom".
 */
 export function scrollToCurrentTime(align?: string) {
-  const timetable_barrier = document.getElementById("timetable-barrier");
-  if (timetable_barrier == null) return;
-  const barrier_rect = timetable_barrier.getBoundingClientRect();
+  const timetable_content = document.getElementById("timetable-content");
+  if (timetable_content == null) return;
+  const content_rect = timetable_content.getBoundingClientRect();
 
   const visible = getVisibleTimetableRect();
   if (visible == undefined) return;
@@ -270,14 +270,14 @@ export function scrollToCurrentTime(align?: string) {
   let target_top;
   if (align === "top") target_top = visible.top;
   else if (align === "bottom") target_top = visible.bottom;
-  else target_top = barrier_rect.top + barrier_rect.height / 2;
+  else target_top = content_rect.top + content_rect.height / 2;
 
   const scroll_amount = now_top - target_top;
-  timetable_barrier.scrollTop += scroll_amount;
+  timetable_content.scrollTop += scroll_amount;
 }
 
 /*
-Sets the horizontal scroll position of the timetable-barrier to display the 
+Sets the horizontal scroll position of the timetable-content to display the 
 column of the current day positioned in the center/left/right specified by
 align argument.
 
@@ -287,8 +287,8 @@ of the visible timetable area. By default center, otherwise can be specified
 "left" or "right".
 */
 export function scrollToCurrentDay(align?: string) {
-  const timetable_barrier = document.getElementById("timetable-barrier");
-  if (timetable_barrier == null) return;
+  const timetable_content = document.getElementById("timetable-content");
+  if (timetable_content == null) return;
 
   const visible = getVisibleTimetableRect();
   if (visible == undefined) return;
@@ -322,11 +322,11 @@ export function scrollToCurrentDay(align?: string) {
   else target_left = visible.left + visible.width / 2 - row_width / 2;
 
   const scroll_amount = today_left - target_left;
-  timetable_barrier.scrollLeft += scroll_amount;
+  timetable_content.scrollLeft += scroll_amount;
 }
 
 /*
-Scrolls the vertical and horizonal scroll of timetable-barrier to position
+Scrolls the vertical and horizonal scroll of timetable-content to position
 the current time and current day within the visible area of the timetable.
 
 Calls scrollToCurrentTime and scrollToCurrentDay.
@@ -369,7 +369,7 @@ function Timetable({ timetable_tasks_props }: TimetableProps) {
       className="h-full w-full rounded-lg bg-slate-900 p-3"
     >
       <div
-        id="timetable-barrier"
+        id="timetable-content"
         className="h-full w-full overflow-auto overscroll-none"
         onScroll={resizeAndPositionTimetableElements}
       >
