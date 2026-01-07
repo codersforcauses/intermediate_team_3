@@ -13,11 +13,6 @@ import TimetableTask, {
 } from "@/components/timetable_task";
 
 /*
-NOTES: 
-- Should use element.parentElement for position adjusting for more clarity.
-*/
-
-/*
 Returns a rect {left, right, top, bottom, width, height} of the visible area of
 the timetable where timetable tasks are to be rendered.
 

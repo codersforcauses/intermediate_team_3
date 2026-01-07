@@ -46,8 +46,11 @@ export function resizeAndPositionTimeIndicator() {
     visible.left - now_label_rect.width - separator_rect.width;
   const now_label_top = time_top - now_label_rect.height / 2;
 
-  now_label.style.left = now_label_left - content_rect.left + "px";
-  now_label.style.top = now_label_top - content_rect.top + "px";
+  const parent_rect = time_indicator.parentElement?.getBoundingClientRect();
+  if (parent_rect == undefined) return;
+
+  now_label.style.left = now_label_left - parent_rect.left + "px";
+  now_label.style.top = now_label_top - parent_rect.top + "px";
 }
 
 /*
