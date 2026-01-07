@@ -55,27 +55,24 @@ export function resizeAndPositionTimetableTask(task: HTMLElement) {
   if (task_data == null) return;
   const { day, hour, duration_hours, start_offset_hours } = task_data;
 
-  const visible = getVisibleTimetableRect();
-  if (visible == null) return;
+  const col_rect = document.getElementById(day)?.getBoundingClientRect();
+  if (col_rect == undefined) return;
 
-  const col = document.getElementById(day);
-  if (col == null) return;
-  const col_rect = col.getBoundingClientRect();
-
-  const row = document.getElementById(hour);
-  if (row == null) return;
-  const row_rect = row.getBoundingClientRect();
+  const row_rect = document.getElementById(hour)?.getBoundingClientRect();
+  if (row_rect == undefined) return;
 
   const one_hour_height = row_rect.height;
   const duration_height = one_hour_height * duration_hours;
 
   const hours = Number(hour.substring(0, 2));
-
   const time_top = getTimeTopPosition(hours, start_offset_hours * 60);
   if (time_top == undefined) return;
 
-  task.style.left = col_rect.left - visible.left + "px";
-  task.style.top = time_top - visible.top + "px";
+  const parent_rect = task.parentElement?.getBoundingClientRect();
+  if (parent_rect == undefined) return;
+
+  task.style.left = col_rect.left - parent_rect.left + "px";
+  task.style.top = time_top - parent_rect.top + "px";
   task.style.width = row_rect.width + "px";
   task.style.height = duration_height + "px";
 }
@@ -128,8 +125,11 @@ function resizeAndPositionTimetableTaskTooltip(tooltip: HTMLElement) {
     top = visible.bottom - tooltip_rect.height;
   }
 
-  tooltip.style.left = left - visible.left + "px";
-  tooltip.style.top = top - visible.top + "px";
+  const parent_rect = tooltip.parentElement?.getBoundingClientRect();
+  if (parent_rect == undefined) return;
+
+  tooltip.style.left = left - parent_rect.left + "px";
+  tooltip.style.top = top - parent_rect.top + "px";
   tooltip.style.width = width + "px";
   tooltip.style.height = height + "px";
 }
@@ -319,7 +319,7 @@ function TimetableTask({
       </div>
       <div
         id={id + "-tooltip"}
-        className="timetable-task-tooltip pointer-events-auto absolute z-[100] max-w-64 rounded-lg bg-slate-800 p-3"
+        className="timetable-task-tooltip pointer-events-auto absolute z-[150] max-w-64 rounded-lg bg-slate-800 p-3"
         style={{ display: "none" }}
         onMouseOver={mouseOverHandler}
         onMouseOut={mouseOutHandler}
@@ -328,7 +328,7 @@ function TimetableTask({
           {tooltip_props.map((props) => (
             <div
               key={id + "-tooltip-" + props.name}
-              className="z-[75] h-fit w-full rounded-lg bg-slate-400 p-3 text-slate-100"
+              className="h-fit w-full rounded-lg bg-slate-400 p-3 text-slate-100"
             >
               <TimetableTaskContent {...props} time_display="both" />
             </div>

@@ -72,11 +72,11 @@ have text "HH:MM" for time time they represent. Already has sticky set.
 export function TimetableTimeLabelsColumn() {
   return (
     <div
-      id="Time-Labels"
+      id="timetable-time-labels"
       className="timetable-column absolute flex flex-col bg-slate-500"
     >
       <TimetableSlot
-        time="time-header"
+        time="time-background-header"
         label="Time"
         header={true}
         time_label={true}

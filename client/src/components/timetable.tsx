@@ -14,7 +14,6 @@ import TimetableTask, {
 
 /*
 NOTES: 
-- Should rename timetable-content to timetable-content to be more descriptive.
 - Should use element.parentElement for position adjusting for more clarity.
 */
 
@@ -25,18 +24,18 @@ the timetable where timetable tasks are to be rendered.
 Visible area is the area: 
 - Within timetable-content's bounding client rect
 - Right of timetable-separator (right of time labels)
-- Below time-header(s))
+- Below Time-header(s))
 
 Returns nothing if any of the required elements are not found (that is, elements
-with id: time-header, timetable-content, timetable-separator, and 
+with id: Time-header, timetable-content, timetable-separator, and 
 timetable-content).
 */
 export function getVisibleTimetableRect() {
-  const time_header = document.getElementById("Time-Header");
+  const time_header = document.getElementById("Time-header");
   if (time_header == null) return;
   const time_header_rect = time_header.getBoundingClientRect();
 
-  const time_labels = document.getElementById("Time-Labels");
+  const time_labels = document.getElementById("timetable-time-labels");
   if (time_labels == null) return;
   const time_labels_rect = time_labels.getBoundingClientRect();
 
@@ -130,28 +129,38 @@ function resizeAndPositionTimetableHeaders() {
   if (timetable_headers == null) return;
   const headers = timetable_headers.children;
 
-  const content = document.getElementById("timetable-content");
-  if (content == null) return;
-  const content_rect = content.getBoundingClientRect();
+  const time_header = document.getElementById("Time-header");
+  if (time_header == null) return;
+
+  const content_rect = document
+    .getElementById("timetable-content")
+    ?.getBoundingClientRect();
+  if (content_rect == undefined) return;
+
+  timetable_headers.style.width = content_rect.width + "px";
+  timetable_headers.style.height =
+    time_header.getBoundingClientRect().height + "px";
 
   for (let i = 0; i < headers.length; i++) {
     const header_id = headers[i].id;
     const header = document.getElementById(header_id);
-    if (header == null) return;
+    if (header == null) continue;
 
     const col_id = header.id.slice(0, -"-Header".length);
     const col = document.getElementById(col_id);
-    if (col == null) return;
+    if (col == null) continue;
     const col_rect = col.getBoundingClientRect();
 
+    const parent_rect = header.parentElement?.getBoundingClientRect();
+    if (parent_rect == undefined) continue;
+
     header.style.top = "0px";
-    header.style.left = col_rect.left - content_rect.left + "px";
+    header.style.left = col_rect.left - parent_rect.left + "px";
     header.style.width = col_rect.width + "px";
   }
 
-  const time_header = document.getElementById("Time-Header");
-  if (time_header == null) return;
   time_header.style.left = "0px";
+  time_header.style.top = "0px";
   time_header.style.zIndex = "1000";
 }
 
@@ -160,18 +169,17 @@ Sync the TimeLabels column top position with the underlying Time column and set
 the left position to 0px.
 */
 function resizeAndPositionTimetableTimeLabels() {
-  const time_labels = document.getElementById("Time-Labels");
+  const time_labels = document.getElementById("timetable-time-labels");
   if (time_labels == null) return;
 
   const time_col = document.getElementById("Time");
   if (time_col == null) return;
   const time_col_rect = time_col.getBoundingClientRect();
 
-  const timetable_content = document.getElementById("timetable-content");
-  if (timetable_content == null) return;
-  const content_rect = timetable_content.getBoundingClientRect();
+  const parent_rect = time_labels.parentElement?.getBoundingClientRect();
+  if (parent_rect == undefined) return;
 
-  time_labels.style.top = time_col_rect.top - content_rect.top + "px";
+  time_labels.style.top = time_col_rect.top - parent_rect.top + "px";
   time_labels.style.left = "0px";
 
   time_labels.style.width = time_col_rect.width + "px";
@@ -188,21 +196,19 @@ function resizeAndPositionTimetableSeparator() {
   const separator = document.getElementById("timetable-separator");
   if (separator == null) return;
 
-  const time_col = document.getElementById("Time-Labels");
+  const time_col = document.getElementById("timetable-time-labels");
   if (time_col == null) return;
   const col_rect = time_col.getBoundingClientRect();
 
-  const time_header = document.getElementById("Time-Header");
+  const time_header = document.getElementById("Time-header");
   if (time_header == null) return;
   const header_rect = time_header.getBoundingClientRect();
 
-  const content_rect = document
-    .getElementById("timetable-content")
-    ?.getBoundingClientRect();
-  if (content_rect == undefined) return;
+  const parent_rect = separator.parentElement?.getBoundingClientRect();
+  if (parent_rect == undefined) return;
 
-  separator.style.top = header_rect.top - content_rect.top + "px";
-  separator.style.left = col_rect.right - content_rect.left + "px";
+  separator.style.top = header_rect.top - parent_rect.top + "px";
+  separator.style.left = col_rect.right - parent_rect.left + "px";
   separator.style.height = col_rect.height + "px";
 }
 
@@ -215,16 +221,14 @@ function resizeAndPositionTimetableTaskArea() {
   const task_container = document.getElementById("timetable-tasks");
   if (task_container == null) return;
 
-  const content_rect = document
-    .getElementById("timetable-content")
-    ?.getBoundingClientRect();
-  if (content_rect == undefined) return;
+  const parent_rect = task_container.parentElement?.getBoundingClientRect();
+  if (parent_rect == undefined) return;
 
   const visible = getVisibleTimetableRect();
   if (visible == undefined) return;
 
-  task_container.style.top = visible.top - content_rect.top + "px";
-  task_container.style.left = visible.left - content_rect.left + "px";
+  task_container.style.top = visible.top - parent_rect.top + "px";
+  task_container.style.left = visible.left - parent_rect.left + "px";
   task_container.style.width = visible.width + "px";
   task_container.style.height = visible.height + "px";
 }
@@ -296,7 +300,7 @@ export function scrollToCurrentDay(align?: string) {
   const timetable = document.getElementById("timetable-background");
   if (timetable == null) return;
 
-  const time_header = document.getElementById("Time-Header");
+  const time_header = document.getElementById("Time-header");
   if (time_header == null) return;
   const time_header_width = time_header.getBoundingClientRect().width;
   const row_width = time_header_width; // easier to read later
@@ -390,7 +394,10 @@ function Timetable({ timetable_tasks_props }: TimetableProps) {
           id="timetable-foreground"
           className="pointer-events-none absolute overflow-hidden"
         >
-          <div id="timetable-headers">
+          <div
+            id="timetable-headers"
+            className="absolute left-0 top-0 z-[200] bg-slate-900"
+          >
             {[
               "Time",
               "Monday",
@@ -407,7 +414,7 @@ function Timetable({ timetable_tasks_props }: TimetableProps) {
           <TimetableTimeLabelsColumn />
           <div
             id="timetable-separator"
-            className="absolute z-[100] w-[4px] bg-slate-900"
+            className="absolute z-[250] w-[4px] bg-slate-900"
           ></div>
           <div
             id="timetable-tasks"

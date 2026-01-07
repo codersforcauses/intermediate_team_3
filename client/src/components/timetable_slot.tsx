@@ -70,8 +70,8 @@ export default TimetableSlot;
 export function TimetableHeader({ label }: TimetableSlotProps) {
   return (
     <div
-      id={label + "-Header"}
-      className="timetable-header absolute z-[100] flex min-h-16 min-w-32 items-center justify-center border-b-2 border-b-slate-900 bg-slate-800"
+      id={label + "-header"}
+      className="timetable-header absolute z-[200] flex min-h-16 min-w-32 items-center justify-center border-b-2 border-b-slate-900 bg-slate-800"
     >
       <p className="text-xl font-semibold text-slate-400">{label}</p>
     </div>
