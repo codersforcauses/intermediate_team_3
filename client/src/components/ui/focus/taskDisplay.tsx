@@ -21,7 +21,7 @@ export default function TaskDisplay({
   time: Time;
 }) {
   return (
-    <div className="w-100 m-3 flex flex-auto flex-col rounded-3xl bg-indigo-400 p-4 px-3 shadow-md shadow-black/40">
+    <div className="px-auto m-3 flex w-80 flex-auto flex-col rounded-3xl bg-indigo-400 p-4 shadow-md shadow-black/40">
       <div className="flex flex-auto flex-row gap-4 px-3">
         <div>{task.name}:</div>
         <div>

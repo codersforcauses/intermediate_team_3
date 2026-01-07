@@ -77,21 +77,28 @@ const CountdownTimer = () => {
     const d = new Date();
     const cur_time =
       d.getHours() * 60 * 60 + d.getMinutes() * 60 + d.getSeconds();
+    const cur_d = d.getDay();
 
     // filter out finished tasks
     upcomingTimes = ts.filter((time) => {
-      const end_time = serializeTime(time.end_time);
-      return end_time > cur_time;
+      return !(cur_d == time.day && serializeTime(time.end_time) <= cur_time);
     });
 
     // sort by start time
     upcomingTimes = upcomingTimes.sort((a, b) => {
-      return serializeTime(a.start_time) - serializeTime(b.start_time);
+      return (
+        serializeTime(a.start_time) +
+        ((a.day + 8 - cur_d) % 8) * 24 * 60 * 60 -
+        (serializeTime(b.start_time) + ((b.day + 8 - cur_d) % 8) * 24 * 60 * 60)
+      );
     });
 
     // logic for if there are no tasks currently or at all
     if (upcomingTimes.length > 0) {
-      if (serializeTime(upcomingTimes[0].start_time) < cur_time) {
+      if (
+        serializeTime(upcomingTimes[0].start_time) < cur_time &&
+        upcomingTimes[0].day == cur_d
+      ) {
         setCurrentTime(upcomingTimes[0]);
       } else {
         setCurrentTime(null);
@@ -109,14 +116,6 @@ const CountdownTimer = () => {
     }
   }
 
-  // check for tasks
-  // direct to make task page if no tasks
-  // refresh timer to check for tasks
-  // play timer if there is a current task
-
-  // lonk in button
-  // lonk out
-
   return (
     <div className="h-screen bg-slate-800 p-8 font-inter">
       <div className="flex flex-col items-center justify-start rounded-xl bg-slate-700 p-8 font-mono text-white shadow-inner shadow-slate-900">
@@ -125,23 +124,19 @@ const CountdownTimer = () => {
           <div className="flex flex-col">
             <div>
               {currentTime ? (
-                <div>
-                  <TimeDisplay
-                    statusSignal={onTaskEnd}
-                    time={currentTime.end_time}
-                    current={true}
-                  />
-                </div>
+                <TimeDisplay
+                  statusSignal={onTaskEnd}
+                  time={currentTime.end_time}
+                  current={true}
+                />
               ) : (
                 <>
                   {nextTime ? (
-                    <div>
-                      <TimeDisplay
-                        statusSignal={onTaskEnd}
-                        time={nextTime.start_time}
-                        current={false}
-                      />
-                    </div>
+                    <TimeDisplay
+                      statusSignal={onTaskEnd}
+                      time={nextTime.start_time}
+                      current={false}
+                    />
                   ) : (
                     <></>
                   )}
@@ -156,17 +151,17 @@ const CountdownTimer = () => {
               )}
             </div>
           </div>
-          <div className="justify-top flex flex-col pl-8">
-            <div className="p-4 font-inter text-xl font-semibold">upcoming</div>
-            <div>
-              {times.length > 0 ? (
-                <>
-                  <UpcomingTasks tasks={tasks} times={times} />
-                </>
-              ) : (
-                <></>
-              )}
-            </div>
+          <div>
+            {times.length > 1 ? (
+              <div className="justify-top flex flex-col pl-8">
+                <div className="p-4 font-inter text-2xl font-semibold">
+                  upcoming
+                </div>
+                <UpcomingTasks tasks={tasks} times={times} />
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         <div className="p-8">

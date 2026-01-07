@@ -35,19 +35,20 @@ export default function UpcomingTasks({ tasks, times }: Tasks) {
       const d = new Date();
       const cur_time =
         d.getHours() * 60 * 60 + d.getMinutes() * 60 + d.getSeconds();
-
+      const cur_d = d.getDay();
       let ut = times.filter(
         (time) =>
-          serializeTime(time.start_time) >= cur_time ||
-          serializeTime(time.end_time) >= cur_time,
+          !(cur_d == time.day && serializeTime(time.end_time) <= cur_time),
       );
 
-      ut = ut
-        .sort((a, b) => {
-          return serializeTime(a.start_time) - serializeTime(b.start_time);
-        })
-        .slice(1);
-
+      ut = ut.sort((a, b) => {
+        return (
+          serializeTime(a.start_time) +
+          ((a.day + 8 - cur_d) % 8) * 24 * 60 * 60 -
+          (serializeTime(b.start_time) +
+            ((b.day + 8 - cur_d) % 8) * 24 * 60 * 60)
+        );
+      });
       setUpcomingTimes(ut);
     }
 
