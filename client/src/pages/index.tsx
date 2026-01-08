@@ -1,36 +1,18 @@
-import { Inter as FontSans } from "next/font/google";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-import { usePings } from "@/hooks/pings";
-import { cn } from "@/lib/utils";
-
-import { Button } from "../components/ui/button";
-
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
-export default function Home() {
-  const [clicked, setClicked] = useState(false);
-  const { data, isLoading } = usePings({
-    enabled: clicked,
-  });
-
+export default function Landing() {
+  const router = useRouter();
+  function ToSignIn() {
+    router.push("/register");
+  }
   return (
-    <main
-      className={cn(
-        "flex min-h-screen flex-col items-center gap-4 p-24 font-sans",
-        fontSans.variable,
-      )}
-    >
-      <h1 className="text-3xl text-primary">wTest title</h1>
-      <Button onClick={() => setClicked(true)}>
-        {isLoading ? "Loading" : "Ping"}
-      </Button>
-      <p>
-        Response from server: <span>{data as string}</span>
-      </p>
-    </main>
+    <div className="flex min-h-screen flex-col justify-center bg-gray-900 px-6 py-12 lg:px-8">
+      <button
+        onClick={ToSignIn}
+        className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+      >
+        Sign Up{" "}
+      </button>
+    </div>
   );
 }
