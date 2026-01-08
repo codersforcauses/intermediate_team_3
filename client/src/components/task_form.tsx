@@ -96,11 +96,11 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
       className="task-form flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-slate-400 p-4 text-slate-200"
     >
       <input
-        className="title-input w-full rounded-lg bg-slate-400 px-3 py-1 text-3xl font-bold text-slate-100 brightness-90 hover:brightness-110"
+        className="title-input w-full rounded-lg bg-slate-400 px-3 py-1 text-3xl font-bold text-slate-100 brightness-90 placeholder:text-slate-300 hover:brightness-110"
         type="text"
         value={taskName}
         onChange={(e) => setTaskName(e.target.value)}
-        placeholder="Task Name"
+        placeholder="Task name"
         required
       />
       <div className="description-wrapper flex w-full flex-col items-center">
@@ -108,11 +108,11 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
           Description
         </h1>
         <textarea
-          className="description-input w-full rounded-lg bg-slate-400 p-2 brightness-90 hover:brightness-110"
+          className="description-input w-full rounded-lg bg-slate-400 p-2 brightness-90 placeholder:text-slate-300 hover:brightness-110"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={7}
-          placeholder="Description"
+          placeholder="Add description here..."
         />
       </div>
       <TopicInput
