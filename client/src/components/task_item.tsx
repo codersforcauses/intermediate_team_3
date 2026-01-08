@@ -122,8 +122,8 @@ export function TaskItem({
     /* Item Display */
   }
   return (
-    <div className="task flex h-fit w-full max-w-96 flex-col rounded-lg bg-slate-400 p-5 text-slate-300">
-      <div className="task-title-container mb-3 flex w-full flex-row items-center justify-start text-slate-200 hover:text-slate-100">
+    <div className="task flex h-fit w-full max-w-[28rem] flex-col gap-3 rounded-lg bg-slate-400 p-5 text-slate-300">
+      <div className="task-title-container flex w-full flex-row items-center justify-start text-3xl font-bold text-slate-200 hover:text-slate-100">
         {/* Task Name and Completion */}
         <input
           className="task-completion mr-3 accent-slate-300"
@@ -133,44 +133,37 @@ export function TaskItem({
         />
         {isEditing ? (
           <input
-            className="task-title-edit rounded border-2 bg-slate-500 p-1 text-slate-300"
+            className="task-title-edit w-full rounded-lg bg-slate-400 p-1 brightness-90 hover:brightness-110"
             value={draftName}
             onChange={(e) => setDraftName(e.target.value)}
           />
         ) : (
           <span
-            className={
-              "task-title text-3xl font-bold" +
-              (item.completed ? " line-through" : "")
-            }
+            className={"task-title" + (item.completed ? " line-through" : "")}
           >
             {item.name}
           </span>
         )}
       </div>
-      <div className="task-times-container">
-        {/* Task Times */}
-        <div className="flex flex-col items-start text-slate-300">
-          {isEditing ? (
-            <TimeInput times={draftTimes} setTimes={setDraftTimes} />
-          ) : item.times?.length > 0 ? (
-            item.times.map((time) => (
-              <div key={time.id} className="flex flex-row gap-3">
-                <DayTag day={formatDay(time.day)} />
-                <TimeTag
-                  start_time={time.start_time}
-                  end_time={time.end_time}
-                />
-              </div>
-            ))
-          ) : (
-            "No time set"
-          )}
-        </div>
+
+      {/* Task Times */}
+      <div className="task-times-container flex flex-col items-start">
+        {isEditing ? (
+          <TimeInput times={draftTimes} setTimes={setDraftTimes} />
+        ) : item.times?.length > 0 ? (
+          item.times.map((time) => (
+            <div key={time.id} className="flex flex-row gap-3">
+              <DayTag day={formatDay(time.day)} />
+              <TimeTag start_time={time.start_time} end_time={time.end_time} />
+            </div>
+          ))
+        ) : (
+          "No time set"
+        )}
       </div>
 
       {/* Task Topics */}
-      <div className="task-topic-tags mt-2 flex flex-row flex-wrap gap-1 text-slate-200">
+      <div className="task-topic-tags flex flex-row flex-wrap gap-1 text-slate-200">
         {isEditing ? (
           <TopicInput
             availableTopics={availableTopics}
@@ -191,21 +184,24 @@ export function TaskItem({
       </div>
 
       {/* Task Description */}
-      <div className="task-description mt-2 text-justify text-slate-300 hover:text-slate-100">
+      <div
+        className="task-description max-h-[12rem] overflow-auto text-justify text-slate-300 hover:text-slate-100"
+        style={{ scrollbarWidth: "none" }}
+      >
         {isEditing ? (
           <textarea
             value={draftDescription}
             onChange={(e) => setDraftDescription(e.target.value)}
-            className="mt-2 w-full rounded border-2 bg-slate-600 p-1 text-slate-200"
+            className="w-full rounded-lg bg-slate-400 p-1 brightness-90 hover:brightness-110"
           />
-        ) : item.description ? (
-          <span className="block">{item.description}</span>
         ) : (
-          <span className="block italic">No description.</span>
+          <span className="block">
+            {item.description ? item.description : "No Description"}
+          </span>
         )}
       </div>
 
-      <div className="task-edit mt-2 flex gap-2">
+      <div className="task-edit flex gap-2">
         {isEditing ? (
           <>
             <button

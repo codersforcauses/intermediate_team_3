@@ -44,22 +44,17 @@ export function TaskList({
     );
   }
   return (
-    <div
-      className="task-list h-full w-full overflow-y-auto bg-slate-500 p-3"
-      style={{ scrollbarWidth: "none" }}
-    >
-      <ul className="space-y-3">
-        {items.map((item) => (
-          <li key={item.id}>
-            <TaskItem
-              item={item}
-              onToggle={onToggleTask}
-              onUpdate={onUpdate}
-              availableTopics={availableTopics}
-            />
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul className="task-list space-y-3">
+      {items.map((item) => (
+        <li key={item.id}>
+          <TaskItem
+            item={item}
+            onToggle={onToggleTask}
+            onUpdate={onUpdate}
+            availableTopics={availableTopics}
+          />
+        </li>
+      ))}
+    </ul>
   );
 }
