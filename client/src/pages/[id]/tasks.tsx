@@ -105,7 +105,7 @@ export default function TasksPage() {
 
   return (
     <div className="content-container min-w-screen flex h-[85vh] flex-row items-center justify-center bg-slate-950 p-3">
-      <div className="task-list-border h-full w-full rounded-lg bg-slate-800 p-3">
+      <div className="task-list-border h-full w-full rounded-lg bg-slate-900 p-3">
         <div className="task-list-container h-full w-full overflow-hidden">
           <div className="task-list-content flex h-full w-full flex-col items-center justify-center rounded-lg bg-slate-500 text-slate-200">
             <div className="task-list-top mb-3 h-[10%] w-full rounded-t-lg p-3">
