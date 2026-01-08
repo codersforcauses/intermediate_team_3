@@ -30,6 +30,7 @@ type ItemProps = {
   item: Item;
   onToggle?: (id: number) => void;
   onUpdate: (item: Item) => void;
+  onDelete: (id: number) => void;
   availableTopics: Topic[];
 };
 
@@ -41,6 +42,7 @@ export function TaskItem({
   item,
   onToggle,
   onUpdate,
+  onDelete,
   availableTopics,
 }: ItemProps) {
   {
@@ -210,6 +212,8 @@ export function TaskItem({
           </span>
         )}
       </div>
+
+      {/* Edit Button */}
       <div className="mt-2 flex gap-2">
         {isEditing ? (
           <>
@@ -220,6 +224,18 @@ export function TaskItem({
           </>
         ) : (
           <button onClick={startEdit}>Edit</button>
+        )}
+      </div>
+
+      {/* Delete Button */}
+      <div>
+        {!isEditing && (
+          <button
+            onClick={() => onDelete(item.id)}
+            className="mt-2 text-red-500"
+          >
+            Delete Task
+          </button>
         )}
       </div>
     </div>
