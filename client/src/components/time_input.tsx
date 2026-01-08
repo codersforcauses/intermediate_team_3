@@ -24,13 +24,13 @@ const daysOfWeek = [
 export function TimeInput({ times, setTimes }: TimeInputProps) {
   return (
     <div className="text-md flex w-full flex-col items-center justify-center gap-2">
-      <h1 className="time-input-title text-2xl hover:brightness-110">Times</h1>
+      <h1 className="time-input-title text-xl hover:brightness-110">Times</h1>
       {times.map((time, index) => (
         <div
           key={index}
-          className="time-input-wrapper flex w-full flex-row items-center justify-evenly gap-1 rounded-lg bg-slate-400 p-1 brightness-90"
+          className="time-input-wrapper flex w-full flex-row items-center justify-evenly gap-1 rounded-lg bg-slate-400 p-1 brightness-90 hover:brightness-95"
         >
-          <div className="day-select-wrapper flex flex-row items-center justify-center gap-1">
+          <div className="day-select-wrapper flex w-[20%] flex-row items-center justify-center gap-1">
             <div className="calendar-placeholder h-5 w-5 bg-slate-200"></div>
             <select
               className="day-select h-full rounded-lg bg-slate-400 p-1 text-center hover:brightness-110"
@@ -48,7 +48,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
               ))}
             </select>
           </div>
-          <div className="time-select-wrapper flex flex-row items-center justify-center gap-1">
+          <div className="time-select-wrapper flex w-[35%] flex-row items-center justify-center gap-1">
             <div className="clock-placeholder h-5 w-5 rounded-full bg-slate-200"></div>
             <div className="time-inputs-wrapper text-md flex flex-col">
               <input
@@ -73,7 +73,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
               />
             </div>
           </div>
-          <div className="repeat-input-wrapper flex flex-row gap-2 rounded-lg bg-slate-400 p-1 hover:brightness-110">
+          <div className="repeat-input-wrapper flex w-[25%] flex-row gap-2 rounded-lg bg-slate-400 p-1 hover:brightness-110">
             <span>Repeats?</span>
             <input
               className="repeat-input"

@@ -152,7 +152,10 @@ export function TaskItem({
           <TimeInput times={draftTimes} setTimes={setDraftTimes} />
         ) : item.times?.length > 0 ? (
           item.times.map((time) => (
-            <div key={time.id} className="flex flex-row gap-3">
+            <div
+              key={time.id}
+              className="day-time-tags flex w-full flex-row gap-3"
+            >
               <DayTag day={formatDay(time.day)} />
               <TimeTag start_time={time.start_time} end_time={time.end_time} />
             </div>
@@ -185,17 +188,23 @@ export function TaskItem({
 
       {/* Task Description */}
       <div
-        className="task-description max-h-[12rem] overflow-auto text-justify text-slate-300 hover:text-slate-100"
-        style={{ scrollbarWidth: "none" }}
+        className="task-description overflow-auto text-justify text-slate-300"
+        style={!isEditing ? { maxHeight: "12rem", scrollbarWidth: "thin" } : {}}
       >
         {isEditing ? (
-          <textarea
-            value={draftDescription}
-            onChange={(e) => setDraftDescription(e.target.value)}
-            className="w-full rounded-lg bg-slate-400 p-1 brightness-90 hover:brightness-110"
-          />
+          <div className="task-description-input-container flex flex-col items-center gap-2">
+            <h1 className="description-input-title text-xl hover:brightness-110">
+              Description
+            </h1>
+            <textarea
+              className="w-full rounded-lg bg-slate-400 p-1 brightness-90 hover:brightness-110"
+              value={draftDescription}
+              rows={7}
+              onChange={(e) => setDraftDescription(e.target.value)}
+            />
+          </div>
         ) : (
-          <span className="block">
+          <span className="block hover:brightness-110">
             {item.description ? item.description : "No Description"}
           </span>
         )}
@@ -203,26 +212,23 @@ export function TaskItem({
 
       <div className="task-edit flex gap-2">
         {isEditing ? (
-          <>
+          <div className="flex w-full flex-row justify-center text-lg">
             <button
-              className="text-slate-300 hover:text-slate-100"
+              className="rounded-full bg-slate-400 px-3 py-1 hover:brightness-110"
               onClick={saveEdit}
               disabled={saving}
             >
               Save
             </button>
             <button
-              className="text-slate-300 hover:text-slate-100"
+              className="rounded-full bg-slate-400 px-3 py-1 hover:brightness-110"
               onClick={cancelEdit}
             >
               Cancel
             </button>
-          </>
+          </div>
         ) : (
-          <button
-            className="text-slate-300 hover:text-slate-100"
-            onClick={startEdit}
-          >
+          <button className="hover:brightness-110" onClick={startEdit}>
             Edit
           </button>
         )}
