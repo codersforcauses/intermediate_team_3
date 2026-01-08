@@ -113,17 +113,22 @@ export default function TasksPage() {
                 My Tasks
               </h1>
             </div>
-            <div className="task-list-bottom flex h-[90%] w-full flex-row justify-center gap-3 rounded-b-lg p-3">
+            <div className="task-list-bottom flex h-[90%] w-full flex-row p-3">
               <div
-                className="task-list-wrapper flex w-full flex-row justify-center overflow-auto"
+                className="view-tasks-section flex h-full w-full flex-row justify-center overflow-auto"
                 style={{ scrollbarWidth: "none" }}
               >
-                <TaskList
-                  items={items}
-                  onToggleTask={handleToggleTask}
-                  onUpdate={handleTaskUpdated}
-                  availableTopics={availableTopics}
-                />
+                <div
+                  className="task-list-wrapper flex w-fit flex-row justify-center"
+                  style={{ scrollbarWidth: "none" }}
+                >
+                  <TaskList
+                    items={items}
+                    onToggleTask={handleToggleTask}
+                    onUpdate={handleTaskUpdated}
+                    availableTopics={availableTopics}
+                  />
+                </div>
               </div>
               <div className="add-task-section flex h-full w-full flex-col items-center">
                 <div className="add-task-container flex h-full flex-col items-center justify-start rounded-lg bg-slate-400 p-3">
