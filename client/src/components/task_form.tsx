@@ -1,4 +1,4 @@
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 import { TimeInput } from "@/components/time_input";
 import { TopicInput } from "@/components/topic_input";
@@ -93,34 +93,39 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto h-[79vh] w-full max-w-md space-y-4 overflow-y-auto rounded-xl bg-zinc-700 p-4"
+      className="task-form flex h-fit w-full flex-col items-center justify-center gap-2 rounded-lg bg-slate-400 p-4 text-slate-200"
     >
       <input
+        className="title-input w-full rounded-lg bg-slate-400 px-3 py-1 text-3xl font-bold text-slate-100 brightness-90 hover:brightness-110"
         type="text"
         value={taskName}
         onChange={(e) => setTaskName(e.target.value)}
         placeholder="Task Name"
-        className="w-full rounded border-2 bg-zinc-700 p-2 text-zinc-200"
         required
       />
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Description"
-        className="h-32 w-full resize-none rounded border-2 bg-zinc-700 p-2 text-zinc-200"
-      />
-      <TimeInput times={times} setTimes={setTimes} />
+      <div className="description-wrapper w-full">
+        <h1 className="description-input-title text-xl hover:brightness-110">
+          Description
+        </h1>
+        <textarea
+          className="description-input w-full rounded-lg bg-slate-400 p-2 brightness-90 hover:brightness-110"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={7}
+          placeholder="Description"
+        />
+      </div>
       <TopicInput
         availableTopics={availableTopics}
         topics={topics}
         setTopics={setTopics}
       />
-
+      <TimeInput times={times} setTimes={setTimes} />
       <button
+        className="w-fit rounded-lg border border-slate-300 bg-slate-400 px-3 py-1 text-xl brightness-110 hover:brightness-125"
         type="submit"
-        className="rounded border-2 border-zinc-200 bg-blue-600 px-4 py-2 text-zinc-200 hover:bg-blue-700"
       >
-        Add Task
+        Save
       </button>
     </form>
   );

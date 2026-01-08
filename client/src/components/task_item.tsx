@@ -122,8 +122,8 @@ export function TaskItem({
     /* Item Display */
   }
   return (
-    <div className="task flex h-fit w-full max-w-[28rem] flex-col gap-3 rounded-lg bg-slate-400 p-5 text-slate-300">
-      <div className="task-title-container flex w-full flex-row items-center justify-start text-3xl font-bold text-slate-200 hover:text-slate-100">
+    <div className="task flex h-fit w-full max-w-[28rem] flex-col gap-3 rounded-lg bg-slate-400 p-5 text-slate-200">
+      <div className="task-title-container flex w-full flex-row items-center justify-start text-3xl font-bold text-slate-100 hover:text-slate-100">
         {/* Task Name and Completion */}
         <input
           className="task-completion mr-3 accent-slate-300"
@@ -133,7 +133,7 @@ export function TaskItem({
         />
         {isEditing ? (
           <input
-            className="task-title-edit w-full rounded-lg bg-slate-400 p-1 brightness-90 hover:brightness-110"
+            className="task-title-edit w-full rounded-lg bg-slate-400 px-3 py-1 brightness-90 hover:brightness-110"
             value={draftName}
             onChange={(e) => setDraftName(e.target.value)}
           />
@@ -188,7 +188,7 @@ export function TaskItem({
 
       {/* Task Description */}
       <div
-        className="task-description overflow-auto text-justify text-slate-300"
+        className="task-description overflow-auto text-justify text-slate-200"
         style={!isEditing ? { maxHeight: "12rem", scrollbarWidth: "thin" } : {}}
       >
         {isEditing ? (

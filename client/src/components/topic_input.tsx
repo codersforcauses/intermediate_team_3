@@ -20,7 +20,7 @@ export function TopicInput({
   setTopics,
 }: TopicInputProps) {
   return (
-    <div className="topic-input flex w-full flex-col items-center justify-center gap-2 text-slate-300">
+    <div className="topic-input flex w-full flex-col items-center justify-center gap-2 text-slate-200">
       <h1 className="topic-input-title text-xl hover:brightness-110">Topics</h1>
       {/* Selected Topics Display */}
       <div className="topics-container flex w-full flex-col items-center justify-center gap-2">

@@ -127,8 +127,8 @@ export default function TasksPage() {
           </div>
         </div>
       </div>
-      <div className="m-4 hidden h-fit w-fit rounded-xl bg-zinc-700 p-4 text-center">
-        <h1 className="mb-4 text-3xl font-bold text-zinc-300">Add Task</h1>
+      <div className="h-full w-fit rounded-lg bg-slate-800 p-4 text-center">
+        <h1 className="text-3xl font-bold text-zinc-300">Add Task</h1>
         <TaskForm userId={Number(id)} onTaskCreated={handleTaskCreated} />
       </div>
     </div>
