@@ -105,42 +105,33 @@ export default function TasksPage() {
 
   return (
     <div className="content-container min-w-screen flex h-[85vh] flex-row items-center justify-center bg-slate-950 p-3">
-      <div className="task-list-border h-full w-full overflow-hidden rounded-lg bg-slate-800 p-3">
+      <div className="task-list-border h-full w-full rounded-lg bg-slate-800 p-3">
         <div className="task-list-container h-full w-full overflow-hidden">
           <div className="task-list-content flex h-full w-full flex-col items-center justify-center rounded-lg bg-slate-500 text-slate-200">
-            <div className="task-list-top h-[10%] w-full rounded-t-lg p-3">
+            <div className="task-list-top mb-3 h-[10%] w-full rounded-t-lg p-3">
               <h1 className="task-list-title border-b-2 border-b-slate-400 p-3 text-center text-3xl font-bold text-slate-100">
                 My Tasks
               </h1>
             </div>
-            <div className="task-list-bottom flex h-[90%] w-full flex-row p-3">
+            <div className="task-list-bottom flex h-[90%] w-full flex-row justify-center gap-6 p-3">
               <div
-                className="view-tasks-section flex h-full w-full flex-row justify-center overflow-auto"
-                style={{ scrollbarWidth: "none" }}
+                className="task-list-wrapper flex w-fit flex-row justify-center overflow-auto"
+                style={{ scrollbarWidth: "thin", scrollbarColor: "grey white" }}
               >
-                <div
-                  className="task-list-wrapper flex w-fit flex-row justify-center"
-                  style={{ scrollbarWidth: "none" }}
-                >
-                  <TaskList
-                    items={items}
-                    onToggleTask={handleToggleTask}
-                    onUpdate={handleTaskUpdated}
-                    availableTopics={availableTopics}
-                  />
-                </div>
+                <TaskList
+                  items={items}
+                  onToggleTask={handleToggleTask}
+                  onUpdate={handleTaskUpdated}
+                  availableTopics={availableTopics}
+                />
               </div>
-              <div className="add-task-section flex h-full w-full flex-col items-center">
-                <div className="add-task-container flex h-full flex-col items-center justify-start rounded-lg bg-slate-400 p-3">
-                  <h1 className="text-3xl font-bold text-slate-100">
-                    Add Task
-                  </h1>
-                  <div className="task-form-wrapper h-full overflow-auto">
-                    <TaskForm
-                      userId={Number(id)}
-                      onTaskCreated={handleTaskCreated}
-                    />
-                  </div>
+              <div className="add-task-container flex h-full flex-col items-center justify-start rounded-lg bg-slate-400 p-3">
+                <h1 className="text-3xl font-bold text-slate-100">Add Task</h1>
+                <div className="task-form-wrapper h-full overflow-auto">
+                  <TaskForm
+                    userId={Number(id)}
+                    onTaskCreated={handleTaskCreated}
+                  />
                 </div>
               </div>
             </div>
