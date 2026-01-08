@@ -93,7 +93,7 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="task-form flex h-fit w-full flex-col items-center justify-center gap-2 rounded-lg bg-slate-400 p-4 text-slate-200"
+      className="task-form flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-slate-400 p-4 text-slate-200"
     >
       <input
         className="title-input w-full rounded-lg bg-slate-400 px-3 py-1 text-3xl font-bold text-slate-100 brightness-90 hover:brightness-110"
@@ -103,7 +103,7 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
         placeholder="Task Name"
         required
       />
-      <div className="description-wrapper w-full">
+      <div className="description-wrapper flex w-full flex-col items-center">
         <h1 className="description-input-title text-xl hover:brightness-110">
           Description
         </h1>
