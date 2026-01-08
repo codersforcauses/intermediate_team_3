@@ -50,9 +50,9 @@ function TimeTag({ start_time, end_time, display }: TimeTagProps) {
     display,
   );
   return (
-    <div className="flex h-fit w-fit flex-row items-center justify-center rounded-full text-slate-300 hover:text-slate-100">
+    <div className="flex h-fit w-fit flex-row items-center justify-center gap-1 rounded-full">
       <div className="placeholder-clock aspect-1/1 h-5 w-5 rounded-[50] bg-slate-200"></div>
-      <p className="ml-1">{time_display_string}</p>
+      <p className="hover:brightness-110">{time_display_string}</p>
     </div>
   );
 }
@@ -65,9 +65,9 @@ interface DayTagProps {
 
 export function DayTag({ day }: DayTagProps) {
   return (
-    <div className="flex h-fit w-fit flex-row items-center justify-center rounded-full text-slate-300 hover:text-slate-100">
+    <div className="flex h-fit w-fit flex-row items-center justify-center gap-1 rounded-full">
       <div className="placeholder-calendar aspect-1/1/ h-5 w-5 bg-slate-200"></div>
-      <p className="ml-1">{day}</p>
+      <p className="hover:brightness-110">{day}</p>
     </div>
   );
 }

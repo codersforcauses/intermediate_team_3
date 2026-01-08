@@ -15,18 +15,12 @@ stored in color_hex.
 function TopicTag({ name, color_hex }: TopicTagProps) {
   const color_hex_code = "#" + color_hex.toString(16).padStart(6, "0");
   return (
-    <div
-      className={
-        "flex w-fit flex-row items-center overflow-hidden rounded-full bg-slate-500/50 p-1 pl-2 pr-2 text-sm text-slate-300 hover:text-slate-100"
-      }
-    >
+    <div className="topic-tag flex w-fit flex-row items-center overflow-hidden rounded-full bg-slate-500/50 p-1 pl-2 pr-2 text-sm text-slate-300 hover:brightness-110">
       <div
-        className="aspect-1/1 mr-1 min-h-2 min-w-2 rounded-full"
+        className="topic-tag-color aspect-1/1 mr-1 min-h-2 min-w-2 rounded-full"
         style={{ backgroundColor: color_hex_code }}
-      >
-        {" "}
-      </div>
-      <p className="truncate">{name}</p>
+      ></div>
+      <p className="topic-tag-text truncate">{name}</p>
     </div>
   );
 }

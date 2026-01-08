@@ -189,10 +189,10 @@ function TimetableTaskContent({
 }: TimetableTaskContentProps) {
   return (
     <div className="timetable-task-content h-full overflow-hidden">
-      <h1 className="mb-1 text-2xl font-bold text-slate-200 hover:text-slate-100">
+      <h1 className="mb-1 text-2xl font-bold text-slate-100 hover:brightness-110">
         {name}
       </h1>
-      <div className="time-tag-wrapper text-lg font-medium">
+      <div className="time-tag-wrapper text-lg font-medium text-slate-200">
         <TimeTag
           start_time={start_time}
           end_time={end_time}
@@ -209,7 +209,7 @@ function TimetableTaskContent({
         ))}
       </div>
       <div className="description mt-1 flex flex-col text-justify">
-        <p className="text-slate-300 hover:text-slate-100">{description}</p>
+        <p className="text-slate-300 hover:brightness-110">{description}</p>
       </div>
     </div>
   );
