@@ -274,8 +274,8 @@ function Schedule() {
   to run in an infinite loop. */
 
   return (
-    <div className="content-container min-w-screen flex h-[85vh] w-full flex-row bg-slate-950">
-      <div className="timetable-container h-[85vh] w-full p-3">
+    <div className="content-container min-w-screen min-h-screen flex w-full flex-row bg-slate-950">
+      <div className="timetable-container max-h-[90vh] w-full p-3">
         <Timetable timetable_tasks_props={timetableTasksProps} />
       </div>
     </div>

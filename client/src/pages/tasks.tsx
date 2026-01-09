@@ -30,7 +30,7 @@ interface Item {
 
 export default function TasksPage() {
   const router = useRouter();
-  const { id } = router.query;
+  const [userId, setUserId] = useState<number | null>(null);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
@@ -42,15 +42,37 @@ export default function TasksPage() {
   }
 
   useEffect(() => {
-    if (!id) return;
-
-    async function fetchTasks() {
+    async function fetchData() {
       try {
-        // Remove the query bit when authentication is added.
-        const response = await fetch(
-          `http://localhost:8000/api/planner/tasks/?user_id=${id}`,
+        const token = localStorage.getItem("access");
+        if (!token) {
+          router.push("/login"); //redirect to login if unauthorised
+          return;
+        }
+        const auth = await fetch( "http://localhost:8000/api/planner/protected/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
-        const data = await response.json();
+        if (!auth.ok) {
+          router.push("/login"); //redirect to login if unauthorised
+          return;
+        }
+
+        const user = await auth.json();
+        setUserId(user.user_id);
+        const tasksFetch = await fetch(
+          `http://localhost:8000/api/planner/tasks/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        const data = await tasksFetch.json();
         setItems(data);
       } catch (err) {
         console.error("Failed to load tasks:", err);
@@ -58,8 +80,8 @@ export default function TasksPage() {
         setLoading(false);
       }
     }
-    fetchTasks();
-  }, [id]);
+    fetchData();
+  }, [router]);
 
   useEffect(() => {
     fetch("http://localhost:8000/api/planner/topic/")
@@ -130,7 +152,7 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="content-container min-w-screen relative flex flex-row items-center justify-center bg-slate-500">
+    <div className="content-container min-w-screen min-h-screen relative flex flex-row items-center justify-center bg-slate-500">
       <div className="task-list-container h-full w-full">
         <div className="task-list-content flex h-full w-full flex-col items-center justify-center rounded-lg p-3 text-slate-200">
           <div className="task-list-top mb-3 hidden h-[10%] w-full rounded-t-lg">
@@ -141,7 +163,11 @@ export default function TasksPage() {
           <div className="task-list-bottom flex w-full flex-row justify-center gap-6">
             <div
               className="task-list-wrapper flex w-fit flex-row justify-center"
-              style={{ scrollbarWidth: "thin", scrollbarColor: "grey white" }}
+              style={{ 
+                scrollbarWidth: "thin", 
+                scrollbarColor: "grey white",
+                display: !(showAddTask && items.length === 0) ? "flex" : "none"
+              }}
             >
               <TaskList
                 items={items}
@@ -164,7 +190,7 @@ export default function TasksPage() {
               </button>
               <div className="task-form-wrapper h-full overflow-auto">
                 <TaskForm
-                  userId={Number(id)}
+                  userId={Number(userId)}
                   onTaskCreated={handleTaskCreated}
                 />
               </div>
