@@ -93,6 +93,8 @@ export function TaskItem({
           color_hex: t.color_hex,
         }));
 
+      const validTimes = draftTimes.filter(t => t.start_time && t.end_time);
+
       const response = await fetch(
         `http://localhost:8000/api/planner/tasks/${item.id}/`,
         {
@@ -107,7 +109,7 @@ export function TaskItem({
             completed: item.completed,
             existing_topic_ids: existing_topic_ids,
             new_topics: new_topics,
-            times: draftTimes,
+            times: validTimes,
           }),
         },
       );

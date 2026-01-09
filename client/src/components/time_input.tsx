@@ -22,17 +22,35 @@ const daysOfWeek = [
 ];
 
 export function TimeInput({ times, setTimes }: TimeInputProps) {
+  
+  const addTime = () => {
+    // Add a new empty draft time only if there isn't already an empty one
+    const hasEmpty = times.some(t => !t.start_time || !t.end_time);
+    if (!hasEmpty) {
+      setTimes([
+        ...times,
+        { id: 0, day: 1, start_time: "", end_time: "", repeating: false },
+      ]);
+    }
+  };
+
+  const updateTime = (index: number, field: keyof Time, value: any) => {
+    const newTimes = [...times];
+    newTimes[index] = { ...newTimes[index], [field]: value };
+    setTimes(newTimes);
+  };
+
+  const removeTime = (index: number) => {
+    setTimes(times.filter((_, i) => i !== index));
+  };
+
   return (
     <div>
       {times.map((time, index) => (
         <div key={index}>
           <select
             value={time.day}
-            onChange={(e) => {
-              const newTimes = [...times];
-              newTimes[index].day = parseInt(e.target.value);
-              setTimes(newTimes);
-            }}
+            onChange={(e) => updateTime(index, "day", parseInt(e.target.value))}
           >
             {daysOfWeek.map((day) => (
               <option key={day.value} value={day.value}>
@@ -43,33 +61,21 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
           <input
             type="time"
             value={time.start_time}
-            onChange={(e) => {
-              const newTimes = [...times];
-              newTimes[index].start_time = e.target.value;
-              setTimes(newTimes);
-            }}
+            onChange={(e) => updateTime(index, "start_time", e.target.value)}
           />
           <input
             type="time"
             value={time.end_time}
-            onChange={(e) => {
-              const newTimes = [...times];
-              newTimes[index].end_time = e.target.value;
-              setTimes(newTimes);
-            }}
+            onChange={(e) => updateTime(index, "end_time", e.target.value)}
           />
           <input
             type="checkbox"
             checked={time.repeating}
-            onChange={(e) => {
-              const newTimes = [...times];
-              newTimes[index].repeating = e.target.checked;
-              setTimes(newTimes);
-            }}
+            onChange={(e) => updateTime(index, "repeating", e.target.checked)}
           />
           <button
             type="button"
-            onClick={() => setTimes(times.filter((_, i) => i !== index))}
+            onClick={() => removeTime(index)}
           >
             Remove
           </button>
@@ -77,12 +83,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
       ))}
       <button
         type="button"
-        onClick={() =>
-          setTimes([
-            ...times,
-            { id: 0, day: 1, start_time: "", end_time: "", repeating: false },
-          ])
-        }
+        onClick={addTime}
       >
         Add Time
       </button>

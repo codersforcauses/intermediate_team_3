@@ -66,6 +66,9 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
       const new_topics = topics
         .filter((t) => t.type === "new")
         .map((t) => ({ name: t.name, color_hex: t.color_hex }));
+
+      const validTimes = times.filter(t => t.start_time && t.end_time);
+
       const response = await fetch("http://localhost:8000/api/planner/tasks/", {
         method: "POST",
         headers: {
@@ -77,7 +80,7 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
           description: description,
           completed: false,
           user_id: userId,
-          times: times,
+          times: validTimes,
           existing_topic_ids: existing_topic_ids,
           new_topics: new_topics,
         }),
