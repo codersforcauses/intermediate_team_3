@@ -96,6 +96,8 @@ export default function TasksPage() {
     const task = items.find((t) => t.id === id);
     if (!task) return;
 
+    const token = localStorage.getItem("access");
+
     try {
       const response = await fetch(
         `http://localhost:8000/api/planner/tasks/${id}/toggle_complete/`,
@@ -103,6 +105,7 @@ export default function TasksPage() {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ completed: !task.completed }),
         },
@@ -129,10 +132,17 @@ export default function TasksPage() {
   async function handleTaskDeleted(id: number) {
     if (!window.confirm("Delete this task?")) return;
 
+    const token = localStorage.getItem("access");
+
     try {
       const response = await fetch(
         `http://localhost:8000/api/planner/tasks/${id}/`,
-        { method: "DELETE" },
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       if (!response.ok) {

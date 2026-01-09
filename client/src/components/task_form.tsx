@@ -51,6 +51,13 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const token = localStorage.getItem("access");
+    if (!token) {
+      console.error("No access token");
+      return;
+    }
+
     try {
       const existing_topic_ids = topics
         .filter((t) => t.type === "existing")
@@ -63,6 +70,7 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name: taskName,
