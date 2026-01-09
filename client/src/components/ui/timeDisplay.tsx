@@ -11,7 +11,7 @@ interface TimeDisplayProps {
 export default function TimeDisplay({
   statusSignal,
   time,
-  current,
+  current
 }: TimeDisplayProps) {
   const [timeRemaining, setTimeRemaining] = useState(0);
 

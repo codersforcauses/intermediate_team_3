@@ -6,12 +6,14 @@ interface TimeDisplayProps {
   statusSignal: (data: string) => void;
   time: string;
   current: boolean;
+  day: number;
 }
 
 export default function TimeDisplay({
   statusSignal,
   time,
   current,
+  day,
 }: TimeDisplayProps) {
   const [timeRemaining, setTimeRemaining] = useState(0);
 
@@ -20,13 +22,15 @@ export default function TimeDisplay({
       const [Hours, Mins, Sec] = time.split(":").map(Number);
 
       const d = new Date();
-      const time_serial = Hours * 60 * 60 + Mins * 60 + Sec;
+      const time_serial = Hours * 60 * 60 + Mins * 60 + Sec;      
+      var day_diff = ((day - d.getDay() + 8) % 8) * 24 * 60 * 60
+
       const cur_time =
         d.getHours() * 60 * 60 + d.getMinutes() * 60 + d.getSeconds();
 
       let remaining_time = 0;
 
-      remaining_time = time_serial - cur_time;
+      remaining_time = time_serial - cur_time + day_diff;
       if (remaining_time <= 1) {
         clearInterval(getTimeRemaining);
       }
@@ -35,7 +39,7 @@ export default function TimeDisplay({
     }, 1000);
 
     return () => clearInterval(getTimeRemaining);
-  }, [time, timeRemaining]);
+  }, [time, timeRemaining, day]);
 
   useEffect(() => {
     if (timeRemaining <= 1) {
