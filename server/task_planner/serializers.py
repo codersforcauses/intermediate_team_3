@@ -68,6 +68,36 @@ class TaskWriteSerializer(serializers.ModelSerializer):
         task.save()
         task.refresh_from_db()
         return Task.objects.get(id=task.id)
+    
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        existing_topics = validated_data.pop("existing_topic_ids", [])
+        new_topics_data = validated_data.pop("new_topics", [])
+        times_data = validated_data.pop("times", [])
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        if existing_topics or new_topics_data:
+            instance.topics.clear()
+            for topic in existing_topics:
+                instance.topics.add(topic)
+            for topic_data in new_topics_data:
+                topic = Topic.objects.create(**topic_data, user_id=instance.user_id)
+                instance.topics.add(topic)
+        
+        if times_data is not None:
+            instance.times.all().delete()
+            Time.objects.bulk_create([
+                Time(task=instance, **time_data)
+                for time_data in times_data
+            ])
+        
+
+        instance.save()
+        instance.refresh_from_db()
+        return Task.objects.get(id=instance.id)
 
 class TaskCompleteSerializer(serializers.ModelSerializer):
     class Meta:
