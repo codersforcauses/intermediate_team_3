@@ -145,7 +145,7 @@ export default function TasksPage() {
                   availableTopics={availableTopics}
                 />
               </div>
-              <div className="add-task-container hidden h-full flex-col items-center justify-start rounded-lg bg-slate-400 p-3 shadow-xl">
+              <div className="add-task-container flex h-full flex-col items-center justify-start rounded-lg bg-slate-400 p-3 shadow-xl">
                 <h1 className="text-3xl font-bold text-slate-100">Add Task</h1>
                 <div className="task-form-wrapper h-full overflow-auto">
                   <TaskForm

@@ -5,7 +5,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { TimeInput } from "@/components/time_input";
 import TimeTag, { DayTag } from "@/components/time_tag";
 import { TopicInput } from "@/components/topic_input";
-import TopicTag from "@/components/topic_tag";
+import { TopicTagAlt } from "@/components/topic_tag";
 
 interface Time {
   id: number;
@@ -126,7 +126,7 @@ export function TaskItem({
     /* Item Display */
   }
   return (
-    <div className="task flex h-fit w-full max-w-[28rem] flex-col gap-3 rounded-lg bg-slate-400 p-5 text-slate-200 shadow-xl">
+    <div className="task flex h-fit w-full max-w-[48rem] flex-col gap-3 rounded-lg bg-slate-400 p-5 text-slate-200 shadow-xl">
       <div className="task-title-container flex w-full flex-row items-center justify-start gap-2 text-3xl font-bold text-slate-100 hover:text-slate-100">
         {/* Task Name and Completion */}
         <input
@@ -161,14 +161,14 @@ export function TaskItem({
       </div>
 
       {/* Task Times */}
-      <div className="task-times-container flex flex-col items-start">
+      <div className="task-times-container flex flex-row flex-wrap items-start justify-start gap-x-8 gap-y-1">
         {isEditing ? (
           <TimeInput times={draftTimes} setTimes={setDraftTimes} />
         ) : item.times?.length > 0 ? (
           item.times.map((time) => (
             <div
               key={time.id}
-              className="day-time-tags flex w-full flex-row gap-3"
+              className="day-time-tags flex w-fit flex-row gap-3 rounded-full bg-slate-400 px-3 py-1 hover:brightness-110"
             >
               <DayTag day={formatDay(time.day)} />
               <TimeTag start_time={time.start_time} end_time={time.end_time} />
@@ -189,7 +189,7 @@ export function TaskItem({
           />
         ) : item.topics.length > 0 ? (
           item.topics.map((topic) => (
-            <TopicTag
+            <TopicTagAlt
               key={topic.id}
               name={topic.name}
               color_hex={topic.color_hex}

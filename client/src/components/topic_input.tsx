@@ -1,4 +1,7 @@
 import { FaRegTrashCan } from "react-icons/fa6";
+import { RxCross2 } from "react-icons/rx";
+
+import { TopicTagAlt } from "@/components/topic_tag";
 
 interface Topic {
   id: number;
@@ -25,26 +28,17 @@ export function TopicInput({
     <div className="topic-input flex w-full flex-col items-center justify-center gap-2 text-slate-200">
       <h1 className="topic-input-title text-xl hover:brightness-110">Topics</h1>
       {/* Selected Topics Display */}
-      <div className="topics-container flex w-full flex-col items-center justify-center gap-2">
+      <div className="topics-container flex w-full flex-row flex-wrap items-center justify-start gap-2">
         {topics.map((topic, index) => {
           if (topic.type === "existing") {
             const topicData = availableTopics.find((t) => t.id === topic.id);
             if (!topicData) return null;
             return (
-              <div
-                key={index}
-                className="flex w-full items-center justify-evenly gap-2 rounded-lg bg-slate-400 p-2 brightness-90 hover:brightness-95"
-              >
-                <div
-                  className="topic-color aspect-square h-5"
-                  style={{
-                    backgroundColor:
-                      "#" + topicData.color_hex.toString(16).padStart(6, "0"),
-                  }}
-                ></div>
-                <span className="topic-name w-full max-w-[75%] text-justify">
-                  {topicData.name}
-                </span>
+              <div key={index} className="flex w-fit flex-row gap-2 rounded-lg">
+                <TopicTagAlt
+                  name={topicData.name}
+                  color_hex={topicData.color_hex}
+                />
                 <button
                   className="hover:brightness-90"
                   type="button"
@@ -52,7 +46,7 @@ export function TopicInput({
                     setTopics(topics.filter((_, i) => i !== index))
                   }
                 >
-                  <FaRegTrashCan className="hover:text-red-500" />
+                  <RxCross2 className="hover:text-red-500" />
                 </button>
               </div>
             );
