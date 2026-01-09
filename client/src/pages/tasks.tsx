@@ -163,7 +163,7 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="content-container min-w-screen relative flex min-h-screen flex-row items-center justify-center bg-slate-500">
+    <div className="content-container min-w-screen relative flex min-h-[calc(100vh-64px)] flex-row items-center justify-center bg-slate-500">
       <div className="task-list-container h-full w-full">
         <div className="task-list-content flex h-full w-full flex-col items-center justify-center rounded-lg p-3 text-slate-200">
           <div className="task-list-top mb-3 hidden h-[10%] w-full rounded-t-lg">
