@@ -10,8 +10,8 @@ export function Navbar() {
 
   const linkClass = (path: string) =>
     pathname === path
-      ? "rounded-md bg-gray-950/50 px-3 py-2 text-sm font-medium text-white"
-      : "rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white";
+      ? "rounded-md bg-gray-950/50 px-3 py-2 text-xl font-bold text-white"
+      : "rounded-md px-3 py-2 text-xl font-bold text-gray-300 hover:bg-white/5 hover:text-white";
 
   return (
     <nav className="relative bg-indigo-800 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-white/10">

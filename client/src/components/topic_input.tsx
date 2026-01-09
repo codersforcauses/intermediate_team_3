@@ -1,3 +1,8 @@
+import { FaRegTrashCan } from "react-icons/fa6";
+import { RxCross2 } from "react-icons/rx";
+
+import { TopicTagAlt } from "@/components/topic_tag";
+
 interface Topic {
   id: number;
   name: string;
@@ -20,10 +25,76 @@ export function TopicInput({
   setTopics,
 }: TopicInputProps) {
   return (
-    <div className="mb-4">
+    <div className="topic-input flex w-full flex-col items-center justify-center gap-2 text-slate-200">
+      <h1 className="topic-input-title text-xl hover:brightness-110">Topics</h1>
+      {/* Selected Topics Display */}
+      <div className="topics-container flex w-full flex-row flex-wrap items-center justify-start gap-2">
+        {topics.map((topic, index) => {
+          if (topic.type === "existing") {
+            const topicData = availableTopics.find((t) => t.id === topic.id);
+            if (!topicData) return null;
+            return (
+              <div key={index} className="flex w-fit flex-row gap-2 rounded-lg">
+                <TopicTagAlt
+                  name={topicData.name}
+                  color_hex={topicData.color_hex}
+                />
+                <button
+                  className="hover:brightness-90"
+                  type="button"
+                  onClick={() =>
+                    setTopics(topics.filter((_, i) => i !== index))
+                  }
+                >
+                  <RxCross2 className="hover:text-red-500" />
+                </button>
+              </div>
+            );
+          }
+
+          return (
+            <div
+              key={index}
+              className="new-topic-input flex w-full flex-row justify-evenly gap-2 rounded-lg bg-slate-400 p-2 brightness-90 hover:brightness-95"
+            >
+              <input
+                className="color-select h-5 w-5 border-0"
+                type="color"
+                value={`#${topic.color_hex.toString(16).padStart(6, "0")}`}
+                onChange={(e) => {
+                  const hex = parseInt(e.target.value.replace("#", ""), 16);
+                  const copy = [...topics];
+                  copy[index] = { ...topic, color_hex: hex };
+                  setTopics(copy);
+                }}
+              />
+              <input
+                className="topic-name-input w-[75%] bg-slate-400 text-justify placeholder:text-slate-300 hover:brightness-110"
+                type="text"
+                placeholder="Topic name..."
+                value={topic.name}
+                onChange={(e) => {
+                  const newTopics = [...topics];
+                  newTopics[index] = { ...topic, name: e.target.value };
+                  setTopics(newTopics);
+                }}
+              />
+
+              <button
+                className="hover:brightness-90"
+                type="button"
+                onClick={() => setTopics(topics.filter((_, i) => i !== index))}
+              >
+                <FaRegTrashCan className="hover:text-red-500" />
+              </button>
+            </div>
+          );
+        })}
+      </div>
+
       {/* Existing Topic Selection */}
       <select
-        className="w-full rounded border-2 bg-zinc-700 p-2 text-zinc-200"
+        className="topic-select w-full rounded-lg bg-slate-400 p-2 text-center brightness-90 hover:brightness-110"
         onChange={(e) => {
           const id = Number(e.target.value);
           if (!id) return;
@@ -33,7 +104,7 @@ export function TopicInput({
           e.target.value = "";
         }}
       >
-        <option value="">Select Existing Topic</option>
+        <option value="">Add Existing Topic</option>
         {availableTopics.map((topic) => (
           <option key={topic.id} value={topic.id}>
             {topic.name}
@@ -41,69 +112,14 @@ export function TopicInput({
         ))}
       </select>
 
-      {/* Selected Topics Display */}
-      {topics.map((topic, index) => {
-        if (topic.type === "existing") {
-          const topicData = availableTopics.find((t) => t.id === topic.id);
-          if (!topicData) return null;
-          return (
-            <div
-              key={index}
-              className="mt-2 flex items-center justify-between rounded bg-zinc-600 p-2 text-zinc-200"
-            >
-              <span>{topicData.name}</span>
-              <button
-                type="button"
-                onClick={() => setTopics(topics.filter((_, i) => i !== index))}
-                className="text-red-500 hover:text-red-700"
-              >
-                Remove
-              </button>
-            </div>
-          );
-        }
-
-        return (
-          <div key={index} className="mt-2 flex items-center gap-2">
-            <input
-              type="text"
-              placeholder="New Topic Name"
-              value={topic.name}
-              onChange={(e) => {
-                const newTopics = [...topics];
-                newTopics[index] = { ...topic, name: e.target.value };
-                setTopics(newTopics);
-              }}
-            />
-            <input
-              type="color"
-              value={`#${topic.color_hex.toString(16).padStart(6, "0")}`}
-              onChange={(e) => {
-                const hex = parseInt(e.target.value.replace("#", ""), 16);
-                const copy = [...topics];
-                copy[index] = { ...topic, color_hex: hex };
-                setTopics(copy);
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => setTopics(topics.filter((_, i) => i !== index))}
-              className="text-red-500 hover:text-red-700"
-            >
-              Remove
-            </button>
-          </div>
-        );
-      })}
-
       <button
         type="button"
-        className="mt-3 rounded bg-green-700 px-2 py-1 text-zinc-200"
+        className="add-topic-button w-12 rounded-full bg-slate-400 text-xl hover:brightness-110"
         onClick={() =>
           setTopics([...topics, { type: "new", name: "", color_hex: 0xffffff }])
         }
       >
-        + Create New Topic
+        +
       </button>
     </div>
   );

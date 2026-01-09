@@ -41,25 +41,23 @@ export function TaskList({
   if (items.length === 0) {
     return (
       <div>
-        <p className="text-center text-zinc-300">No tasks available.</p>
+        <p className="text-center text-slate-300">No tasks available.</p>
       </div>
     );
   }
   return (
-    <div className="mx-auto h-[79vh] w-full max-w-md overflow-y-auto p-2">
-      <ul className="space-y-2">
-        {items.map((item) => (
-          <li key={item.id}>
-            <TaskItem
-              item={item}
-              onToggle={onToggleTask}
-              onUpdate={onUpdate}
-              onDelete={onDelete}
-              availableTopics={availableTopics}
-            />
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul className="task-list h-fit space-y-3">
+      {items.map((item) => (
+        <li key={item.id}>
+          <TaskItem
+            item={item}
+            onToggle={onToggleTask}
+            onUpdate={onUpdate}
+            onDelete={onDelete}
+            availableTopics={availableTopics}
+          />
+        </li>
+      ))}
+    </ul>
   );
 }

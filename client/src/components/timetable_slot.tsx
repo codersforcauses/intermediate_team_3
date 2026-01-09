@@ -47,7 +47,7 @@ function TimetableSlot({
   }
 
   if (header !== true && time_label !== true) {
-    class_name += " hover:bg-slate-500";
+    class_name += " hover:brightness-125";
   }
 
   // There's probably a better way to do this
@@ -76,9 +76,9 @@ export function TimetableHeader({ label }: TimetableSlotProps) {
   return (
     <div
       id={label + "-header"}
-      className="timetable-header absolute z-[200] flex min-h-16 min-w-32 items-center justify-center border-b-2 border-b-slate-900 bg-slate-800"
+      className="timetable-header absolute z-[200] flex min-h-16 min-w-32 select-none items-center justify-center border-b-2 border-b-slate-900 bg-slate-800 text-slate-300"
     >
-      <p className="text-xl font-semibold text-slate-400">{label}</p>
+      <p className="text-xl font-semibold">{label}</p>
     </div>
   );
 }
