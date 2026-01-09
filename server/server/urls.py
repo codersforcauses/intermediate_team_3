@@ -28,4 +28,7 @@ urlpatterns = [
     path("api/healthcheck/", include("healthcheck.urls")),
     path("api/user/", include("user_profile.urls")),
     path("api/planner/", include("task_planner.urls")),
+    path('', include("django.contrib.auth.urls")),
+    path("api/auth/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/auth/refresh/", TokenObtainPairView.as_view(), name="token_refresh"),
 ]

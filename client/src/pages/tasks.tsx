@@ -29,21 +29,44 @@ interface Item {
 
 export default function TasksPage() {
   const router = useRouter();
-  const { id } = router.query;
+  const [userId, setUserId] = useState<number | null>(null);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
-    if (!id) return;
-
-    async function fetchTasks() {
+    async function fetchData() {
       try {
-        // Remove the query bit when authentication is added.
-        const response = await fetch(
-          `http://localhost:8000/api/planner/tasks/?user_id=${id}`,
+        const token = localStorage.getItem("access");
+        if (!token) {
+          router.push("/login"); //redirect to login if unauthorised
+          return;
+        }
+        const auth = await fetch(
+          "http://localhost:8000/api/planner/protected/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
-        const data = await response.json();
+        if (!auth.ok) {
+          router.push("/login"); //redirect to login if unauthorised
+          return;
+        }
+
+        const user = await auth.json();
+        setUserId(user.user_id);
+        const tasksFetch = await fetch(
+          `http://localhost:8000/api/planner/tasks/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        const data = await tasksFetch.json();
         setItems(data);
       } catch (err) {
         console.error("Failed to load tasks:", err);
@@ -51,8 +74,8 @@ export default function TasksPage() {
         setLoading(false);
       }
     }
-    fetchTasks();
-  }, [id]);
+    fetchData();
+  }, [router]);
 
   useEffect(() => {
     fetch("http://localhost:8000/api/planner/topic/")
@@ -136,7 +159,7 @@ export default function TasksPage() {
       </div>
       <div className="m-4 h-fit w-fit rounded-xl bg-zinc-700 p-4 text-center">
         <h1 className="mb-4 text-3xl font-bold text-zinc-300">Add Task</h1>
-        <TaskForm userId={Number(id)} onTaskCreated={handleTaskCreated} />
+        <TaskForm userId={Number(userId)} onTaskCreated={handleTaskCreated} />
       </div>
     </div>
   );
