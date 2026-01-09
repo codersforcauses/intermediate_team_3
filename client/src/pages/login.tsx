@@ -3,6 +3,11 @@ import { useRouter } from "next/navigation";
 
 export default function Login() {
   const router = useRouter();
+
+  function ToSignIn() {
+    router.push("/register");
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -40,13 +45,27 @@ export default function Login() {
       },
     );
 
-    const user = await userFetch.json();
-    router.push(`/${user.user_id}/tasks`);
+    if (!userFetch.ok) {
+      alert("Invalid login");
+      return;
+    }
+
+    router.push("/tasks");
   }
 
   return (
     <div className="flex min-h-screen flex-col justify-center bg-gray-900 px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <p className="font-semibold text-white">
+          Don&apos;t have an account? Sign Up!
+        </p>
+        <button
+          onClick={ToSignIn}
+          className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+        >
+          Create New Account
+        </button>
+
         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">
           Log in to your account
         </h2>
@@ -103,7 +122,6 @@ export default function Login() {
               />
             </div>
           </div>
-
           <div>
             <button
               type="submit"
