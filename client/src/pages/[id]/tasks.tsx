@@ -123,36 +123,34 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="content-container min-w-screen flex h-[85vh] flex-row items-center justify-center bg-slate-950 p-3">
-      <div className="task-list-border h-full w-full rounded-lg bg-slate-900 p-3">
-        <div className="task-list-container h-full w-full overflow-hidden">
-          <div className="task-list-content flex h-full w-full flex-col items-center justify-center rounded-lg bg-slate-500 text-slate-200">
-            <div className="task-list-top mb-3 h-[10%] w-full rounded-t-lg p-3">
-              <h1 className="task-list-title border-b-2 border-b-slate-400 p-3 text-center text-3xl font-bold text-slate-100">
-                My Tasks
-              </h1>
+    <div className="content-container min-w-screen relative flex flex-row items-center justify-center bg-slate-500">
+      <div className="task-list-container h-full w-full">
+        <div className="task-list-content flex h-full w-full flex-col items-center justify-center rounded-lg p-3 text-slate-200">
+          <div className="task-list-top mb-3 hidden h-[10%] w-full rounded-t-lg">
+            <h1 className="task-list-title border-b-2 border-b-slate-400 p-3 text-center text-3xl font-bold text-slate-100">
+              My Tasks
+            </h1>
+          </div>
+          <div className="task-list-bottom flex w-full flex-row justify-center gap-6">
+            <div
+              className="task-list-wrapper flex w-fit flex-row justify-center"
+              style={{ scrollbarWidth: "thin", scrollbarColor: "grey white" }}
+            >
+              <TaskList
+                items={items}
+                onToggleTask={handleToggleTask}
+                onUpdate={handleTaskUpdated}
+                onDelete={handleTaskDeleted}
+                availableTopics={availableTopics}
+              />
             </div>
-            <div className="task-list-bottom flex h-[90%] w-full flex-row justify-center gap-6 p-3">
-              <div
-                className="task-list-wrapper flex w-fit flex-row justify-center overflow-auto"
-                style={{ scrollbarWidth: "thin", scrollbarColor: "grey white" }}
-              >
-                <TaskList
-                  items={items}
-                  onToggleTask={handleToggleTask}
-                  onUpdate={handleTaskUpdated}
-                  onDelete={handleTaskDeleted}
-                  availableTopics={availableTopics}
+            <div className="add-task-container sticky top-3 flex h-full flex-col items-center justify-start rounded-lg bg-slate-400 p-3 shadow-xl">
+              <h1 className="text-3xl font-bold text-slate-100">Add Task</h1>
+              <div className="task-form-wrapper h-full overflow-auto">
+                <TaskForm
+                  userId={Number(id)}
+                  onTaskCreated={handleTaskCreated}
                 />
-              </div>
-              <div className="add-task-container flex h-full flex-col items-center justify-start rounded-lg bg-slate-400 p-3 shadow-xl">
-                <h1 className="text-3xl font-bold text-slate-100">Add Task</h1>
-                <div className="task-form-wrapper h-full overflow-auto">
-                  <TaskForm
-                    userId={Number(id)}
-                    onTaskCreated={handleTaskCreated}
-                  />
-                </div>
               </div>
             </div>
           </div>
