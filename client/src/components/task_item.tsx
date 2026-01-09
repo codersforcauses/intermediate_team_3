@@ -127,7 +127,7 @@ export function TaskItem({
   }
   return (
     <div className="task flex h-fit w-full max-w-[28rem] flex-col gap-3 rounded-lg bg-slate-400 p-5 text-slate-200 shadow-xl">
-      <div className="task-title-container flex w-full flex-row items-center justify-start text-3xl font-bold text-slate-100 hover:text-slate-100">
+      <div className="task-title-container flex w-full flex-row items-center justify-start gap-2 text-3xl font-bold text-slate-100 hover:text-slate-100">
         {/* Task Name and Completion */}
         <input
           className="task-completion mr-3 accent-slate-300"
@@ -142,11 +142,21 @@ export function TaskItem({
             onChange={(e) => setDraftName(e.target.value)}
           />
         ) : (
-          <span
-            className={"task-title" + (item.completed ? " line-through" : "")}
-          >
-            {item.name}
-          </span>
+          <>
+            <span
+              className={
+                "task-title w-full" + (item.completed ? " line-through" : "")
+              }
+            >
+              {item.name}
+            </span>
+            <button className="hover:brightness-110" onClick={startEdit}>
+              <FaRegEdit className="h-5 w-5" />
+            </button>
+            <button onClick={() => onDelete(item.id)}>
+              <FaRegTrashCan className="h-5 w-5 hover:text-red-600" />
+            </button>
+          </>
         )}
       </div>
 
@@ -234,25 +244,14 @@ export function TaskItem({
             </button>
           </div>
         ) : (
-          <button className="hover:brightness-110" onClick={startEdit}>
-            <FaRegEdit className="h-5 w-5" />
-          </button>
-        )}
-      </div>
-
-      {/* Delete Button */}
-      <div>
-        {!isEditing && (
-          <button onClick={() => onDelete(item.id)}>
-            <FaRegTrashCan className="h-5 w-5 hover:text-red-600" />
-          </button>
+          <></>
         )}
       </div>
     </div>
   );
 }
 
-function formatDay(day: number): string {
+export function formatDay(day: number): string {
   const days = [
     "Monday",
     "Tuesday",
