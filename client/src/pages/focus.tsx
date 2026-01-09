@@ -152,7 +152,7 @@ const CountdownTimer = () => {
   }
 
   return (
-    <div className="h-screen bg-slate-800 p-8 font-inter">
+    <div className="h-[calc(100vh-64px)] bg-slate-800 p-8 font-inter">
       <div className="flex flex-col items-center justify-start rounded-xl bg-slate-700 p-8 font-mono text-white shadow-inner shadow-slate-900">
         <p className="p-4 font-inter text-4xl font-semibold">focus</p>
         <div className="flex flex-row justify-center">
