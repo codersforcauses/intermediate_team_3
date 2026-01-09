@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { FaRegEdit } from "react-icons/fa";
+import { FaRegTrashCan } from "react-icons/fa6";
 
 import { TimeInput } from "@/components/time_input";
 import TimeTag, { DayTag } from "@/components/time_tag";
@@ -233,7 +235,7 @@ export function TaskItem({
           </div>
         ) : (
           <button className="hover:brightness-110" onClick={startEdit}>
-            Edit
+            <FaRegEdit className="h-5 w-5" />
           </button>
         )}
       </div>
@@ -241,11 +243,8 @@ export function TaskItem({
       {/* Delete Button */}
       <div>
         {!isEditing && (
-          <button
-            onClick={() => onDelete(item.id)}
-            className="mt-2 text-red-500"
-          >
-            Delete Task
+          <button onClick={() => onDelete(item.id)}>
+            <FaRegTrashCan className="h-5 w-5 hover:text-red-600" />
           </button>
         )}
       </div>

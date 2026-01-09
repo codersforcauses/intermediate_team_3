@@ -1,3 +1,6 @@
+import { FaRegCalendarAlt,FaRegClock } from "react-icons/fa";
+import { FaRegTrashCan } from "react-icons/fa6";
+
 interface Time {
   id: number;
   day: number;
@@ -31,7 +34,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
           className="time-input-wrapper flex w-full flex-row items-center justify-evenly gap-1 rounded-lg bg-slate-400 p-1 brightness-90 hover:brightness-95"
         >
           <div className="day-select-wrapper flex w-[20%] flex-row items-center justify-center gap-1">
-            <div className="calendar-placeholder h-5 w-5 bg-slate-200"></div>
+            <FaRegCalendarAlt />
             <select
               className="day-select h-full rounded-lg bg-slate-400 p-1 text-center hover:brightness-110"
               value={time.day}
@@ -49,7 +52,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
             </select>
           </div>
           <div className="time-select-wrapper flex w-[35%] flex-row items-center justify-center gap-1">
-            <div className="clock-placeholder h-5 w-5 rounded-full bg-slate-200"></div>
+            <FaRegClock />
             <div className="time-inputs-wrapper text-md flex flex-col">
               <input
                 className="time-input h-full rounded-lg bg-slate-400 hover:brightness-110"
@@ -91,7 +94,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
             type="button"
             onClick={() => setTimes(times.filter((_, i) => i !== index))}
           >
-            <div className="trashcan-placeholder h-5 w-5 bg-red-500"></div>
+            <FaRegTrashCan className="hover:text-red-500" />
           </button>
         </div>
       ))}

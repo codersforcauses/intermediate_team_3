@@ -1,3 +1,5 @@
+import { FaRegCalendarAlt,FaRegClock } from "react-icons/fa";
+
 import { getDurationMinutes } from "@/components/timetable";
 
 /*
@@ -51,7 +53,7 @@ function TimeTag({ start_time, end_time, display }: TimeTagProps) {
   );
   return (
     <div className="flex h-fit w-fit flex-row items-center justify-center gap-1 rounded-full">
-      <div className="placeholder-clock aspect-1/1 h-5 w-5 rounded-[50] bg-slate-200"></div>
+      <FaRegClock />
       <p className="hover:brightness-110">{time_display_string}</p>
     </div>
   );
@@ -66,7 +68,7 @@ interface DayTagProps {
 export function DayTag({ day }: DayTagProps) {
   return (
     <div className="flex h-fit w-fit flex-row items-center justify-center gap-1 rounded-full">
-      <div className="placeholder-calendar aspect-1/1/ h-5 w-5 bg-slate-200"></div>
+      <FaRegCalendarAlt />
       <p className="hover:brightness-110">{day}</p>
     </div>
   );

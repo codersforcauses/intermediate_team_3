@@ -1,3 +1,5 @@
+import { FaRegTrashCan } from "react-icons/fa6";
+
 interface Topic {
   id: number;
   name: string;
@@ -50,7 +52,7 @@ export function TopicInput({
                     setTopics(topics.filter((_, i) => i !== index))
                   }
                 >
-                  <div className="trashcan-placeholder aspect-square h-5 bg-red-500"></div>
+                  <FaRegTrashCan className="hover:text-red-500" />
                 </button>
               </div>
             );
@@ -73,9 +75,9 @@ export function TopicInput({
                 }}
               />
               <input
-                className="topic-name-input w-[75%] bg-slate-400 text-justify hover:brightness-110"
+                className="topic-name-input w-[75%] bg-slate-400 text-justify placeholder:text-slate-300 hover:brightness-110"
                 type="text"
-                placeholder="New Topic Name"
+                placeholder="Topic name..."
                 value={topic.name}
                 onChange={(e) => {
                   const newTopics = [...topics];
@@ -89,7 +91,7 @@ export function TopicInput({
                 type="button"
                 onClick={() => setTopics(topics.filter((_, i) => i !== index))}
               >
-                <div className="trashcan-placeholder aspect-square h-5 bg-red-500"></div>
+                <FaRegTrashCan className="hover:text-red-500" />
               </button>
             </div>
           );
