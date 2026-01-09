@@ -24,7 +24,7 @@ const Timer = (timeRemaining: number) => {
   };
 
   return (
-    <div className="rounded-full bg-indigo-400 p-3 px-8 font-inter text-xl font-semibold">
+    <div className="w-32 rounded-full bg-indigo-400 p-3 px-8 font-inter text-xl font-semibold">
       {formatTime(timeRemaining)}
     </div>
   );
