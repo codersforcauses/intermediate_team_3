@@ -49,7 +49,8 @@ export default function TasksPage() {
           router.push("/login"); //redirect to login if unauthorised
           return;
         }
-        const auth = await fetch( "http://localhost:8000/api/planner/protected/",
+        const auth = await fetch(
+          "http://localhost:8000/api/planner/protected/",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -102,6 +103,8 @@ export default function TasksPage() {
     const task = items.find((t) => t.id === id);
     if (!task) return;
 
+    const token = localStorage.getItem("access");
+
     try {
       const response = await fetch(
         `http://localhost:8000/api/planner/tasks/${id}/toggle_complete/`,
@@ -109,6 +112,7 @@ export default function TasksPage() {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ completed: !task.completed }),
         },
@@ -135,10 +139,17 @@ export default function TasksPage() {
   async function handleTaskDeleted(id: number) {
     if (!window.confirm("Delete this task?")) return;
 
+    const token = localStorage.getItem("access");
+
     try {
       const response = await fetch(
         `http://localhost:8000/api/planner/tasks/${id}/`,
-        { method: "DELETE" },
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       if (!response.ok) {
@@ -152,7 +163,7 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="content-container min-w-screen min-h-screen relative flex flex-row items-center justify-center bg-slate-500">
+    <div className="content-container min-w-screen relative flex min-h-screen flex-row items-center justify-center bg-slate-500">
       <div className="task-list-container h-full w-full">
         <div className="task-list-content flex h-full w-full flex-col items-center justify-center rounded-lg p-3 text-slate-200">
           <div className="task-list-top mb-3 hidden h-[10%] w-full rounded-t-lg">
@@ -163,10 +174,10 @@ export default function TasksPage() {
           <div className="task-list-bottom flex w-full flex-row justify-center gap-6">
             <div
               className="task-list-wrapper flex w-fit flex-row justify-center"
-              style={{ 
-                scrollbarWidth: "thin", 
+              style={{
+                scrollbarWidth: "thin",
                 scrollbarColor: "grey white",
-                display: !(showAddTask && items.length === 0) ? "flex" : "none"
+                display: !(showAddTask && items.length === 0) ? "flex" : "none",
               }}
             >
               <TaskList

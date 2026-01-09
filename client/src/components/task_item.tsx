@@ -82,6 +82,9 @@ export function TaskItem({
 
   async function saveEdit() {
     setSaving(true);
+
+    const token = localStorage.getItem("access");
+
     try {
       const existing_topic_ids = draftTopics
         .filter((t) => t.type === "existing")
@@ -98,7 +101,10 @@ export function TaskItem({
         `http://localhost:8000/api/planner/tasks/${item.id}/`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({
             name: draftName,
             description: draftDescription,
