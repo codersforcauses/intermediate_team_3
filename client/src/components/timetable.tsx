@@ -374,7 +374,7 @@ function Timetable({ timetable_tasks_props }: TimetableProps) {
     >
       <div
         id="timetable-content"
-        className="h-full w-full overflow-auto overscroll-none"
+        className="h-full w-full overflow-auto overscroll-none scrollbar"
         onScroll={resizeAndPositionTimetableElements}
       >
         <div

@@ -73,10 +73,10 @@ export default function Login() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <label className="block text-sm/6 font-medium text-gray-100">
-            Username
-          </label>
           <div className="mt-2">
+            <label className="block text-sm/6 font-medium text-gray-100">
+              Username
+            </label>
             <input
               id="username"
               type="text"
@@ -87,10 +87,10 @@ export default function Login() {
             />
           </div>
 
-          <label className="block text-sm/6 font-medium text-gray-100">
-            Email
-          </label>
           <div className="mt-2">
+            <label className="block text-sm/6 font-medium text-gray-100">
+              Email
+            </label>
             <input
               id="email"
               type="email"
@@ -102,17 +102,17 @@ export default function Login() {
           </div>
 
           <div>
-            <div className="flex items-center justify-between">
-              <label className="block text-sm/6 font-medium text-gray-100">
-                Password
-              </label>
-              <div className="text-sm">
-                <a className="font-semibold text-indigo-400 hover:text-indigo-300">
-                  Forgot password?
-                </a>
-              </div>
-            </div>
             <div className="mt-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm/6 font-medium text-gray-100">
+                  Password
+                </label>
+                <div className="text-sm">
+                  <a className="font-semibold text-indigo-400 hover:text-indigo-300">
+                    Forgot password?
+                  </a>
+                </div>
+              </div>
               <input
                 id="password"
                 type="password"
