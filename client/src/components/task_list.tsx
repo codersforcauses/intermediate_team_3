@@ -26,9 +26,16 @@ interface Item {
 type ListProps = {
   items: Item[];
   onToggleTask?: (id: number) => void;
+  onUpdate: (item: Item) => void;
+  availableTopics: Topic[];
 };
 
-export function TaskList({ items, onToggleTask }: ListProps) {
+export function TaskList({
+  items,
+  onToggleTask,
+  onUpdate,
+  availableTopics,
+}: ListProps) {
   if (items.length === 0) {
     return (
       <div>
@@ -41,7 +48,12 @@ export function TaskList({ items, onToggleTask }: ListProps) {
       <ul className="space-y-2">
         {items.map((item) => (
           <li key={item.id}>
-            <TaskItem item={item} onToggle={onToggleTask} />
+            <TaskItem
+              item={item}
+              onToggle={onToggleTask}
+              onUpdate={onUpdate}
+              availableTopics={availableTopics}
+            />
           </li>
         ))}
       </ul>

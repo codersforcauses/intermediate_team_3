@@ -32,6 +32,7 @@ export default function TasksPage() {
   const [userId, setUserId] = useState<number | null>(null);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -76,6 +77,13 @@ export default function TasksPage() {
     fetchData();
   }, [router]);
 
+  useEffect(() => {
+    fetch("http://localhost:8000/api/planner/topic/")
+      .then((res) => res.json())
+      .then((data) => setAvailableTopics(data))
+      .catch((err) => console.error("Failed to load topics", err));
+  }, []);
+
   if (loading) {
     return <p>Loading tasks...</p>;
   }
@@ -114,11 +122,20 @@ export default function TasksPage() {
     }
   }
 
+  function handleTaskUpdated(updated: Item) {
+    setItems((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+  }
+
   return (
     <div className="container mx-auto flex flex-row items-center justify-center p-4">
       <div className="m-4 h-fit w-fit rounded-xl bg-zinc-700 p-4 text-center">
         <h1 className="mb-4 text-3xl font-bold text-zinc-300">Task List</h1>
-        <TaskList items={items} onToggleTask={handleToggleTask} />
+        <TaskList
+          items={items}
+          onToggleTask={handleToggleTask}
+          onUpdate={handleTaskUpdated}
+          availableTopics={availableTopics}
+        />
       </div>
       <div className="m-4 h-fit w-fit rounded-xl bg-zinc-700 p-4 text-center">
         <h1 className="mb-4 text-3xl font-bold text-zinc-300">Add Task</h1>

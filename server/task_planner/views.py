@@ -114,3 +114,14 @@ class TaskViewSet(ModelViewSet):
         serializer.save()
         read_serializer = TaskReadSerializer(task)
         return Response(read_serializer.data)
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        write_serializer = TaskWriteSerializer(instance, data=request.data, partial=partial)
+        write_serializer.is_valid(raise_exception=True)
+        task = write_serializer.save()
+
+        read_serializer = TaskReadSerializer(task)
+        return Response(read_serializer.data)
