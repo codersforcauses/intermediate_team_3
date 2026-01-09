@@ -161,7 +161,7 @@ export function TaskItem({
       </div>
 
       {/* Task Times */}
-      <div className="task-times-container flex flex-row flex-wrap items-start justify-start gap-x-8 gap-y-1">
+      <div className="task-times-container flex flex-row flex-wrap items-start justify-start gap-y-1">
         {isEditing ? (
           <TimeInput times={draftTimes} setTimes={setDraftTimes} />
         ) : item.times?.length > 0 ? (
