@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { RxCross2, RxPlus } from "react-icons/rx";
 
 import { TaskForm } from "@/components/task_form";
 import { TaskList } from "@/components/task_list";
@@ -33,6 +34,12 @@ export default function TasksPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
+
+  const [showAddTask, setShowAddTask] = useState(false);
+
+  function toggleShowAddTask() {
+    setShowAddTask(!showAddTask);
+  }
 
   useEffect(() => {
     if (!id) return;
@@ -144,8 +151,17 @@ export default function TasksPage() {
                 availableTopics={availableTopics}
               />
             </div>
-            <div className="add-task-container sticky top-3 flex h-full flex-col items-center justify-start rounded-lg bg-slate-400 p-3 shadow-xl">
+            <div
+              className="add-task-container sticky top-3 flex h-full flex-col items-center justify-start rounded-lg bg-slate-400 p-3 shadow-xl"
+              style={{ display: showAddTask ? "flex" : "none" }}
+            >
               <h1 className="text-3xl font-bold text-slate-100">Add Task</h1>
+              <button
+                className="minimise-add-task-btn absolute right-3 top-3 h-7 w-7 text-lg hover:brightness-110"
+                onClick={toggleShowAddTask}
+              >
+                <RxCross2 />
+              </button>
               <div className="task-form-wrapper h-full overflow-auto">
                 <TaskForm
                   userId={Number(id)}
@@ -153,6 +169,12 @@ export default function TasksPage() {
                 />
               </div>
             </div>
+            <button
+              className="toggle-add-task-button fixed bottom-9 right-9 flex h-12 w-12 items-center justify-center rounded-full border bg-slate-400 text-xl brightness-90 hover:brightness-110"
+              onClick={toggleShowAddTask}
+            >
+              {!showAddTask ? <RxPlus /> : <RxCross2 />}
+            </button>
           </div>
         </div>
       </div>
