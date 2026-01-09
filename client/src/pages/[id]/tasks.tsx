@@ -103,6 +103,25 @@ export default function TasksPage() {
     setItems((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
   }
 
+  async function handleTaskDeleted(id: number) {
+    if (!window.confirm("Delete this task?")) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/planner/tasks/${id}/`,
+        { method: "DELETE" },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete task");
+      }
+
+      setItems((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  }
+
   return (
     <div className="content-container min-w-screen flex h-[85vh] flex-row items-center justify-center bg-slate-950 p-3">
       <div className="task-list-border h-full w-full rounded-lg bg-slate-900 p-3">
@@ -122,6 +141,7 @@ export default function TasksPage() {
                   items={items}
                   onToggleTask={handleToggleTask}
                   onUpdate={handleTaskUpdated}
+                  onDelete={handleTaskDeleted}
                   availableTopics={availableTopics}
                 />
               </div>

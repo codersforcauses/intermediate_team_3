@@ -27,6 +27,7 @@ type ListProps = {
   items: Item[];
   onToggleTask?: (id: number) => void;
   onUpdate: (item: Item) => void;
+  onDelete: (id: number) => void;
   availableTopics: Topic[];
 };
 
@@ -34,6 +35,7 @@ export function TaskList({
   items,
   onToggleTask,
   onUpdate,
+  onDelete,
   availableTopics,
 }: ListProps) {
   if (items.length === 0) {
@@ -51,6 +53,7 @@ export function TaskList({
             item={item}
             onToggle={onToggleTask}
             onUpdate={onUpdate}
+            onDelete={onDelete}
             availableTopics={availableTopics}
           />
         </li>
