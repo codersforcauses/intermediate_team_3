@@ -22,8 +22,8 @@ export default function TimeDisplay({
       const [Hours, Mins, Sec] = time.split(":").map(Number);
 
       const d = new Date();
-      const time_serial = Hours * 60 * 60 + Mins * 60 + Sec;      
-      var day_diff = ((day - d.getDay() + 8) % 8) * 24 * 60 * 60
+      const time_serial = Hours * 60 * 60 + Mins * 60 + Sec;
+      const day_diff = ((day - d.getDay() + 8) % 8) * 24 * 60 * 60;
 
       const cur_time =
         d.getHours() * 60 * 60 + d.getMinutes() * 60 + d.getSeconds();
