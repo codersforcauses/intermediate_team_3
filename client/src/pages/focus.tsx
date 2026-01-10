@@ -210,6 +210,13 @@ const CountdownTimer = () => {
         <div className="flex flex-row justify-center">
           <div className="flex flex-col">
             <div>
+              {currentTask ? (
+                <div>{CurrentTaskTitle(currentTask.name)}</div>
+              ) : (
+                <div>{CurrentTaskTitle("none")}</div>
+              )}
+            </div>
+            <div>
               {currentTime ? (
                 <TimeDisplay
                   statusSignal={onTaskEnd}
@@ -232,19 +239,12 @@ const CountdownTimer = () => {
                 </>
               )}
             </div>
-            <div>
-              {currentTask ? (
-                <div>{CurrentTaskTitle(currentTask.name)}</div>
-              ) : (
-                <div>{CurrentTaskTitle("none")}</div>
-              )}
-            </div>
           </div>
           <div>
             {times.length > 0 ? (
               <div className="justify-top flex flex-col pl-8">
                 <div className="p-4 font-inter text-2xl font-semibold">
-                  tasks
+                  Tasks
                 </div>
                 <UpcomingTasks tasks={tasks} times={times} refresh={refresh} />
               </div>
