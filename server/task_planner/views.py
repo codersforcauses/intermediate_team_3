@@ -55,8 +55,11 @@ class ProtectedView(APIView):
         })
 
 class TopicList(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        topics = Topic.objects.all()
+        topics = Topic.objects.filter(user=request.user)
         serializer = TopicReadSerializer(topics, many=True)
         return Response(serializer.data)
 
