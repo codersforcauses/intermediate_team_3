@@ -49,7 +49,7 @@ export default function TasksPage() {
           return;
         }
         const auth = await fetch(
-          "http://localhost:8000/api/planner/protected/",
+          process.env.NEXT_PUBLIC_BACKEND_URL + "planner/protected/",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -64,7 +64,7 @@ export default function TasksPage() {
         const user = await auth.json();
         setUserId(user.user_id);
         const tasksFetch = await fetch(
-          `http://localhost:8000/api/planner/tasks/`,
+          process.env.NEXT_PUBLIC_BACKEND_URL + `planner/tasks/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -84,7 +84,7 @@ export default function TasksPage() {
   }, [router]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/planner/topic/")
+    fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "planner/topic/")
       .then((res) => res.json())
       .then((data) => setAvailableTopics(data))
       .catch((err) => console.error("Failed to load topics", err));
@@ -106,7 +106,8 @@ export default function TasksPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/planner/tasks/${id}/toggle_complete/`,
+        process.env.NEXT_PUBLIC_BACKEND_URL +
+          `planner/tasks/${id}/toggle_complete/`,
         {
           method: "PATCH",
           headers: {
@@ -142,7 +143,7 @@ export default function TasksPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/planner/tasks/${id}/`,
+        process.env.NEXT_PUBLIC_BACKEND_URL + `planner/tasks/${id}/`,
         {
           method: "DELETE",
           headers: {

@@ -43,7 +43,7 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
   const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/planner/topic/")
+    fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "planner/topic/")
       .then((res) => res.json())
       .then((data) => setAvailableTopics(data))
       .catch((err) => console.error("Failed to load topics:", err));
@@ -66,22 +66,25 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
       const new_topics = topics
         .filter((t) => t.type === "new")
         .map((t) => ({ name: t.name, color_hex: t.color_hex }));
-      const response = await fetch("http://localhost:8000/api/planner/tasks/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_BACKEND_URL + "planner/tasks/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: taskName,
+            description: description,
+            completed: false,
+            user_id: userId,
+            times: times,
+            existing_topic_ids: existing_topic_ids,
+            new_topics: new_topics,
+          }),
         },
-        body: JSON.stringify({
-          name: taskName,
-          description: description,
-          completed: false,
-          user_id: userId,
-          times: times,
-          existing_topic_ids: existing_topic_ids,
-          new_topics: new_topics,
-        }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to create task");
