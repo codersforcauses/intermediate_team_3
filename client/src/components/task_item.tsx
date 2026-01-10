@@ -98,7 +98,7 @@ export function TaskItem({
         }));
 
       const response = await fetch(
-        `http://localhost:8000/api/planner/tasks/${item.id}/`,
+        process.env.NEXT_PUBLIC_BACKEND_URL + `planner/tasks/${item.id}/`,
         {
           method: "PUT",
           headers: {
@@ -234,7 +234,7 @@ export function TaskItem({
 
       <div className="task-edit flex gap-2">
         {isEditing ? (
-          <div className="flex w-full flex-row justify-center text-lg gap-2">
+          <div className="flex w-full flex-row justify-center gap-2 text-lg">
             <button
               className="rounded-full bg-indigo-400 px-3 py-1 hover:brightness-110"
               onClick={saveEdit}

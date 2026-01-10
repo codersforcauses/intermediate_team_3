@@ -13,17 +13,20 @@ export default function Login() {
 
     const formData = new FormData(e.currentTarget);
 
-    const res = await fetch("http://127.0.0.1:8000/api/auth/login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_BACKEND_URL + "auth/login/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: formData.get("username"),
+          email: formData.get("email"),
+          password: formData.get("password"),
+        }),
       },
-      body: JSON.stringify({
-        username: formData.get("username"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-      }),
-    });
+    );
 
     const data = await res.json();
     if (!res.ok) {
@@ -37,7 +40,7 @@ export default function Login() {
     const token = localStorage.getItem("access");
 
     const userFetch = await fetch(
-      "http://127.0.0.1:8000/api/planner/protected",
+      process.env.NEXT_PUBLIC_BACKEND_URL + "planner/protected",
       {
         headers: {
           Authorization: `Bearer ${token}`,

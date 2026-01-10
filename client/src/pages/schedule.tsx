@@ -91,7 +91,7 @@ function Schedule() {
           return;
         }
         const auth = await fetch(
-          "http://localhost:8000/api/planner/protected/",
+          process.env.NEXT_PUBLIC_BACKEND_URL + "planner/protected/",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -103,7 +103,7 @@ function Schedule() {
           return;
         }
         const tasksFetch = await fetch(
-          `http://localhost:8000/api/planner/tasks/`,
+          process.env.NEXT_PUBLIC_BACKEND_URL + `planner/tasks/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
