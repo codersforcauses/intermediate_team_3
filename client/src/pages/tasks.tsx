@@ -32,7 +32,6 @@ export default function TasksPage() {
   const router = useRouter();
   const [userId, setUserId] = useState<number | null>(null);
   const [items, setItems] = useState<Item[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
 
   const [showAddTask, setShowAddTask] = useState(false);
@@ -78,7 +77,7 @@ export default function TasksPage() {
       } catch (err) {
         console.error("Failed to load tasks:", err);
       } finally {
-        setLoading(false);
+        //setLoading(false);
       }
     }
     fetchData();
@@ -166,9 +165,9 @@ export default function TasksPage() {
     <div className="content-container min-w-screen relative flex min-h-[calc(100vh-64px)] flex-row items-center justify-center bg-slate-800">
       <div className="task-list-container h-full w-full">
         <div className="task-list-content flex h-full w-full flex-col items-center justify-center rounded-lg p-3 text-slate-200">
-            <h1 className="task-list-title border-b-slate-400 p-3 text-center text-4xl font-bold text-slate-100">
-              Tasks
-            </h1>
+          <h1 className="task-list-title border-b-slate-400 p-3 text-center text-4xl font-bold text-slate-100">
+            Tasks
+          </h1>
           <div className="task-list-bottom flex w-full flex-row justify-center gap-6">
             <div
               className="task-list-wrapper flex w-fit flex-row justify-center"
