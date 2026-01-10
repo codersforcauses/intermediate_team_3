@@ -46,7 +46,7 @@ export function TaskList({
     );
   }
   return (
-    <ul className="task-list h-fit space-y-3 w-xl">
+    <ul className="task-list w-xl h-fit space-y-3">
       {items.map((item) => (
         <li key={item.id}>
           <TaskItem

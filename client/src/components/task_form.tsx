@@ -43,10 +43,31 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
   const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
-    fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "planner/topic/")
-      .then((res) => res.json())
-      .then((data) => setAvailableTopics(data))
-      .catch((err) => console.error("Failed to load topics:", err));
+    async function fetchTopics() {
+      try {
+        const token = localStorage.getItem("access");
+        if (!token) return;
+
+        const res = await fetch(
+          process.env.NEXT_PUBLIC_BACKEND_URL + "planner/topic/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (!res.ok) {
+          throw new Error("Failed to load topics");
+        }
+
+        const data = await res.json();
+        setAvailableTopics(data);
+      } catch (err) {
+        console.error("Failed to load topics", err);
+      }
+    }
+    fetchTopics();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,6 +87,9 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
       const new_topics = topics
         .filter((t) => t.type === "new")
         .map((t) => ({ name: t.name, color_hex: t.color_hex }));
+
+      const validTimes = times.filter((t) => t.start_time && t.end_time);
+
       const response = await fetch(
         process.env.NEXT_PUBLIC_BACKEND_URL + "planner/tasks/",
         {
@@ -79,7 +103,7 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
             description: description,
             completed: false,
             user_id: userId,
-            times: times,
+            times: validTimes,
             existing_topic_ids: existing_topic_ids,
             new_topics: new_topics,
           }),

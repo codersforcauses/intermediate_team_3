@@ -2,7 +2,7 @@ const Timer = (timeRemaining: number) => {
   const formatTime = (time: number) => {
     const seconds = Math.floor(time % 60);
     const minutes = Math.floor((time / 60) % 60);
-    const hours = Math.floor((time / (60 * 60)));
+    const hours = Math.floor(time / (60 * 60));
 
     return (
       <div className="countdown-display">
@@ -24,7 +24,7 @@ const Timer = (timeRemaining: number) => {
   };
 
   return (
-    <div className="rounded-full bg-indigo-400 p-3 px-8 font-inter text-xl font-semibold w-full">
+    <div className="w-full rounded-full bg-indigo-400 p-3 px-8 font-inter text-xl font-semibold">
       {formatTime(timeRemaining)}
     </div>
   );

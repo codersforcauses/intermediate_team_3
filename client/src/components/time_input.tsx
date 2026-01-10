@@ -1,4 +1,4 @@
-import { FaRegCalendarAlt,FaRegClock } from "react-icons/fa";
+import { FaRegCalendarAlt, FaRegClock } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 
 interface Time {
@@ -25,6 +25,31 @@ const daysOfWeek = [
 ];
 
 export function TimeInput({ times, setTimes }: TimeInputProps) {
+  const addTime = () => {
+    // Add a new empty draft time only if there isn't already an empty one
+    const hasEmpty = times.some((t) => !t.start_time || !t.end_time);
+    if (!hasEmpty) {
+      setTimes([
+        ...times,
+        { id: 0, day: 1, start_time: "", end_time: "", repeating: false },
+      ]);
+    }
+  };
+
+  const updateTime = (
+    index: number,
+    field: keyof Time,
+    value: string | number | boolean,
+  ) => {
+    const newTimes = [...times];
+    newTimes[index] = { ...newTimes[index], [field]: value };
+    setTimes(newTimes);
+  };
+
+  const removeTime = (index: number) => {
+    setTimes(times.filter((_, i) => i !== index));
+  };
+
   return (
     <div className="text-md flex w-full flex-col items-center justify-center gap-2">
       <h1 className="time-input-title text-xl hover:brightness-110">Times</h1>
@@ -38,11 +63,9 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
             <select
               className="day-select h-full rounded-lg bg-indigo-400 p-1 text-center hover:brightness-110"
               value={time.day}
-              onChange={(e) => {
-                const newTimes = [...times];
-                newTimes[index].day = parseInt(e.target.value);
-                setTimes(newTimes);
-              }}
+              onChange={(e) =>
+                updateTime(index, "day", parseInt(e.target.value))
+              }
             >
               {daysOfWeek.map((day) => (
                 <option key={day.value} value={day.value}>
@@ -58,21 +81,15 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
                 className="time-input h-full rounded-lg bg-indigo-400 hover:brightness-110"
                 type="time"
                 value={time.start_time}
-                onChange={(e) => {
-                  const newTimes = [...times];
-                  newTimes[index].start_time = e.target.value;
-                  setTimes(newTimes);
-                }}
+                onChange={(e) =>
+                  updateTime(index, "start_time", e.target.value)
+                }
               />
               <input
                 className="time-input h-full rounded-lg bg-indigo-400 hover:brightness-110"
                 type="time"
                 value={time.end_time}
-                onChange={(e) => {
-                  const newTimes = [...times];
-                  newTimes[index].end_time = e.target.value;
-                  setTimes(newTimes);
-                }}
+                onChange={(e) => updateTime(index, "end_time", e.target.value)}
               />
             </div>
           </div>
@@ -82,17 +99,14 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
               className="repeat-input"
               type="checkbox"
               checked={time.repeating}
-              onChange={(e) => {
-                const newTimes = [...times];
-                newTimes[index].repeating = e.target.checked;
-                setTimes(newTimes);
-              }}
+              onChange={(e) => updateTime(index, "repeating", e.target.checked)}
             />
           </div>
+
           <button
             className="time-delete"
             type="button"
-            onClick={() => setTimes(times.filter((_, i) => i !== index))}
+            onClick={() => removeTime(index)}
           >
             <FaRegTrashCan className="hover:text-red-500" />
           </button>
@@ -101,12 +115,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
       <button
         className="add-time-button w-12 rounded-full bg-indigo-400 text-xl hover:brightness-110"
         type="button"
-        onClick={() =>
-          setTimes([
-            ...times,
-            { id: 0, day: 1, start_time: "", end_time: "", repeating: false },
-          ])
-        }
+        onClick={addTime}
       >
         +
       </button>

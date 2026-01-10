@@ -84,10 +84,32 @@ export default function TasksPage() {
   }, [router]);
 
   useEffect(() => {
-    fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "planner/topic/")
-      .then((res) => res.json())
-      .then((data) => setAvailableTopics(data))
-      .catch((err) => console.error("Failed to load topics", err));
+    async function fetchTopics() {
+      try {
+        const token = localStorage.getItem("access");
+        if (!token) return;
+
+        const res = await fetch(
+          process.env.NEXT_PUBLIC_BACKEND_URL + "planner/topic/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (!res.ok) {
+          throw new Error("Failed to load topics");
+        }
+
+        const data = await res.json();
+        setAvailableTopics(data);
+      } catch (err) {
+        console.error("Failed to load topics", err);
+      }
+    }
+
+    fetchTopics();
   }, []);
 
   //if (loading) {
