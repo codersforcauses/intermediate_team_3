@@ -5,6 +5,7 @@ import Timetable, {
   resizeAndPositionTimetableElements,
 } from "@/components/timetable";
 import { TimetableTaskProps } from "@/components/timetable_task";
+import { useRouter } from "next/router";
 
 /*
 Database representation of Time.
@@ -59,6 +60,8 @@ Page containing a Timetable to visually represent the times that tasks have been
 assigned.
 */
 function Schedule() {
+
+  const router = useRouter();
   const [timetableTasksProps, setTimetableTasksProps] = useState<
     TimetableTaskProps[]
   >([]);
@@ -82,13 +85,35 @@ function Schedule() {
     to be displayed. Sets the timetableTasksProps State variable once finished.
     */
     async function fetchTasks() {
-      const API_URL = "http://localhost:8000/api/planner/task/";
+      
       try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-          throw new Error(`Response status: ${response.status}`);
+        const token = localStorage.getItem("access");
+        if (!token) {
+          router.push("/login"); //redirect to login if unauthorised
+          return;
         }
-        const data = await response.json();
+        const auth = await fetch(
+          "http://localhost:8000/api/planner/protected/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        if (!auth.ok) {
+          router.push("/login"); //redirect to login if unauthorised
+          return;
+        }
+        const tasksFetch = await fetch(
+          `http://localhost:8000/api/planner/tasks/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        const data = await tasksFetch.json();
         let timetable_task_props =
           await formatTaskDataToTimetableTaskProps(data);
         timetable_task_props =
@@ -269,13 +294,13 @@ function Schedule() {
     return () => {
       removeEventListeners();
     };
-  }, []);
+  }, [router]);
   /* This should be dependent on timetableTasksProps however doing so causes it
   to run in an infinite loop. */
 
   return (
-    <div className="content-container min-w-screen flex h-[85vh] w-full flex-row bg-slate-950">
-      <div className="timetable-container h-[85vh] w-full p-3">
+    <div className="content-container min-w-screen h-[calc(100vh-64px)] flex w-full flex-row bg-slate-950">
+      <div className="timetable-container max-h-[90vh] w-full p-3">
         <Timetable timetable_tasks_props={timetableTasksProps} />
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { RxCross2, RxPlus } from "react-icons/rx";
 
 import { TaskForm } from "@/components/task_form";
 import { TaskList } from "@/components/task_list";
@@ -33,6 +34,12 @@ export default function TasksPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [availableTopics, setAvailableTopics] = useState<Topic[]>([]);
+
+  const [showAddTask, setShowAddTask] = useState(false);
+
+  function toggleShowAddTask() {
+    setShowAddTask(!showAddTask);
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -156,20 +163,57 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="container mx-auto flex flex-row items-center justify-center p-4">
-      <div className="m-4 h-fit w-fit rounded-xl bg-zinc-700 p-4 text-center">
-        <h1 className="mb-4 text-3xl font-bold text-zinc-300">Task List</h1>
-        <TaskList
-          items={items}
-          onToggleTask={handleToggleTask}
-          onUpdate={handleTaskUpdated}
-          onDelete={handleTaskDeleted}
-          availableTopics={availableTopics}
-        />
-      </div>
-      <div className="m-4 h-fit w-fit rounded-xl bg-zinc-700 p-4 text-center">
-        <h1 className="mb-4 text-3xl font-bold text-zinc-300">Add Task</h1>
-        <TaskForm userId={Number(userId)} onTaskCreated={handleTaskCreated} />
+    <div className="content-container min-w-screen relative flex min-h-[calc(100vh-64px)] flex-row items-center justify-center bg-slate-500">
+      <div className="task-list-container h-full w-full">
+        <div className="task-list-content flex h-full w-full flex-col items-center justify-center rounded-lg p-3 text-slate-200">
+          <div className="task-list-top mb-3 hidden h-[10%] w-full rounded-t-lg">
+            <h1 className="task-list-title border-b-2 border-b-slate-400 p-3 text-center text-3xl font-bold text-slate-100">
+              My Tasks
+            </h1>
+          </div>
+          <div className="task-list-bottom flex w-full flex-row justify-center gap-6">
+            <div
+              className="task-list-wrapper flex w-fit flex-row justify-center"
+              style={{
+                scrollbarWidth: "thin",
+                scrollbarColor: "grey white",
+                display: !(showAddTask && items.length === 0) ? "flex" : "none",
+              }}
+            >
+              <TaskList
+                items={items}
+                onToggleTask={handleToggleTask}
+                onUpdate={handleTaskUpdated}
+                onDelete={handleTaskDeleted}
+                availableTopics={availableTopics}
+              />
+            </div>
+            <div
+              className="add-task-container sticky top-3 flex h-full flex-col items-center justify-start rounded-lg bg-slate-400 p-3 shadow-xl"
+              style={{ display: showAddTask ? "flex" : "none" }}
+            >
+              <h1 className="text-3xl font-bold text-slate-100">Add Task</h1>
+              <button
+                className="minimise-add-task-btn absolute right-3 top-3 h-7 w-7 text-lg hover:brightness-110"
+                onClick={toggleShowAddTask}
+              >
+                <RxCross2 />
+              </button>
+              <div className="task-form-wrapper h-full overflow-auto">
+                <TaskForm
+                  userId={Number(userId)}
+                  onTaskCreated={handleTaskCreated}
+                />
+              </div>
+            </div>
+            <button
+              className="toggle-add-task-button fixed bottom-9 right-9 flex h-12 w-12 items-center justify-center rounded-full border bg-slate-400 text-xl brightness-90 hover:brightness-110"
+              onClick={toggleShowAddTask}
+            >
+              {!showAddTask ? <RxPlus /> : <RxCross2 />}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -17,17 +17,12 @@ interface Time {
   task: number;
 }
 
-interface Tasks {
-  tasks: Task[];
-  times: Time[];
-}
-
 function serializeTime(time: string) {
   const [Hours, Mins, Sec] = time.split(":").map(Number);
   return Hours * 60 * 60 + Mins * 60 + Sec;
 }
 
-export default function UpcomingTasks({ tasks, times }: Tasks) {
+export default function UpcomingTasks({ tasks, times, refresh }: { tasks: Task[], times:Time[], refresh : Boolean}) {
   const [upcomingTimes, setUpcomingTimes] = useState<Time[]>([]);
 
   useEffect(() => {
@@ -53,17 +48,20 @@ export default function UpcomingTasks({ tasks, times }: Tasks) {
     }
 
     sortTimes();
-  }, [times, tasks]);
+  }, [times, tasks, refresh]);
 
   return (
     <div className="rounded-2xl bg-slate-900 p-2 py-3 shadow-xl shadow-black/40">
       <div className="scrollbar h-[285px] w-96 overflow-y-auto overflow-x-hidden">
-        {upcomingTimes.map((time: Time) => (
+        {upcomingTimes.map((time: Time, index) => (
+          <>
           <TaskDisplay
             task={tasks.filter((task) => task.id === time.task)[0]}
             time={time}
             key={time.id}
+            current={index===0}
           />
+          </>
         ))}
       </div>
     </div>

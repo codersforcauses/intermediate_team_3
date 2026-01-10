@@ -1,3 +1,5 @@
+import { FaRegCalendarAlt,FaRegClock } from "react-icons/fa";
+
 import { getDurationMinutes } from "@/components/timetable";
 
 /*
@@ -14,10 +16,13 @@ interface TimeTagProps {
 }
 
 /*
-A small round tag containing a clock icon and either the start and end times,
-the duration, or both, specified by the display prop.
+Returns a string describing the time component of a TimeTag.
 */
-function TimeTag({ start_time, end_time, display }: TimeTagProps) {
+function getTimeDisplayString(
+  start_time: string,
+  end_time: string,
+  display?: string,
+) {
   const time_string =
     start_time.substring(0, 5) + "-" + end_time.substring(0, 5);
 
@@ -33,16 +38,38 @@ function TimeTag({ start_time, end_time, display }: TimeTagProps) {
     else if (display == "both") display_string += " (" + duration_string + ")";
   }
 
+  return display_string;
+}
+
+/*
+A small round tag containing a clock icon and either the start and end times,
+the duration, or both, specified by the display prop.
+*/
+function TimeTag({ start_time, end_time, display }: TimeTagProps) {
+  const time_display_string = getTimeDisplayString(
+    start_time,
+    end_time,
+    display,
+  );
   return (
-    <div
-      className={
-        "flex h-fit w-fit flex-row items-center justify-center rounded-full text-lg font-medium"
-      }
-    >
-      <div className="placeholder-clock aspect-1/1 h-5 w-5 rounded-[50] bg-slate-200"></div>
-      <p className="ml-1">{display_string}</p>
+    <div className="flex h-fit w-fit flex-row items-center justify-center gap-1 rounded-full">
+      <FaRegClock />
+      <p className="hover:brightness-110">{time_display_string}</p>
     </div>
   );
 }
 
 export default TimeTag;
+
+interface DayTagProps {
+  day: string;
+}
+
+export function DayTag({ day }: DayTagProps) {
+  return (
+    <div className="flex h-fit w-fit flex-row items-center justify-center gap-1 rounded-full">
+      <FaRegCalendarAlt />
+      <p className="hover:brightness-110">{day}</p>
+    </div>
+  );
+}

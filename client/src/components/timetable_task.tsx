@@ -189,13 +189,17 @@ function TimetableTaskContent({
 }: TimetableTaskContentProps) {
   return (
     <div className="timetable-task-content h-full overflow-hidden">
-      <h1 className="mb-1 text-2xl font-bold">{name}</h1>
-      <TimeTag
-        start_time={start_time}
-        end_time={end_time}
-        display={time_display}
-      />
-      <div className="topic-tags mt-2 flex flex-row flex-wrap justify-between text-slate-200">
+      <h1 className="mb-1 text-2xl font-bold text-slate-100 hover:brightness-110">
+        {name}
+      </h1>
+      <div className="time-tag-wrapper text-lg font-medium text-slate-200">
+        <TimeTag
+          start_time={start_time}
+          end_time={end_time}
+          display={time_display}
+        />
+      </div>
+      <div className="topic-tags mb-2 mt-2 flex flex-row flex-wrap gap-1">
         {topics?.map((topic) => (
           <TopicTag
             key={topic.name}
@@ -204,8 +208,8 @@ function TimetableTaskContent({
           />
         ))}
       </div>
-      <div className="description mt-1 flex flex-col text-slate-200">
-        <p className="">{description}</p>
+      <div className="description mt-1 flex flex-col text-justify">
+        <p className="text-slate-300 hover:brightness-110">{description}</p>
       </div>
     </div>
   );
@@ -273,9 +277,9 @@ function TimetableTask({
   }
 
   if (clash === true) {
-    additional_style += "bg-slate-700 hover:bg-slate-500 ";
+    additional_style += "bg-slate-700 ";
   } else {
-    additional_style += "bg-slate-400 hover:bg-slate-300 ";
+    additional_style += "bg-slate-400 ";
   }
 
   const mouseOverHandler = () => {
@@ -295,7 +299,7 @@ function TimetableTask({
       <div
         id={id}
         className={
-          "timetable-task pointer-events-auto absolute z-[50] overflow-hidden rounded-lg p-3 text-slate-100" +
+          "timetable-task pointer-events-auto absolute z-[50] overflow-hidden rounded-lg p-3 hover:brightness-110 " +
           additional_style
         }
         data-completed={completed}
@@ -324,7 +328,10 @@ function TimetableTask({
         onMouseOver={mouseOverHandler}
         onMouseOut={mouseOutHandler}
       >
-        <div className="tooltip-content-container flex h-full w-full flex-col gap-3 overflow-auto">
+        <div
+          className="tooltip-content-container flex h-full w-full flex-col gap-3 overflow-auto"
+          style={{ scrollbarWidth: "thin" }}
+        >
           {tooltip_props.map((props) => (
             <div
               key={id + "-tooltip-" + props.name}

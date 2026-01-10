@@ -1,7 +1,11 @@
 import { useState } from "react";
+import { FaRegEdit } from "react-icons/fa";
+import { FaRegTrashCan } from "react-icons/fa6";
 
 import { TimeInput } from "@/components/time_input";
+import TimeTag, { DayTag } from "@/components/time_tag";
 import { TopicInput } from "@/components/topic_input";
+import { TopicTagAlt } from "@/components/topic_tag";
 
 interface Time {
   id: number;
@@ -130,52 +134,61 @@ export function TaskItem({
     /* Item Display */
   }
   return (
-    <div className="m-1 flex w-96 flex-col rounded-md border-2 border-zinc-200 bg-zinc-700 p-2">
-      <div className="flex items-center justify-between">
+    <div className="task flex h-fit w-full max-w-[48rem] flex-col gap-3 rounded-lg bg-slate-400 p-5 text-slate-200 shadow-xl">
+      <div className="task-title-container flex w-full flex-row items-center justify-start gap-2 text-3xl font-bold text-slate-100 hover:text-slate-100">
         {/* Task Name and Completion */}
-        <div className="flex items-center space-x-2">
+        <input
+          className="task-completion mr-3 accent-slate-300"
+          type="checkbox"
+          checked={item.completed}
+          onChange={() => onToggle?.(item.id)}
+        />
+        {isEditing ? (
           <input
-            type="checkbox"
-            checked={item.completed}
-            onChange={() => onToggle?.(item.id)}
-            className="w-xl h-xl accent-zinc-600"
+            className="task-title-edit w-full rounded-lg bg-slate-400 px-3 py-1 brightness-90 hover:brightness-110"
+            value={draftName}
+            onChange={(e) => setDraftName(e.target.value)}
           />
-          {isEditing ? (
-            <input
-              value={draftName}
-              onChange={(e) => setDraftName(e.target.value)}
-              className="rounded border-2 bg-zinc-600 p-1 text-zinc-200"
-            />
-          ) : (
+        ) : (
+          <>
             <span
               className={
-                item.completed ? "text-zinc-400 line-through" : "text-zinc-300"
+                "task-title w-full" + (item.completed ? " line-through" : "")
               }
             >
               {item.name}
             </span>
-          )}
-        </div>
+            <button className="hover:brightness-110" onClick={startEdit}>
+              <FaRegEdit className="h-5 w-5" />
+            </button>
+            <button onClick={() => onDelete(item.id)}>
+              <FaRegTrashCan className="h-5 w-5 hover:text-red-600" />
+            </button>
+          </>
+        )}
+      </div>
 
-        {/* Task Times */}
-        <div className="flex flex-col items-end text-sm text-zinc-300">
-          {isEditing ? (
-            <TimeInput times={draftTimes} setTimes={setDraftTimes} />
-          ) : item.times?.length > 0 ? (
-            item.times.map((t) => (
-              <span key={t.id}>
-                {formatDay(t.day)} {t.start_time.slice(0, 5)} -{" "}
-                {t.end_time.slice(0, 5)}
-              </span>
-            ))
-          ) : (
-            "No time set"
-          )}
-        </div>
+      {/* Task Times */}
+      <div className="task-times-container flex flex-row flex-wrap items-start justify-start gap-y-1">
+        {isEditing ? (
+          <TimeInput times={draftTimes} setTimes={setDraftTimes} />
+        ) : item.times?.length > 0 ? (
+          item.times.map((time) => (
+            <div
+              key={time.id}
+              className="day-time-tags flex w-fit flex-row gap-3 rounded-full bg-slate-400 px-3 py-1 hover:brightness-110"
+            >
+              <DayTag day={formatDay(time.day)} />
+              <TimeTag start_time={time.start_time} end_time={time.end_time} />
+            </div>
+          ))
+        ) : (
+          "No time set"
+        )}
       </div>
 
       {/* Task Topics */}
-      <div className="flex flex-wrap gap-1 text-sm text-zinc-300">
+      <div className="task-topic-tags flex flex-row flex-wrap gap-1 text-slate-200">
         {isEditing ? (
           <TopicInput
             availableTopics={availableTopics}
@@ -184,20 +197,11 @@ export function TaskItem({
           />
         ) : item.topics.length > 0 ? (
           item.topics.map((topic) => (
-            <span
+            <TopicTagAlt
               key={topic.id}
-              className="flex items-center gap-1 rounded-lg border-2 border-zinc-500 px-2 py-0.5 text-zinc-100"
-            >
-              <span
-                className="h-2 w-2 rounded-full"
-                style={{
-                  backgroundColor: `#${topic.color_hex
-                    .toString(16)
-                    .padStart(6, "0")}`,
-                }}
-              />
-              {topic.name}
-            </span>
+              name={topic.name}
+              color_hex={topic.color_hex}
+            />
           ))
         ) : (
           "No topics"
@@ -205,52 +209,57 @@ export function TaskItem({
       </div>
 
       {/* Task Description */}
-      <div>
+      <div
+        className="task-description overflow-auto text-justify text-slate-200"
+        style={!isEditing ? { maxHeight: "12rem", scrollbarWidth: "thin" } : {}}
+      >
         {isEditing ? (
-          <textarea
-            value={draftDescription}
-            onChange={(e) => setDraftDescription(e.target.value)}
-            className="mt-2 w-full rounded border-2 bg-zinc-600 p-1 text-zinc-200"
-          />
-        ) : item.description ? (
-          <span className="mt-2 block text-zinc-300">{item.description}</span>
+          <div className="task-description-input-container flex flex-col items-center gap-2">
+            <h1 className="description-input-title text-xl hover:brightness-110">
+              Description
+            </h1>
+            <textarea
+              className="w-full rounded-lg bg-slate-400 p-1 brightness-90 hover:brightness-110"
+              value={draftDescription}
+              rows={7}
+              onChange={(e) => setDraftDescription(e.target.value)}
+            />
+          </div>
         ) : (
-          <span className="mt-2 block italic text-zinc-500">
-            No description.
+          <span className="block hover:brightness-110">
+            {item.description ? item.description : "No Description"}
           </span>
         )}
       </div>
 
       {/* Edit Button */}
-      <div className="mt-2 flex gap-2">
+
+      <div className="task-edit flex gap-2">
         {isEditing ? (
-          <>
-            <button onClick={saveEdit} disabled={saving}>
+          <div className="flex w-full flex-row justify-center text-lg">
+            <button
+              className="rounded-full bg-slate-400 px-3 py-1 hover:brightness-110"
+              onClick={saveEdit}
+              disabled={saving}
+            >
               Save
             </button>
-            <button onClick={cancelEdit}>Cancel</button>
-          </>
+            <button
+              className="rounded-full bg-slate-400 px-3 py-1 hover:brightness-110"
+              onClick={cancelEdit}
+            >
+              Cancel
+            </button>
+          </div>
         ) : (
-          <button onClick={startEdit}>Edit</button>
-        )}
-      </div>
-
-      {/* Delete Button */}
-      <div>
-        {!isEditing && (
-          <button
-            onClick={() => onDelete(item.id)}
-            className="mt-2 text-red-500"
-          >
-            Delete Task
-          </button>
+          <></>
         )}
       </div>
     </div>
   );
 }
 
-function formatDay(day: number): string {
+export function formatDay(day: number): string {
   const days = [
     "Monday",
     "Tuesday",
