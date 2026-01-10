@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import Timetable, {
@@ -5,7 +6,6 @@ import Timetable, {
   resizeAndPositionTimetableElements,
 } from "@/components/timetable";
 import { TimetableTaskProps } from "@/components/timetable_task";
-import { useRouter } from "next/router";
 
 /*
 Database representation of Time.
@@ -46,7 +46,7 @@ interface Task {
 Used to convert database representation of a day to string used by front end.
 */
 enum Day {
-  Monday = 0,
+  Monday = 1,
   Tuesday,
   Wednesday,
   Thursday,
@@ -60,7 +60,6 @@ Page containing a Timetable to visually represent the times that tasks have been
 assigned.
 */
 function Schedule() {
-
   const router = useRouter();
   const [timetableTasksProps, setTimetableTasksProps] = useState<
     TimetableTaskProps[]
@@ -85,7 +84,6 @@ function Schedule() {
     to be displayed. Sets the timetableTasksProps State variable once finished.
     */
     async function fetchTasks() {
-      
       try {
         const token = localStorage.getItem("access");
         if (!token) {
@@ -299,7 +297,7 @@ function Schedule() {
   to run in an infinite loop. */
 
   return (
-    <div className="content-container min-w-screen h-[calc(100vh-64px)] flex w-full flex-col bg-slate-800 justify-center items-center p-3">
+    <div className="content-container min-w-screen flex h-[calc(100vh-64px)] w-full flex-col items-center justify-center bg-slate-800 p-3">
       <div className="timetable-container max-h-[90vh] w-full p-3">
         <Timetable timetable_tasks_props={timetableTasksProps} />
       </div>
