@@ -48,11 +48,14 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
         const token = localStorage.getItem("access");
         if (!token) return;
 
-        const res = await fetch("http://localhost:8000/api/planner/topic/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const res = await fetch(
+          process.env.NEXT_PUBLIC_BACKEND_URL + "planner/topic/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!res.ok) {
           throw new Error("Failed to load topics");
@@ -87,22 +90,25 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
 
       const validTimes = times.filter((t) => t.start_time && t.end_time);
 
-      const response = await fetch("http://localhost:8000/api/planner/tasks/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_BACKEND_URL + "planner/tasks/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: taskName,
+            description: description,
+            completed: false,
+            user_id: userId,
+            times: validTimes,
+            existing_topic_ids: existing_topic_ids,
+            new_topics: new_topics,
+          }),
         },
-        body: JSON.stringify({
-          name: taskName,
-          description: description,
-          completed: false,
-          user_id: userId,
-          times: validTimes,
-          existing_topic_ids: existing_topic_ids,
-          new_topics: new_topics,
-        }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to create task");
@@ -122,10 +128,10 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="task-form flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-slate-400 p-4 text-slate-200"
+      className="task-form flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-slate-900 p-4 text-slate-200"
     >
       <input
-        className="title-input w-full rounded-lg bg-slate-400 px-3 py-1 text-3xl font-bold text-slate-100 brightness-90 placeholder:text-slate-300 hover:brightness-110"
+        className="title-input w-full rounded-lg bg-indigo-400 px-3 py-1 text-3xl font-bold text-slate-100 brightness-90 placeholder:text-slate-300 hover:brightness-110"
         type="text"
         value={taskName}
         onChange={(e) => setTaskName(e.target.value)}
@@ -137,7 +143,7 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
           Description
         </h1>
         <textarea
-          className="description-input w-full rounded-lg bg-slate-400 p-2 brightness-90 placeholder:text-slate-300 hover:brightness-110"
+          className="description-input w-full rounded-lg bg-indigo-400 p-2 brightness-90 placeholder:text-slate-300 hover:brightness-110"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={7}
@@ -151,7 +157,7 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
       />
       <TimeInput times={times} setTimes={setTimes} />
       <button
-        className="w-fit rounded-lg border border-slate-300 bg-slate-400 px-3 py-1 text-xl brightness-110 hover:brightness-125"
+        className="w-fit rounded-full border border-slate-300 bg-indigo-400 px-3 py-1 text-xl brightness-110 hover:brightness-125"
         type="submit"
       >
         Save

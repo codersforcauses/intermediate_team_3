@@ -1,4 +1,4 @@
-import { FaRegCalendarAlt,FaRegClock } from "react-icons/fa";
+import { FaRegCalendarAlt, FaRegClock } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 
 interface Time {
@@ -25,10 +25,9 @@ const daysOfWeek = [
 ];
 
 export function TimeInput({ times, setTimes }: TimeInputProps) {
-  
   const addTime = () => {
     // Add a new empty draft time only if there isn't already an empty one
-    const hasEmpty = times.some(t => !t.start_time || !t.end_time);
+    const hasEmpty = times.some((t) => !t.start_time || !t.end_time);
     if (!hasEmpty) {
       setTimes([
         ...times,
@@ -37,7 +36,11 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
     }
   };
 
-  const updateTime = (index: number, field: keyof Time, value: any) => {
+  const updateTime = (
+    index: number,
+    field: keyof Time,
+    value: string | number | boolean,
+  ) => {
     const newTimes = [...times];
     newTimes[index] = { ...newTimes[index], [field]: value };
     setTimes(newTimes);
@@ -53,14 +56,16 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
       {times.map((time, index) => (
         <div
           key={index}
-          className="time-input-wrapper flex w-full flex-row items-center justify-evenly gap-1 rounded-lg bg-slate-400 p-1 brightness-90 hover:brightness-95"
+          className="time-input-wrapper flex w-full flex-row items-center justify-evenly gap-1 rounded-lg bg-indigo-400 p-1 brightness-90 hover:brightness-95"
         >
           <div className="day-select-wrapper flex w-[20%] flex-row items-center justify-center gap-1">
             <FaRegCalendarAlt />
             <select
-              className="day-select h-full rounded-lg bg-slate-400 p-1 text-center hover:brightness-110"
+              className="day-select h-full rounded-lg bg-indigo-400 p-1 text-center hover:brightness-110"
               value={time.day}
-              onChange={(e) => updateTime(index, "day", parseInt(e.target.value))}
+              onChange={(e) =>
+                updateTime(index, "day", parseInt(e.target.value))
+              }
             >
               {daysOfWeek.map((day) => (
                 <option key={day.value} value={day.value}>
@@ -73,20 +78,22 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
             <FaRegClock />
             <div className="time-inputs-wrapper text-md flex flex-col">
               <input
-                className="time-input h-full rounded-lg bg-slate-400 hover:brightness-110"
+                className="time-input h-full rounded-lg bg-indigo-400 hover:brightness-110"
                 type="time"
                 value={time.start_time}
-                onChange={(e) => updateTime(index, "start_time", e.target.value)}
+                onChange={(e) =>
+                  updateTime(index, "start_time", e.target.value)
+                }
               />
               <input
-                className="time-input h-full rounded-lg bg-slate-400 hover:brightness-110"
+                className="time-input h-full rounded-lg bg-indigo-400 hover:brightness-110"
                 type="time"
                 value={time.end_time}
                 onChange={(e) => updateTime(index, "end_time", e.target.value)}
               />
             </div>
           </div>
-          <div className="repeat-input-wrapper flex w-[25%] flex-row gap-2 rounded-lg bg-slate-400 p-1 hover:brightness-110">
+          <div className="repeat-input-wrapper flex w-[25%] flex-row gap-2 rounded-lg bg-indigo-400 p-1 hover:brightness-110">
             <span>Repeats?</span>
             <input
               className="repeat-input"
@@ -95,7 +102,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
               onChange={(e) => updateTime(index, "repeating", e.target.checked)}
             />
           </div>
-          
+
           <button
             className="time-delete"
             type="button"
@@ -106,7 +113,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
         </div>
       ))}
       <button
-        className="add-time-button w-12 rounded-full bg-slate-400 text-xl hover:brightness-110"
+        className="add-time-button w-12 rounded-full bg-indigo-400 text-xl hover:brightness-110"
         type="button"
         onClick={addTime}
       >

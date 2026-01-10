@@ -141,7 +141,7 @@ export function resizeAndPositionTimetableTasks() {
   const tasks = document.getElementsByClassName("timetable-task");
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
-    resizeAndPositionTimetableTask(task);
+    resizeAndPositionTimetableTask(task as HTMLElement);
   }
 }
 

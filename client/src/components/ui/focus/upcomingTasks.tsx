@@ -22,7 +22,15 @@ function serializeTime(time: string) {
   return Hours * 60 * 60 + Mins * 60 + Sec;
 }
 
-export default function UpcomingTasks({ tasks, times, refresh }: { tasks: Task[], times:Time[], refresh : Boolean}) {
+export default function UpcomingTasks({
+  tasks,
+  times,
+  refresh,
+}: {
+  tasks: Task[];
+  times: Time[];
+  refresh: boolean;
+}) {
   const [upcomingTimes, setUpcomingTimes] = useState<Time[]>([]);
 
   useEffect(() => {
@@ -55,12 +63,12 @@ export default function UpcomingTasks({ tasks, times, refresh }: { tasks: Task[]
       <div className="scrollbar h-[285px] w-96 overflow-y-auto overflow-x-hidden">
         {upcomingTimes.map((time: Time, index) => (
           <>
-          <TaskDisplay
-            task={tasks.filter((task) => task.id === time.task)[0]}
-            time={time}
-            key={time.id}
-            current={index===0}
-          />
+            <TaskDisplay
+              task={tasks.filter((task) => task.id === time.task)[0]}
+              time={time}
+              key={time.id}
+              current={index === 0}
+            />
           </>
         ))}
       </div>

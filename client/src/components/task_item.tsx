@@ -97,10 +97,10 @@ export function TaskItem({
           color_hex: t.color_hex,
         }));
 
-      const validTimes = draftTimes.filter(t => t.start_time && t.end_time);
+      const validTimes = draftTimes.filter((t) => t.start_time && t.end_time);
 
       const response = await fetch(
-        `http://localhost:8000/api/planner/tasks/${item.id}/`,
+        process.env.NEXT_PUBLIC_BACKEND_URL + `planner/tasks/${item.id}/`,
         {
           method: "PUT",
           headers: {
@@ -134,7 +134,7 @@ export function TaskItem({
     /* Item Display */
   }
   return (
-    <div className="task flex h-fit w-full max-w-[48rem] flex-col gap-3 rounded-lg bg-slate-400 p-5 text-slate-200 shadow-xl">
+    <div className="task flex h-fit w-full min-w-[20rem] max-w-[48rem] flex-col gap-3 rounded-3xl bg-slate-900 p-5 text-slate-200 shadow-xl shadow-black/40">
       <div className="task-title-container flex w-full flex-row items-center justify-start gap-2 text-3xl font-bold text-slate-100 hover:text-slate-100">
         {/* Task Name and Completion */}
         <input
@@ -145,7 +145,7 @@ export function TaskItem({
         />
         {isEditing ? (
           <input
-            className="task-title-edit w-full rounded-lg bg-slate-400 px-3 py-1 brightness-90 hover:brightness-110"
+            className="task-title-edit w-full rounded-lg bg-indigo-400 px-3 py-1 brightness-90 hover:brightness-110"
             value={draftName}
             onChange={(e) => setDraftName(e.target.value)}
           />
@@ -169,14 +169,14 @@ export function TaskItem({
       </div>
 
       {/* Task Times */}
-      <div className="task-times-container flex flex-row flex-wrap items-start justify-start gap-y-1">
+      <div className="task-times-container flex flex-row flex-wrap items-start justify-start gap-1">
         {isEditing ? (
           <TimeInput times={draftTimes} setTimes={setDraftTimes} />
         ) : item.times?.length > 0 ? (
           item.times.map((time) => (
             <div
               key={time.id}
-              className="day-time-tags flex w-fit flex-row gap-3 rounded-full bg-slate-400 px-3 py-1 hover:brightness-110"
+              className="day-time-tags flex w-fit flex-row gap-3 rounded-full bg-indigo-400 px-3 py-1 hover:brightness-110"
             >
               <DayTag day={formatDay(time.day)} />
               <TimeTag start_time={time.start_time} end_time={time.end_time} />
@@ -219,7 +219,7 @@ export function TaskItem({
               Description
             </h1>
             <textarea
-              className="w-full rounded-lg bg-slate-400 p-1 brightness-90 hover:brightness-110"
+              className="w-full rounded-lg bg-indigo-400 p-1 brightness-90 hover:brightness-110"
               value={draftDescription}
               rows={7}
               onChange={(e) => setDraftDescription(e.target.value)}
@@ -236,16 +236,16 @@ export function TaskItem({
 
       <div className="task-edit flex gap-2">
         {isEditing ? (
-          <div className="flex w-full flex-row justify-center text-lg">
+          <div className="flex w-full flex-row justify-center gap-2 text-lg">
             <button
-              className="rounded-full bg-slate-400 px-3 py-1 hover:brightness-110"
+              className="rounded-full bg-indigo-400 px-3 py-1 hover:brightness-110"
               onClick={saveEdit}
               disabled={saving}
             >
               Save
             </button>
             <button
-              className="rounded-full bg-slate-400 px-3 py-1 hover:brightness-110"
+              className="rounded-full bg-indigo-400 px-3 py-1 hover:brightness-110"
               onClick={cancelEdit}
             >
               Cancel

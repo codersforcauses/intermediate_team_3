@@ -11,15 +11,18 @@ export default function Register() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    const res = await fetch("http://127.0.0.1:8000/api/planner/register/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: formData.get("username"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-      }),
-    });
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_BACKEND_URL + "planner/register/",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: formData.get("username"),
+          email: formData.get("email"),
+          password: formData.get("password"),
+        }),
+      },
+    );
 
     const data = await res.json();
     if (!res.ok) {
