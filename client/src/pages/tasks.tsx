@@ -91,9 +91,9 @@ export default function TasksPage() {
       .catch((err) => console.error("Failed to load topics", err));
   }, []);
 
-  if (loading) {
-    return <p>Loading tasks...</p>;
-  }
+  //if (loading) {
+  //  return <p>Loading tasks...</p>;
+  //}
 
   const handleTaskCreated = (task: Item) => {
     setItems((prev) => [...prev, task]);
@@ -163,14 +163,12 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="content-container min-w-screen relative flex min-h-[calc(100vh-64px)] flex-row items-center justify-center bg-slate-500">
+    <div className="content-container min-w-screen relative flex min-h-[calc(100vh-64px)] flex-row items-center justify-center bg-slate-800">
       <div className="task-list-container h-full w-full">
         <div className="task-list-content flex h-full w-full flex-col items-center justify-center rounded-lg p-3 text-slate-200">
-          <div className="task-list-top mb-3 hidden h-[10%] w-full rounded-t-lg">
-            <h1 className="task-list-title border-b-2 border-b-slate-400 p-3 text-center text-3xl font-bold text-slate-100">
-              My Tasks
+            <h1 className="task-list-title border-b-slate-400 p-3 text-center text-4xl font-bold text-slate-100">
+              Tasks
             </h1>
-          </div>
           <div className="task-list-bottom flex w-full flex-row justify-center gap-6">
             <div
               className="task-list-wrapper flex w-fit flex-row justify-center"
@@ -189,7 +187,7 @@ export default function TasksPage() {
               />
             </div>
             <div
-              className="add-task-container sticky top-3 flex h-full flex-col items-center justify-start rounded-lg bg-slate-400 p-3 shadow-xl"
+              className="add-task-container sticky top-3 flex h-full flex-col items-center justify-start rounded-lg bg-slate-900 p-3 shadow-xl"
               style={{ display: showAddTask ? "flex" : "none" }}
             >
               <h1 className="text-3xl font-bold text-slate-100">Add Task</h1>
@@ -207,7 +205,7 @@ export default function TasksPage() {
               </div>
             </div>
             <button
-              className="toggle-add-task-button fixed bottom-9 right-9 flex h-12 w-12 items-center justify-center rounded-full border bg-slate-400 text-xl brightness-90 hover:brightness-110"
+              className="toggle-add-task-button fixed bottom-9 right-9 flex h-12 w-12 items-center justify-center rounded-full border bg-indigo-400 text-xl brightness-90 hover:brightness-110"
               onClick={toggleShowAddTask}
             >
               {!showAddTask ? <RxPlus /> : <RxCross2 />}

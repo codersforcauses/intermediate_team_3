@@ -152,9 +152,9 @@ const CountdownTimer = () => {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] bg-slate-800 p-8 font-inter">
-      <div className="flex flex-col items-center justify-start rounded-xl bg-slate-700 p-8 font-mono text-white shadow-inner shadow-slate-900">
-        <p className="p-4 font-inter text-4xl font-semibold">focus</p>
+    <div className="h-[calc(100vh-64px)] bg-slate-800 font-inter flex w-full flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-start rounded-xl bg-slate-800 p-8 font-mono text-white">
+        <p className="p-4 font-inter text-4xl font-semibold">Focus</p>
         <div className="flex flex-row justify-center">
           <div className="flex flex-col">
             <div>
@@ -189,7 +189,7 @@ const CountdownTimer = () => {
             </div>
           </div>
           <div>
-            {tasks.length > 0 ? (
+            {times.length > 0 ? (
               <div className="justify-top flex flex-col pl-8">
                 <div className="p-4 font-inter text-2xl font-semibold">
                   tasks

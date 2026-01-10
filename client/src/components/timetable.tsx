@@ -370,7 +370,7 @@ function Timetable({ timetable_tasks_props }: TimetableProps) {
   return (
     <div
       id="timetable-border"
-      className="h-full w-full rounded-lg bg-slate-900 p-3"
+      className="h-full w-full rounded-lg bg-slate-900 p-3 shadow-xl shadow-black/40"
     >
       <div
         id="timetable-content"
