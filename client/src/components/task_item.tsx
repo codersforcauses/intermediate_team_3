@@ -134,7 +134,7 @@ export function TaskItem({
     /* Item Display */
   }
   return (
-    <div className="task flex h-fit w-full min-w-[20rem] max-w-[48rem] flex-col gap-3 rounded-3xl bg-slate-900 p-5 text-slate-200 shadow-xl shadow-black/40">
+    <div className="task flex h-fit w-full min-w-[20rem] max-w-[36rem] flex-col gap-3 rounded-3xl bg-indigo-500 p-5 text-slate-200 shadow-xl shadow-black/40">
       <div className="task-title-container flex w-full flex-row items-center justify-start gap-2 text-3xl font-bold text-slate-100 hover:text-slate-100">
         {/* Task Name and Completion */}
         <input
@@ -145,7 +145,7 @@ export function TaskItem({
         />
         {isEditing ? (
           <input
-            className="task-title-edit w-full rounded-lg bg-indigo-400 px-3 py-1 brightness-90 hover:brightness-110"
+            className="task-title-edit w-full rounded-lg bg-indigo-600 px-3 py-1 brightness-100 hover:brightness-110"
             value={draftName}
             onChange={(e) => setDraftName(e.target.value)}
           />
@@ -176,7 +176,7 @@ export function TaskItem({
           item.times.map((time) => (
             <div
               key={time.id}
-              className="day-time-tags flex w-fit flex-row gap-3 rounded-full bg-indigo-400 px-3 py-1 hover:brightness-110"
+              className="day-time-tags flex w-fit flex-row gap-3 rounded-full bg-indigo-600 px-3 py-1 hover:brightness-110"
             >
               <DayTag day={formatDay(time.day)} />
               <TimeTag start_time={time.start_time} end_time={time.end_time} />
@@ -219,7 +219,7 @@ export function TaskItem({
               Description
             </h1>
             <textarea
-              className="w-full rounded-lg bg-indigo-400 p-1 brightness-90 hover:brightness-110"
+              className="w-full rounded-lg bg-indigo-600 p-1 brightness-100 hover:brightness-110"
               value={draftDescription}
               rows={7}
               onChange={(e) => setDraftDescription(e.target.value)}
@@ -238,14 +238,14 @@ export function TaskItem({
         {isEditing ? (
           <div className="flex w-full flex-row justify-center gap-2 text-lg">
             <button
-              className="rounded-full bg-indigo-400 px-3 py-1 hover:brightness-110"
+              className="rounded-full bg-indigo-600 px-3 py-1 hover:brightness-110"
               onClick={saveEdit}
               disabled={saving}
             >
               Save
             </button>
             <button
-              className="rounded-full bg-indigo-400 px-3 py-1 hover:brightness-110"
+              className="rounded-full bg-indigo-600 px-3 py-1 hover:brightness-110"
               onClick={cancelEdit}
             >
               Cancel

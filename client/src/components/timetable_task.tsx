@@ -3,7 +3,7 @@ import {
   getTimeTopPosition,
   getVisibleTimetableRect,
 } from "@/components/timetable";
-import TopicTag from "@/components/topic_tag";
+import { TopicTagAlt } from "@/components/topic_tag";
 
 /*
 An interface for the data properties of a TimetableTask with numerical times
@@ -201,7 +201,7 @@ function TimetableTaskContent({
       </div>
       <div className="topic-tags mb-2 mt-2 flex flex-row flex-wrap gap-1">
         {topics?.map((topic) => (
-          <TopicTag
+          <TopicTagAlt
             key={topic.name}
             name={topic.name}
             color_hex={topic.color_hex}
@@ -277,9 +277,9 @@ function TimetableTask({
   }
 
   if (clash === true) {
-    additional_style += "bg-slate-700 ";
+    additional_style += "bg-indigo-900 border-2 border-indigo-800";
   } else {
-    additional_style += "bg-slate-400 ";
+    additional_style += "bg-indigo-500 border-2 border-indigo-700";
   }
 
   const mouseOverHandler = () => {
@@ -299,7 +299,7 @@ function TimetableTask({
       <div
         id={id}
         className={
-          "timetable-task pointer-events-auto absolute z-[50] overflow-hidden rounded-lg p-3 hover:brightness-110 " +
+          "timetable-task pointer-events-auto absolute z-[50] overflow-hidden rounded-lg p-2 hover:brightness-110 " +
           additional_style
         }
         data-completed={completed}
@@ -335,7 +335,7 @@ function TimetableTask({
           {tooltip_props.map((props) => (
             <div
               key={id + "-tooltip-" + props.name}
-              className="h-fit w-full rounded-lg bg-slate-400 p-3 text-slate-100"
+              className="h-fit w-full rounded-lg bg-indigo-500 p-3 text-slate-100"
             >
               <TimetableTaskContent {...props} time_display="both" />
             </div>

@@ -40,7 +40,6 @@ export function TopicInput({
                   color_hex={topicData.color_hex}
                 />
                 <button
-                  className="hover:brightness-90"
                   type="button"
                   onClick={() =>
                     setTopics(topics.filter((_, i) => i !== index))
@@ -55,7 +54,7 @@ export function TopicInput({
           return (
             <div
               key={index}
-              className="new-topic-input flex w-full flex-row justify-evenly gap-2 rounded-lg bg-indigo-400 p-2 brightness-90 hover:brightness-95"
+              className="new-topic-input flex w-full flex-row justify-evenly gap-2 rounded-lg bg-indigo-600 p-2 brightness-100 hover:brightness-95"
             >
               <input
                 className="color-select h-5 w-5 border-0"
@@ -69,7 +68,7 @@ export function TopicInput({
                 }}
               />
               <input
-                className="topic-name-input w-[75%] bg-indigo-400 text-justify placeholder:text-slate-300 hover:brightness-110"
+                className="topic-name-input w-[75%] bg-indigo-600 text-justify placeholder:text-slate-300 hover:brightness-110"
                 type="text"
                 placeholder="Topic name..."
                 value={topic.name}
@@ -81,7 +80,7 @@ export function TopicInput({
               />
 
               <button
-                className="hover:brightness-90"
+                className="hover:brightness-100"
                 type="button"
                 onClick={() => setTopics(topics.filter((_, i) => i !== index))}
               >
@@ -94,7 +93,7 @@ export function TopicInput({
 
       {/* Existing Topic Selection */}
       <select
-        className="topic-select w-full rounded-lg bg-indigo-400 p-2 text-center brightness-90 hover:brightness-110"
+        className="topic-select w-full rounded-lg bg-indigo-600 p-2 text-center brightness-100 hover:brightness-110"
         onChange={(e) => {
           const id = Number(e.target.value);
           if (!id) return;
@@ -114,7 +113,7 @@ export function TopicInput({
 
       <button
         type="button"
-        className="add-topic-button w-12 rounded-full bg-indigo-400 text-xl hover:brightness-110"
+        className="add-topic-button w-12 rounded-full bg-indigo-600 text-xl hover:brightness-110"
         onClick={() =>
           setTopics([...topics, { type: "new", name: "", color_hex: 0xffffff }])
         }

@@ -56,12 +56,12 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
       {times.map((time, index) => (
         <div
           key={index}
-          className="time-input-wrapper flex w-full flex-row items-center justify-evenly gap-1 rounded-lg bg-indigo-400 p-1 brightness-90 hover:brightness-95"
+          className="time-input-wrapper flex w-full flex-row items-center justify-evenly gap-1 rounded-lg bg-indigo-600 p-1 brightness-100 hover:brightness-95"
         >
           <div className="day-select-wrapper flex w-[20%] flex-row items-center justify-center gap-1">
             <FaRegCalendarAlt />
             <select
-              className="day-select h-full rounded-lg bg-indigo-400 p-1 text-center hover:brightness-110"
+              className="day-select h-full rounded-lg bg-indigo-600 p-1 text-center hover:brightness-110"
               value={time.day}
               onChange={(e) =>
                 updateTime(index, "day", parseInt(e.target.value))
@@ -78,7 +78,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
             <FaRegClock />
             <div className="time-inputs-wrapper text-md flex flex-col">
               <input
-                className="time-input h-full rounded-lg bg-indigo-400 hover:brightness-110"
+                className="time-input h-full rounded-lg bg-indigo-600 hover:brightness-110"
                 type="time"
                 value={time.start_time}
                 onChange={(e) =>
@@ -86,14 +86,14 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
                 }
               />
               <input
-                className="time-input h-full rounded-lg bg-indigo-400 hover:brightness-110"
+                className="time-input h-full rounded-lg bg-indigo-600 hover:brightness-110"
                 type="time"
                 value={time.end_time}
                 onChange={(e) => updateTime(index, "end_time", e.target.value)}
               />
             </div>
           </div>
-          <div className="repeat-input-wrapper flex w-[25%] flex-row gap-2 rounded-lg bg-indigo-400 p-1 hover:brightness-110">
+          <div className="repeat-input-wrapper flex w-[25%] flex-row gap-2 rounded-lg bg-indigo-600 p-1 hover:brightness-110">
             <span>Repeats?</span>
             <input
               className="repeat-input"
@@ -113,7 +113,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
         </div>
       ))}
       <button
-        className="add-time-button w-12 rounded-full bg-indigo-400 text-xl hover:brightness-110"
+        className="add-time-button w-12 rounded-full bg-indigo-600 text-xl hover:brightness-110"
         type="button"
         onClick={addTime}
       >

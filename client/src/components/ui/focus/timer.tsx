@@ -24,7 +24,7 @@ const Timer = (timeRemaining: number) => {
   };
 
   return (
-    <div className="w-full rounded-full bg-indigo-400 p-3 px-8 font-inter text-xl font-semibold">
+    <div className="flex aspect-square w-64 items-center justify-center rounded-full bg-indigo-500 font-inter text-3xl font-semibold">
       {formatTime(timeRemaining)}
     </div>
   );

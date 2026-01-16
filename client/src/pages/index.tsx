@@ -15,7 +15,7 @@ export default function Landing() {
           Not a Calendar
         </h3>
         <p className="text-s mb-3 text-white dark:text-neutral-200">
-          A streamlined task and time management to-do list.
+          A streamlined task and time management system.
         </p>
         <p className="text-s mb-3 font-semibold text-white dark:text-neutral-200">
           Create Tasks, Organise Time, Focus on Priorities

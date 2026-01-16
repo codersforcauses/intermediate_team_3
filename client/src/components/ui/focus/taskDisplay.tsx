@@ -27,7 +27,7 @@ export default function TaskDisplay({
       className={
         current
           ? "px-auto outline-3 m-3 flex flex-auto flex-col rounded-3xl bg-indigo-500 p-4 shadow-md shadow-black/40 outline outline-slate-50"
-          : "px-auto m-3 flex flex-auto flex-col rounded-3xl bg-indigo-400 p-4 shadow-md shadow-black/40"
+          : "px-auto m-3 flex flex-auto flex-col rounded-3xl bg-indigo-700 p-4 shadow-md shadow-black/40"
       }
     >
       <div className="font-bold">{task.name}</div>
