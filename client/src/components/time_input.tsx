@@ -56,7 +56,7 @@ export function TimeInput({ times, setTimes }: TimeInputProps) {
       {times.map((time, index) => (
         <div
           key={index}
-          className="time-input-wrapper flex w-full flex-row items-center justify-evenly gap-1 rounded-lg bg-indigo-600 p-1 brightness-90 hover:brightness-95"
+          className="time-input-wrapper flex w-full flex-row items-center justify-evenly gap-1 rounded-lg bg-indigo-600 p-1 brightness-100 hover:brightness-95"
         >
           <div className="day-select-wrapper flex w-[20%] flex-row items-center justify-center gap-1">
             <FaRegCalendarAlt />

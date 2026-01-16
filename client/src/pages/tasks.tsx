@@ -209,7 +209,7 @@ export default function TasksPage() {
               />
             </div>
             <div
-              className="add-task-container sticky top-3 flex h-full flex-col items-center justify-start rounded-3xl bg-indigo-800 p-3 shadow-xl"
+              className="add-task-container sticky top-3 flex h-full flex-col items-center justify-start rounded-3xl bg-indigo-500 p-3 shadow-xl"
               style={{ display: showAddTask ? "flex" : "none" }}
             >
               <h1 className="text-3xl font-bold text-slate-100">Add Task</h1>
@@ -227,7 +227,7 @@ export default function TasksPage() {
               </div>
             </div>
             <button
-              className="toggle-add-task-button fixed bottom-9 right-9 flex h-12 w-12 items-center justify-center rounded-full border bg-indigo-600 text-xl brightness-90 hover:brightness-110"
+              className="toggle-add-task-button fixed bottom-9 right-9 flex h-12 w-12 items-center justify-center rounded-full border bg-indigo-500 text-xl hover:brightness-125"
               onClick={toggleShowAddTask}
             >
               {!showAddTask ? <RxPlus /> : <RxCross2 />}

@@ -128,10 +128,10 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="task-form flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg bg-indigo-800 p-4 text-slate-200"
+      className="task-form flex h-full w-full flex-col items-center justify-between gap-2 rounded-lg p-4 text-slate-200"
     >
       <input
-        className="title-input w-full rounded-lg bg-indigo-600 px-3 py-1 text-3xl font-bold text-slate-100 brightness-90 placeholder:text-slate-300 hover:brightness-110"
+        className="title-input w-full rounded-lg bg-indigo-600 px-3 py-1 text-3xl font-bold text-slate-100 brightness-100 placeholder:text-slate-300 hover:brightness-110"
         type="text"
         value={taskName}
         onChange={(e) => setTaskName(e.target.value)}
@@ -143,7 +143,7 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
           Description
         </h1>
         <textarea
-          className="description-input w-full rounded-lg bg-indigo-600 p-2 brightness-90 placeholder:text-slate-300 hover:brightness-110"
+          className="description-input w-full rounded-lg bg-indigo-600 p-2 brightness-100 placeholder:text-slate-300 hover:brightness-110"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={7}
@@ -157,7 +157,7 @@ export function TaskForm({ userId, onTaskCreated }: TaskFormProps) {
       />
       <TimeInput times={times} setTimes={setTimes} />
       <button
-        className="w-fit rounded-full border border-slate-300 bg-indigo-600 px-3 py-1 text-xl brightness-110 hover:brightness-125"
+        className="w-fit rounded-full border bg-indigo-600 px-3 py-1 text-xl brightness-110 hover:brightness-125"
         type="submit"
       >
         Save

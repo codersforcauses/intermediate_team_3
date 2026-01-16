@@ -134,7 +134,7 @@ export function TaskItem({
     /* Item Display */
   }
   return (
-    <div className="task flex h-fit w-full min-w-[20rem] max-w-[48rem] flex-col gap-3 rounded-3xl bg-indigo-500 p-5 text-slate-200 shadow-xl shadow-black/40">
+    <div className="task flex h-fit w-full min-w-[20rem] max-w-[36rem] flex-col gap-3 rounded-3xl bg-indigo-500 p-5 text-slate-200 shadow-xl shadow-black/40">
       <div className="task-title-container flex w-full flex-row items-center justify-start gap-2 text-3xl font-bold text-slate-100 hover:text-slate-100">
         {/* Task Name and Completion */}
         <input
@@ -145,7 +145,7 @@ export function TaskItem({
         />
         {isEditing ? (
           <input
-            className="task-title-edit w-full rounded-lg bg-indigo-600 px-3 py-1 brightness-90 hover:brightness-110"
+            className="task-title-edit w-full rounded-lg bg-indigo-600 px-3 py-1 brightness-100 hover:brightness-110"
             value={draftName}
             onChange={(e) => setDraftName(e.target.value)}
           />
@@ -219,7 +219,7 @@ export function TaskItem({
               Description
             </h1>
             <textarea
-              className="w-full rounded-lg bg-indigo-600 p-1 brightness-90 hover:brightness-110"
+              className="w-full rounded-lg bg-indigo-600 p-1 brightness-100 hover:brightness-110"
               value={draftDescription}
               rows={7}
               onChange={(e) => setDraftDescription(e.target.value)}

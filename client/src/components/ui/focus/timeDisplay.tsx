@@ -48,18 +48,17 @@ export default function TimeDisplay({
   }, [timeRemaining, statusSignal]);
 
   return (
-    <div className="m-3 flex flex-col items-center justify-center rounded-3xl bg-slate-900 p-10 shadow-xl shadow-black/40">
+    <div className="flex flex-col items-center justify-center gap-6 rounded-3xl bg-slate-900 p-10 shadow-xl shadow-black/40">
       {current ? (
         <>
-          <h1 className="mb-2 font-inter text-4xl font-semibold">Timer</h1>
+          <h1 className="font-inter text-4xl font-semibold">Time Remaining</h1>
         </>
       ) : (
         <>
-          <h1 className="mb-2 font-inter text-4xl font-semibold">Next Task</h1>
+          <h1 className="font-inter text-4xl font-semibold">Next Task In</h1>
         </>
       )}
       <div className="time_left">{Timer(timeRemaining)}</div>
-      <div></div>
     </div>
   );
 }

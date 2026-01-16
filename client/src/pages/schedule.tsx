@@ -298,7 +298,7 @@ function Schedule() {
 
   return (
     <div className="content-container min-w-screen flex h-[calc(100vh-64px)] w-full flex-col items-center justify-center bg-slate-800 p-3">
-      <div className="timetable-container max-h-[90vh] w-full p-3">
+      <div className="timetable-container max-h-[90vh] w-full p-3 pb-16">
         <Timetable timetable_tasks_props={timetableTasksProps} />
       </div>
     </div>
